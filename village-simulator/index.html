@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Village Simulator · ISV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/isv-theme.css?v=20260903dark">
+<script src="./js/isv-theme.js?v=20260903dark"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { font-family: var(--font); font-size: 15px; color: var(--text); background: var(--bg); line-height: 1.5; }
+a { color: var(--green); }
+.wrap {
+  max-width: 1280px; margin: 0 auto; padding: 0.5rem 1.25rem 1.5rem;
+  min-height: 100%; display: flex; flex-direction: column;
+}
+.back { font-size: 12px; color: var(--text-2); margin-bottom: 0.4rem; flex-shrink: 0; }
+.back a { text-decoration: none; }
+.legend { display: flex; flex-wrap: wrap; gap: 0.65rem 1rem; font-size: 11px; color: var(--text-2); margin-bottom: 0.75rem; }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; vertical-align: middle; }
+.cap-bar {
+  display: inline-block; width: 140px; height: 9px; border-radius: 4px; vertical-align: middle; margin-right: 6px;
+  background: linear-gradient(90deg, #3b6d11 0%, #e6c84a 50%, #b42318 100%);
+}
+.cap-bar.is-harm {
+  background: linear-gradient(90deg, #1a8f7a 0%, #9b4dca 50%, #ff2d6a 100%);
+}
+.line-leg {
+  display: inline-flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;
+  font-size: 10px; color: var(--text-2);
+}
+#wl-theater {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - 2.25rem);
+  min-height: 420px;
+  flex: 0 0 auto;
+}
+.stage {
+  display: grid; grid-template-columns: minmax(0, 1fr) 332px; gap: 0.75rem;
+  align-items: stretch; flex: 1 1 auto; min-height: 0;
+}
+.stage.has-feeder { grid-template-columns: minmax(0, 1fr) minmax(300px, 360px); }
+.wl-stage-col { position: relative; min-width: 0; height: 100%; min-height: 0; }
+#wl-stage { position: relative; height: 100%; min-height: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #121214; }
+.wl-overlay {
+  position: absolute; z-index: 8; pointer-events: auto;
+  top: 8px; left: 8px; width: min(440px, calc(100% - 56px));
+  max-height: calc(100% - 16px); overflow: auto;
+  padding: 0.6rem 0.7rem 0.7rem;
+  border: 1px solid #3a3a3e; border-radius: 10px;
+  background: rgba(18, 18, 20, 0.92); color: #e8e6dc;
+  font-size: 12px; line-height: 1.4;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+.wl-overlay[hidden] { display: none !important; }
+.wl-overlay h2 {
+  font-size: 13px; font-weight: 500; margin: 0; border: 0; padding: 0; color: #e8e6dc;
+}
+.wl-ov-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.45rem; }
+.wl-ov-head p { margin: 0.15rem 0 0; font-size: 11px; color: #9a9990; }
+.wl-ov-actions { display: flex; flex-wrap: wrap; gap: 0.3rem; flex-shrink: 0; }
+.wl-ov-actions button, .wl-overlay select {
+  font-family: inherit; font-size: 11px; padding: 0.2rem 0.5rem; border-radius: 999px;
+  border: 1px solid #4a4a4e; background: #1c1c20; color: #e8e6dc; cursor: pointer;
+}
+.wl-ov-k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; color: #9a9990; margin: 0.55rem 0 0.25rem; }
+.wl-ov-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem; }
+.wl-ov-stat {
+  padding: 0.35rem 0.45rem; border-radius: 8px; background: #121214; border: 1px solid #2a2a2e;
+}
+.wl-ov-stat b { display: block; font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.wl-ov-stat span { display: block; font-size: 10px; color: #9a9990; }
+.wl-ov-stat.warn { border-color: #ba7517; }
+.wl-ov-stat.bad { border-color: #b42318; }
+.wl-ov-stat.ok { border-color: #3b6d11; }
+.wl-ports { width: 100%; border-collapse: collapse; font-size: 11px; }
+.wl-ports th, .wl-ports td { padding: 0.22rem 0.3rem; text-align: left; border-bottom: 1px solid #2a2a2e; }
+.wl-ports th { color: #9a9990; font-weight: 500; }
+.wl-ports tr.is-off td { color: #c45b5b; }
+.wl-ports tr.is-out td { color: #e6c84a; }
+.wl-check { list-style: none; margin: 0; padding: 0; }
+.wl-check li { padding: 0.2rem 0 0.2rem 1.15rem; position: relative; color: #c8c6bc; }
+.wl-check li::before { content: ""; position: absolute; left: 0; top: 0.45rem; width: 8px; height: 8px; border-radius: 2px; background: #3a3a38; }
+.wl-check li.done::before { background: #3b6d11; }
+.wl-check li.warn::before { background: #ba7517; }
+.wl-check li.bad::before { background: #b42318; }
+.wl-ov-note { font-size: 11px; color: #9a9990; margin: 0.4rem 0 0; }
+html[data-role="customer"] .side,
+html[data-role="customer"] .tbl-wrap,
+html[data-role="customer"] #wl-stream-panel,
+html[data-role="customer"] #wl-feeder-view,
+html[data-role="customer"] [data-ops] { display: none !important; }
+html[data-role="customer"] .stage { grid-template-columns: 1fr; }
+.circa-mark {
+  position: absolute; left: 8px; bottom: 8px; z-index: 6;
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 4px 8px 5px; border-radius: 4px;
+  background: rgba(18, 18, 20, 0.58);
+  color: #e8e6dc; text-decoration: none;
+  line-height: 1.15; pointer-events: auto;
+}
+.circa-mark:hover { background: rgba(18, 18, 20, 0.82); color: #fff; }
+.circa-mark svg { display: block; flex-shrink: 0; opacity: 0.92; }
+.circa-mark-txt { display: flex; flex-direction: column; }
+.circa-mark-txt b { font-size: 11px; font-weight: 500; letter-spacing: 0.02em; }
+.circa-mark-txt span { font-size: 9px; color: #9a9990; font-weight: 400; }
+.circa-mark:hover .circa-mark-txt span { color: #c8c6bc; }
+#wl-stage canvas { display: block; width: 100%; height: 100%; }
+#wl-frame {
+  position: absolute; top: 8px; right: 8px; z-index: 9;
+  width: 36px; height: 36px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid #4a4a4e; border-radius: 10px;
+  background: rgba(18, 18, 20, 0.82); color: #e8e6dc;
+  cursor: pointer; pointer-events: auto;
+}
+#wl-frame:hover { border-color: #7aa0c4; color: #fff; background: rgba(28, 28, 32, 0.94); }
+#wl-frame:focus-visible { outline: 2px solid #5ee0ff; outline-offset: 2px; }
+#wl-frame svg { display: block; }
+.wl-win {
+  position: absolute;
+  right: 8px;
+  top: 28px;
+  bottom: 28px;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  pointer-events: none;
+}
+.wl-win span {
+  font-family: "DM Mono", ui-monospace, monospace;
+  font-size: 10px;
+  color: #d8dee6;
+  text-shadow: 0 1px 4px #121214;
+  pointer-events: none;
+}
+.wl-win input[type="range"] {
+  pointer-events: auto;
+  flex: 1;
+  width: 22px;
+  margin: 0;
+  padding: 0;
+  writing-mode: vertical-lr;
+  direction: rtl;
+  appearance: slider-vertical;
+  -webkit-appearance: slider-vertical;
+  accent-color: #c9a227;
+  cursor: ns-resize;
+}
+#wl-theater:fullscreen,
+#wl-theater:-webkit-full-screen {
+  width: 100vw; height: 100vh; background: #121214;
+  display: flex; flex-direction: column; padding: 0.55rem 0.7rem 0.7rem; box-sizing: border-box;
+}
+#wl-theater:fullscreen .controls,
+#wl-theater:-webkit-full-screen .controls { margin-bottom: 0.45rem; }
+#wl-theater:fullscreen .stage,
+#wl-theater:-webkit-full-screen .stage { flex: 1; min-height: 0; }
+#wl-theater:fullscreen .wl-stage-col,
+#wl-theater:-webkit-full-screen .wl-stage-col {
+  height: 100%; min-height: 0; flex: 1;
+}
+#wl-theater:fullscreen #wl-stage,
+#wl-theater:-webkit-full-screen #wl-stage {
+  border: 0; border-radius: 8px;
+}
+#wl-fs-load { display: none; }
+#wl-theater:fullscreen #wl-fs-load,
+#wl-theater:-webkit-full-screen #wl-fs-load {
+  display: flex; flex-direction: column; flex-shrink: 0;
+  height: 176px; margin-top: 0.4rem; padding: 0.35rem 0.55rem 0.3rem;
+  border: 1px solid #2a2a2e; border-radius: 8px; background: #121214; color: #e8e6dc;
+}
+.fs-load-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; flex-shrink: 0; }
+.fs-load-head h2 { font-size: 12px; font-weight: 500; margin: 0; border: 0; padding: 0; color: #e8e6dc; }
+.fs-load-head p { font-size: 11px; color: #9a9990; margin: 0; }
+.fs-load-leg { display: flex; flex-wrap: wrap; gap: 0.25rem 0.65rem; font-size: 10px; color: #9a9990; justify-content: flex-end; }
+.fs-load-leg i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+#wl-fs-load-cv { display: block; width: 100%; height: 132px; flex: 1; min-height: 0; }
+.side { display: flex; flex-direction: column; gap: 0.65rem; min-height: 0; overflow: auto; }
+.panel { border: 1px solid var(--border); border-radius: 10px; background: var(--bg-2); padding: 0.65rem 0.75rem; font-size: 12px; }
+.panel h2 { font-size: 11px; font-weight: 500; color: var(--text-2); margin: 0 0 0.4rem; border: 0; padding: 0; display: flex; align-items: center; gap: 0.4rem; }
+.panel h2::before { content: ""; width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.panel-play h2::before { background: #2bb6a3; }
+.panel-geoid h2::before { background: #5c7cfa; }
+.panel-stats h2::before { background: #3b6d11; }
+.panel-log h2::before { background: #c9a227; }
+#wl-geoid-sub { font-size: 11px; color: var(--text-2); margin: 0 0 0.35rem; line-height: 1.35; }
+#wl-geoid-json {
+  margin: 0; max-height: 28vh; overflow: auto;
+  font-family: "DM Mono", ui-monospace, monospace; font-size: 10px; line-height: 1.35;
+  padding: 0.4rem 0.5rem; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); white-space: pre;
+}
+.panel-geoid .wl-geoid-copy,
+.panel-geoid .wl-geoid-file {
+  font-family: inherit; font-size: 10px; padding: 0.12rem 0.4rem;
+  border-radius: 999px; border: 1px solid var(--border); background: var(--bg);
+  color: var(--text-2); cursor: pointer; text-decoration: none;
+}
+.panel-geoid .wl-geoid-file { margin-left: auto; }
+.panel-geoid .wl-geoid-file:hover { color: var(--text); border-color: var(--blue); }
+#wl-stats { display: flex; flex-direction: column; gap: 0.5rem; }
+.stat-hero, .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+.stat {
+  display: flex; gap: 0.4rem; align-items: flex-start;
+  padding: 0.42rem 0.48rem; border-radius: 8px;
+  background: var(--bg); border: 1px solid var(--border);
+}
+.stat-ico {
+  width: 22px; height: 22px; border-radius: 6px; flex-shrink: 0;
+  display: grid; place-items: center; color: #fff;
+}
+.stat-ico svg { display: block; }
+.stat.site .stat-ico { background: #3b6d11; }
+.stat.dtm .stat-ico { background: #2bb6a3; }
+.stat.energy .stat-ico { background: #175cd3; }
+.stat.money .stat-ico { background: #c9a227; }
+.stat.fault .stat-ico { background: #b42318; }
+.stat.pf .stat-ico { background: #3d8bfd; }
+.stat.ops .stat-ico { background: #8a8a82; }
+.stat.mesh .stat-ico { background: #ff4d1a; }
+.stat-k { display: block; font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.04em; }
+.stat-v { display: block; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.25; }
+.stat-s { display: block; font-size: 10px; color: var(--text-2); font-style: normal; margin-top: 0.05rem; }
+.stat-sec { font-size: 10px; font-weight: 500; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin: 0.1rem 0 0; }
+.stat-note { font-size: 10px; color: var(--text-2); line-height: 1.35; margin: 0; }
+.controls { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; margin-bottom: 0.75rem; }
+.controls button, .controls select, [data-hide] {
+  font-family: inherit; font-size: 12px; padding: 0.3rem 0.65rem; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer;
+}
+.controls button.primary { background: var(--green); color: #fff; border-color: var(--green); }
+.wl-skip { min-width: 2.35rem; font-size: 15px; line-height: 1; padding: 0.28rem 0.55rem; }
+.controls button.on { border-color: var(--blue); background: var(--bg-2); }
+#wl-clock {
+  font-family: "DM Mono", ui-monospace, monospace;
+  font-size: 18px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  width: 6ch;
+  min-width: 6ch;
+  flex-shrink: 0;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+#wl-fs { flex-shrink: 0; }
+#wl-build {
+  font-family: "DM Mono", ui-monospace, monospace;
+  font-size: 10px; color: var(--text-3); letter-spacing: 0.02em;
+}
+#wl-scrub { flex: 1; min-width: 140px; }
+#wl-houses { display: flex; flex-direction: column; gap: 0.3rem; max-height: 38vh; overflow: auto; }
+#wl-feeder-view[hidden], #wl-house-view[hidden] { display: none !important; }
+#wl-feeder-sub { font-size: 11px; color: var(--text-2); margin: 0 0 0.4rem; line-height: 1.35; }
+#wl-feeder-grid {
+  display: flex; flex-direction: column; gap: 3px;
+  max-height: 46vh; overflow: auto; padding: 1px;
+}
+.feeder-row {
+  display: grid; grid-template-columns: 3.4rem repeat(var(--feeder-cols, 10), minmax(0, 1fr));
+  gap: 2px; align-items: stretch;
+  padding: 2px; border-radius: 5px;
+}
+.feeder-row.is-on {
+  outline: 2px solid #5ee0ff; outline-offset: 0;
+  background: rgba(94, 224, 255, 0.12);
+}
+.feeder-row.is-on .feeder-row-lab { border-color: #5ee0ff; color: #e8eef4; background: #163038; }
+.feeder-row.is-dim { opacity: 0.38; }
+.feeder-row-lab {
+  font-family: inherit; font-size: 9px; line-height: 1.15; text-align: left;
+  padding: 0.15rem 0.22rem; border-radius: 4px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--bg); color: var(--text-2);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.feeder-row-lab:hover { border-color: var(--blue); color: var(--text); }
+.feeder-cell {
+  aspect-ratio: 1; min-width: 0; min-height: 16px; padding: 0;
+  border-radius: 3px; border: 1px solid #2a2a2e; cursor: pointer;
+  background: #3b6d11;
+}
+.feeder-cell.out { box-shadow: inset 0 0 0 1px #ba7517; }
+.feeder-cell.match { box-shadow: 0 0 0 1px #e8e6dc; }
+.feeder-row.is-on .feeder-cell { box-shadow: 0 0 0 1px rgba(94, 224, 255, 0.55); }
+.feeder-cell.on-ems { box-shadow: 0 0 0 1px #5ee0ff; }
+.feeder-cell.focus {
+  outline: 2px solid #e6c84a; outline-offset: 1px; z-index: 2;
+  box-shadow: 0 0 0 2px #e6c84a; transform: scale(1.14);
+}
+.feeder-cell:hover { filter: brightness(1.12); }
+.feeder-row.is-leak .feeder-row-lab { color: #f0b0ff; }
+.feeder-leak {
+  display: flex; align-items: center; gap: 0.4rem; width: 100%;
+  font-family: inherit; font-size: 11px; line-height: 1.3; text-align: left;
+  padding: 0.32rem 0.5rem; margin: 2px 0 3px; border-radius: 5px; cursor: pointer;
+  border: 1px solid #ff4dff; background: #4a1848; color: #ffd6ff; font-weight: 500;
+}
+.feeder-leak.is-live { background: #6a1f68; box-shadow: 0 0 0 1px #ff4dff; }
+.feeder-leak.is-idle { background: #3a1438; color: #f0b0ff; }
+.feeder-leak-k {
+  flex-shrink: 0; font-size: 9px; letter-spacing: 0.04em; font-weight: 500;
+  padding: 0.05rem 0.28rem; border-radius: 3px; border: 1px solid #e85dff;
+}
+.feeder-leak-txt { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.feeder-leak:hover { filter: brightness(1.12); }
+.feeder-clear {
+  font-family: inherit; font-size: 11px; padding: 0.2rem 0.5rem; margin-top: 0.4rem;
+  border-radius: 999px; border: 1px solid var(--border); background: var(--bg);
+  color: var(--text-2); cursor: pointer;
+}
+#wl-house-q {
+  width: 100%; font-family: inherit; font-size: 12px; padding: 0.35rem 0.5rem; margin-bottom: 0.4rem;
+  border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text);
+}
+.house-clusters { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 0.35rem; }
+.house-clusters button {
+  font-family: inherit; font-size: 10px; padding: 0.15rem 0.45rem; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--bg); color: var(--text-2); cursor: pointer;
+}
+.house-clusters button.on { border-color: var(--blue); color: var(--text); background: var(--bg-2); }
+.house-count { font-size: 10px; color: var(--text-3); margin: 0 0 0.3rem; }
+.house {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.2rem 0.5rem;
+  text-align: left; font-family: inherit; font-size: 12px; padding: 0.4rem 0.5rem;
+  border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); cursor: pointer;
+}
+.house code { font-size: 10px; color: var(--text-3); }
+.house span { width: 100%; color: var(--teal); font-size: 11px; }
+.house.is-off span { color: var(--red); }
+.house.is-outage span { color: var(--amber); }
+.house.active { border-color: var(--blue); }
+#wl-log { list-style: none; max-height: 180px; overflow: auto; }
+#wl-log li {
+  margin-bottom: 0.35rem; color: var(--text-2); line-height: 1.35;
+  padding: 0.35rem 0.45rem; border-radius: 8px; background: var(--bg);
+  border: 1px solid var(--border); border-left-width: 3px;
+}
+#wl-log time { font-family: var(--mono); color: var(--text); }
+#wl-log li.k-pay { border-left-color: #c9a227; }
+#wl-log li.k-disconnect, #wl-log li.k-overload, #wl-log li.k-cap_warn { border-left-color: #b42318; }
+#wl-log li.k-outage, #wl-log li.k-lastbreath { border-left-color: #ff4d1a; }
+#wl-log li.k-pf_warn { border-left-color: #3d8bfd; }
+#wl-log li.k-sms { border-left-color: #c45b8a; }
+#wl-log li.k-reconnect, #wl-log li.k-restore { border-left-color: #3b6d11; }
+#wl-log li.k-phase_xfer { border-left-color: #2bb6a3; }
+#wl-log li.k-leak, #wl-log li.k-leak_clear { border-left-color: #e85dff; }
+.stream-panel { border: 1px solid var(--border); border-radius: 10px; background: var(--bg-2); padding: 0.65rem 0.75rem; margin-top: 0.75rem; }
+.stream-panel h2 { font-size: 11px; font-weight: 500; color: var(--text-2); margin: 0 0 0.25rem; border: 0; padding: 0; }
+.stream-note { font-size: 11px; color: var(--text-3); margin-bottom: 0.4rem; }
+#wl-stream { display: block; width: 100%; height: 168px; border-radius: 8px; background: #121214; }
+#wl-stream-legend { margin-top: 0.45rem; margin-bottom: 0; }
+.tbl-wrap { overflow: auto; max-height: 280px; border: 1px solid var(--border); border-radius: 10px; margin-top: 0.85rem; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th, td { padding: 0.35rem 0.55rem; text-align: left; border-bottom: 1px solid var(--border); }
+th { color: var(--text-3); font-weight: 500; }
+tr.k-pay td:nth-child(2) { color: #a88620; }
+tr.k-disconnect td:nth-child(2) { color: var(--red); }
+tr.k-outage td:nth-child(2) { color: #ff2d4a; }
+tr.k-repair td:nth-child(2) { color: #a88620; }
+tr.k-shed td:nth-child(2) { color: #ba7517; }
+tr.k-restore td:nth-child(2) { color: var(--green); }
+tr.k-lastbreath td:nth-child(2) { color: #ff4d1a; }
+tr.k-lastbreath_lost td:nth-child(2) { color: #ff9a40; }
+tr.k-reconnect td:nth-child(2) { color: var(--blue); }
+tr.k-sms td:nth-child(2) { color: #c45b8a; }
+tr.k-sync td:nth-child(2) { color: var(--text-3); }
+tr.k-leak td:nth-child(2), tr.k-leak_clear td:nth-child(2) { color: #e85dff; }
+[data-hide].off { opacity: 0.4; text-decoration: line-through; }
+html.embed .back { display: none; }
+html.embed .wrap { padding: 0.35rem 0.7rem 0.75rem; max-width: none; height: auto; min-height: 100%; }
+html.embed #wl-theater { height: calc(100dvh - 0.7rem); min-height: 420px; flex: 0 0 auto; }
+@media (max-width: 900px) {
+  .stage { grid-template-columns: 1fr; }
+  .wl-stage-col { height: 65vh; min-height: 360px; }
+  #wl-theater, html.embed #wl-theater { height: auto; min-height: 0; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="back"><a href="https://isv.wiki/#village-metering/village-simulator">Village Metering</a> · Village Simulator</p>
+  <div id="wl-theater">
+  <div class="controls">
+    <span id="wl-clock">00:00</span>
+    <button type="button" class="wl-skip" id="wl-play" title="Play" aria-label="Play">▶</button>
+    <input id="wl-scrub" type="range" min="0" max="1440" value="0" />
+    <button type="button" class="wl-skip" id="wl-rev" title="Play reverse" aria-label="Play reverse">◀</button>
+    <select id="wl-viz" aria-label="Time layout" data-ops>
+      <option value="v2" selected>v2 · worldlines rise</option>
+      <option value="v1">v1 · worldlines drop</option>
+    </select>
+    <select id="wl-sky" aria-label="Sky">
+      <option value="dark" selected>Sky: dark</option>
+      <option value="bright">Sky: bright</option>
+    </select>
+    <select id="wl-light" aria-label="Village lighting">
+      <option value="fill" selected>Light: fill</option>
+      <option value="lamps">Light: lamps</option>
+      <option value="sun">Light: sun</option>
+    </select>
+    <select id="wl-scheme" aria-label="Color scheme" data-ops>
+      <option value="messages">Color: message types</option>
+      <option value="load">Color: load types</option>
+      <option value="capacity">Color: capacity proximity</option>
+      <option value="feeder">Color: feeder allotment</option>
+      <option value="osi">Color: OSI stack</option>
+      <option value="asset">Color: asset type</option>
+    </select>
+    <select id="wl-linegrad" aria-label="Power line gradient" data-ops>
+      <option value="capacity" selected>Lines: capacity</option>
+      <option value="pf">Lines: power factor</option>
+      <option value="harmonics">Lines: harmonics (THD)</option>
+    </select>
+    <span id="wl-line-legend" class="line-leg" title="Line / feeder-grid color ramp">
+      <i class="cap-bar"></i>
+      <span id="wl-line-lo">0% idle</span>
+      <span id="wl-line-mid">50% mid</span>
+      <span id="wl-line-hi">100% at cap</span>
+    </span>
+    <select id="wl-speed" aria-label="Playback speed">
+      <option value="15">15× min/s</option>
+      <option value="30" selected>30× min/s</option>
+      <option value="60">60× min/s</option>
+      <option value="120">120× min/s</option>
+    </select>
+    <select id="wl-homes" aria-label="Village size" title="100 or 1000 home mock. Reloads. Size is ?homes= so other query changes keep it.">
+      <option value="100">Size: 100 homes</option>
+      <option value="1000" selected>Size: 1000 homes</option>
+    </select>
+    <select id="wl-role" aria-label="Viewer role">
+      <option value="ops" selected>View: operator</option>
+      <option value="tech">View: technician</option>
+      <option value="customer">View: customer</option>
+    </select>
+    <select id="wl-feeder" aria-label="Feeder" data-ops title="Open the EMS × customer feeder grid">
+      <option value="">Feeder: village</option>
+    </select>
+    <span id="wl-build" title="Local preview stamp — if you do not see this, you are on an old cached page">local 0901-step</span>
+    <button type="button" id="wl-ems-open" title="Open pole MeshEMS cabinet card" data-ops>EMS cabinet</button>
+    <button type="button" data-hide="pay" class="off" data-ops>payments</button>
+    <button type="button" id="wl-anomaly" class="on" title="Outage, last-breath, cutoff, PF &lt; 0.80, capacity ≥ 80%, overload trip" data-ops>anomalies</button>
+    <button type="button" data-hide="leak" title="MeshEMS ΔP localizes leak to a feeder span between two boards" data-ops>leakage</button>
+    <button type="button" data-hide="worldline" class="off" data-ops>worldlines</button>
+    <button type="button" data-hide="reading" class="off" data-ops>readings</button>
+    <button type="button" data-hide="disconnect" data-ops>cutoffs</button>
+    <button type="button" data-hide="sms">SMS</button>
+    <button type="button" data-hide="sync" data-ops>sync</button>
+    <button type="button" data-hide="mesh" class="off" data-ops>mesh hops</button>
+    <button type="button" data-hide="phase_xfer" data-ops>phase xfer</button>
+    <button type="button" data-hide="rf" class="off" data-ops>RF net</button>
+    <button type="button" id="wl-fs" title="Fullscreen (F)">Fullscreen</button>
+  </div>
+  <div class="stage" id="wl-stage-grid">
+    <div class="wl-stage-col">
+      <div id="wl-stage" role="img" aria-label="Village Simulator 3D scene, now at ground, past rises into the sky">
+        <button type="button" id="wl-frame" title="Center camera on selection" aria-label="Center camera on selection">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <circle cx="12" cy="12" r="7.2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+            <circle cx="12" cy="12" r="2.15" fill="currentColor"/>
+            <path d="M12 3.1v3.3M12 17.6v3.3M3.1 12h3.3M17.6 12h3.3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <a class="circa-mark" href="https://circaevum.com/" target="_blank" rel="noopener noreferrer" title="Powered by Circaevum graphics library">
+          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+            <circle cx="8" cy="8" r="2.1" fill="currentColor"/>
+            <ellipse cx="8" cy="8" rx="6.3" ry="2.35" fill="none" stroke="currentColor" stroke-width="1.15"/>
+            <ellipse cx="8" cy="8" rx="6.3" ry="2.35" fill="none" stroke="currentColor" stroke-width="1.15" transform="rotate(60 8 8)"/>
+            <ellipse cx="8" cy="8" rx="6.3" ry="2.35" fill="none" stroke="currentColor" stroke-width="1.15" transform="rotate(120 8 8)"/>
+          </svg>
+          <span class="circa-mark-txt"><b>Circaevum</b><span>graphics library</span></span>
+        </a>
+        <aside id="wl-ems-card" class="wl-overlay" hidden>
+          <div class="wl-ov-head">
+            <div>
+              <h2 id="wl-ems-title">Pole EMS</h2>
+              <p id="wl-ems-sub">MeshEMS cabinet · ~10 meters</p>
+            </div>
+            <div class="wl-ov-actions">
+              <button type="button" id="wl-ems-prev">Prev pole</button>
+              <button type="button" id="wl-ems-next">Next pole</button>
+              <button type="button" id="wl-ems-close">Close</button>
+            </div>
+          </div>
+          <div id="wl-ems-body"></div>
+        </aside>
+        <aside id="wl-cust-card" class="wl-overlay" hidden>
+          <div class="wl-ov-head">
+            <div>
+              <h2>My connection</h2>
+              <p>Your meter and area status. Not a neighbor list.</p>
+            </div>
+            <label class="wl-ov-actions">
+              <select id="wl-you" aria-label="Who you are"></select>
+            </label>
+          </div>
+          <div id="wl-cust-body"></div>
+        </aside>
+      </div>
+      <label class="wl-win" id="wl-win" title="Height of stretch / scrunch boundary">
+        <span id="wl-win-hi">past</span>
+        <input id="wl-window" type="range" min="8" max="42" step="1" value="36" aria-label="Stretch / scrunch boundary height" />
+        <span id="wl-win-val">−2h</span>
+      </label>
+    </div>
+    <div class="side">
+      <div class="panel panel-play">
+        <h2 id="wl-play-title">At playhead</h2>
+        <input id="wl-house-q" type="search" placeholder="search name / serial" autocomplete="off" />
+        <div id="wl-feeder-view" hidden>
+          <p id="wl-feeder-sub"></p>
+          <div id="wl-feeder-grid" role="grid" aria-label="Feeder EMS by customer"></div>
+          <button type="button" class="feeder-clear" id="wl-feeder-clear">Clear feeder</button>
+        </div>
+        <div id="wl-house-view">
+          <div id="wl-house-clusters" class="house-clusters"></div>
+          <p id="wl-house-count" class="house-count"></p>
+          <div id="wl-houses"></div>
+        </div>
+      </div>
+      <div class="panel panel-geoid">
+        <h2>Geoid
+          <a class="wl-geoid-file" href="./grid.geojson" title="Full village FeatureCollection">grid.geojson</a>
+          <button type="button" class="wl-geoid-copy" id="wl-geoid-copy" title="Copy this FeatureCollection">copy</button>
+        </h2>
+        <p id="wl-geoid-sub">FeatureCollection · select a feeder or home</p>
+        <pre id="wl-geoid-json">{"type":"FeatureCollection","features":[]}</pre>
+      </div>
+      <div class="panel panel-stats">
+        <h2>Day totals</h2>
+        <div id="wl-stats"></div>
+      </div>
+      <div class="panel panel-log">
+        <h2>Recent events</h2>
+        <ul id="wl-log"></ul>
+      </div>
+    </div>
+  </div>
+  <div id="wl-fs-load">
+    <header class="fs-load-head">
+      <div>
+        <h2 id="wl-fs-load-title">Village load</h2>
+        <p id="wl-fs-load-sub">none selected · all homes</p>
+      </div>
+      <div id="wl-fs-load-leg" class="fs-load-leg"></div>
+    </header>
+    <canvas id="wl-fs-load-cv" width="960" height="132" aria-label="Daily load profile"></canvas>
+  </div>
+  </div>
+  <div id="wl-stream-panel" class="stream-panel" hidden>
+    <h2>Load signature · <span id="wl-stream-name"></span></h2>
+    <p class="stream-note">Stacked stream of end-use watts (viz-only). Fridge holds a baseline; cooking, laundry, pump, tools fire in short successive bursts — not all appliances on all day. Grows with playhead. Click house in 3D or list.</p>
+    <svg id="wl-stream" viewBox="0 0 720 168" role="img" aria-label="Load signature streamgraph"></svg>
+    <div id="wl-stream-legend" class="legend"></div>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>t</th><th>kind</th><th>who</th><th>event</th></tr></thead>
+      <tbody id="wl-ledger"></tbody>
+    </table>
+  </div>
+</div>
+<script type="module" src="./js/village-worldline-day.js"></script>
+</body>
+</html>
