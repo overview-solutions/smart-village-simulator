@@ -3,7 +3,7 @@
  * Each mode shows a slim control strip + matching legend defaults.
  */
 
-export const MODES = ["operations", "build", "maintenance"];
+export const MODES = ["build", "operations", "maintenance"];
 
 /** Default layer visibility (state.hide keys) per mode. true = hidden. */
 export const MODE_HIDE = {
@@ -30,6 +30,9 @@ export const MODE_HIDE = {
     rf: true,
     phase_xfer: true,
     leak: true,
+    outage: true,
+    lastbreath: true,
+    repair: true,
   },
   maintenance: {
     reading: true,
@@ -56,7 +59,7 @@ export const MODE_META = {
   },
   build: {
     label: "Build",
-    hint: "Place microgrid assets on the map. Lines need two clicks.",
+    hint: "Place assets · red grid = unmapped · green = API configured.",
     role: "ops",
     scheme: "asset",
     lineGrad: "capacity",

@@ -17,6 +17,13 @@ export async function createVillageMap(container) {
   const viewer=new LocusMap(container,{origin:ORIGIN,zoom:19,pitch:55,bearing:0,
     offline:selected!=='satellite',style:style(selected),
     onError:()=>{status.textContent='Map asset unavailable · check local packs or satellite connection';}});
+  // Gesture ownership: village-worldline-day owns drag orbit/pan + click hop.
+  // Keep scroll / pinch zoom available until the app rebinds.
+  viewer.map.scrollZoom.enable();
+  viewer.map.touchZoomRotate.enable();
+  viewer.map.dragPan.disable();
+  viewer.map.dragRotate.disable();
+  viewer.map.keyboard.disable();
   const copy=()=>{status.textContent=`Locus · Voundou · hypothetical infrastructure · ${selected==='satellite'?'satellite online':'local map'}`;};
   viewer.map.on('render',()=>{if(viewer.map.isStyleLoaded() && viewer.map.areTilesLoaded()) copy();});
   select.addEventListener('change',async()=>{

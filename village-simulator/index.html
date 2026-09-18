@@ -111,8 +111,9 @@ html[data-role="customer"] .stage { grid-template-columns: 1fr; }
 .circa-mark-txt span { font-size: 9px; color: #9a9990; font-weight: 400; }
 .circa-mark:hover .circa-mark-txt span { color: #c8c6bc; }
 #wl-stage canvas { display: block; width: 100%; height: 100%; }
+/* Frame button left — MapLibre NavigationControl owns top-right zoom/compass */
 #wl-frame {
-  position: absolute; top: 8px; right: 8px; z-index: 9;
+  position: absolute; top: 8px; left: 8px; z-index: 9;
   width: 36px; height: 36px; padding: 0;
   display: flex; align-items: center; justify-content: center;
   border: 1px solid #4a4a4e; border-radius: 10px;
@@ -122,6 +123,31 @@ html[data-role="customer"] .stage { grid-template-columns: 1fr; }
 #wl-frame:hover { border-color: #7aa0c4; color: #fff; background: rgba(28, 28, 32, 0.94); }
 #wl-frame:focus-visible { outline: 2px solid #5ee0ff; outline-offset: 2px; }
 #wl-frame svg { display: block; }
+#wl-stage .maplibregl-ctrl-top-right {
+  top: 8px; right: 8px; z-index: 10;
+  pointer-events: auto;
+}
+#wl-stage .maplibregl-ctrl-top-right .maplibregl-ctrl { margin: 0 0 8px 0; }
+#wl-stage .maplibregl-canvas-container,
+#wl-stage .maplibregl-canvas { pointer-events: auto; }
+.mg-dom-pop {
+  position: absolute; z-index: 12; max-width: 260px;
+  padding: 0.55rem 1.6rem 0.55rem 0.65rem;
+  background: rgba(18, 18, 20, 0.94); color: #e8e6dc;
+  border: 1px solid #3a3a3e; border-radius: 8px;
+  font-size: 12px; line-height: 1.35;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  pointer-events: auto;
+}
+.mg-dom-pop-x {
+  position: absolute; top: 2px; right: 4px;
+  border: 0; background: transparent; color: #9a9990;
+  font-size: 16px; cursor: pointer; line-height: 1; padding: 2px 6px;
+}
+.mg-pop strong { display: block; font-weight: 500; margin-bottom: 0.2rem; }
+.mg-pop p { margin: 0.2rem 0; color: #c8c6bc; }
+.mg-pop-meta { font-size: 11px; color: #9a9990 !important; }
+.mg-pop-warn { font-size: 11px; color: #ba7517 !important; }
 .wl-win {
   position: absolute;
   right: 8px;
@@ -311,7 +337,58 @@ html[data-mode="build"] .panel-play,
 html[data-mode="build"] .panel-stats,
 html[data-mode="build"] .panel-log,
 html[data-mode="build"] #wl-ems-card,
-html[data-mode="build"] #wl-cust-card { display: none !important; }
+html[data-mode="build"] #wl-cust-card,
+html[data-mode="build"] #wl-stream-panel,
+html[data-mode="build"] .tbl-wrap,
+html[data-mode="build"] #wl-productive,
+html[data-mode="build"] #wl-win,
+html[data-mode="build"] #wl-fs-load { display: none !important; }
+html[data-mode="build"] .panel-build { display: block !important; }
+.panel-build { display: none; }
+.panel-build h2 { margin-top: 0.85rem; }
+.panel-build h2:first-child { margin-top: 0; }
+.build-leg {
+  display: flex; flex-wrap: wrap; gap: 0.45rem 0.75rem;
+  font-size: 11px; color: var(--text-2); margin: 0 0 0.45rem;
+}
+.build-leg i {
+  display: inline-block; width: 10px; height: 10px; border-radius: 2px;
+  margin-right: 4px; vertical-align: -1px;
+}
+.feeder-cell.build-red {
+  background: #b42318 !important; border-color: #7a1812 !important;
+}
+.feeder-cell.build-green {
+  background: #3b6d11 !important; border-color: #2a520c !important;
+}
+.feeder-cell.build-pending {
+  outline: 2px solid #e6c84a; outline-offset: 1px;
+}
+.feeder-row-lab.build-red { border-color: #b42318; color: #f5c4c0; }
+.feeder-row-lab.build-green { border-color: #3b6d11; color: #c8e6a0; }
+#wl-build-config {
+  display: flex; flex-direction: column; gap: 0.4rem;
+  margin-top: 0.35rem;
+}
+#wl-build-config[hidden] { display: none !important; }
+.wl-build-cfg-row {
+  display: grid; grid-template-columns: 5.5rem 1fr; gap: 0.35rem; align-items: center;
+}
+.wl-build-cfg-row label { font-size: 11px; color: var(--text-2); }
+.wl-build-cfg-row input,
+.wl-build-cfg-row select {
+  font-family: inherit; font-size: 12px; padding: 0.28rem 0.45rem;
+  border-radius: 6px; border: 1px solid var(--border); background: var(--bg); color: var(--text);
+}
+#wl-build-cfg-status { font-size: 11px; color: var(--text-2); margin: 0.15rem 0 0; }
+#wl-build-cfg-status.is-ok { color: #3b6d11; }
+#wl-build-cfg-status.is-bad { color: #b42318; }
+#wl-build-cfg-save {
+  align-self: flex-start; margin-top: 0.25rem;
+  font-family: inherit; font-size: 12px; padding: 0.3rem 0.7rem;
+  border-radius: 999px; border: 1px solid var(--green); background: var(--green); color: #fff; cursor: pointer;
+}
+#wl-build-empty { font-size: 12px; color: var(--text-2); margin: 0.35rem 0 0; line-height: 1.4; }
 html[data-mode="maintenance"] .panel-geoid { order: -1; }
 #wl-scrub { flex: 1; min-width: 140px; }
 #wl-houses { display: flex; flex-direction: column; gap: 0.3rem; max-height: 38vh; overflow: auto; }
@@ -447,8 +524,8 @@ html.embed #wl-theater { height: calc(100dvh - 0.7rem); min-height: 420px; flex:
   <div id="wl-theater">
   <div class="controls">
     <div class="wl-mode-switch" id="wl-mode-switch" role="group" aria-label="Simulator mode">
-      <button type="button" data-mode-btn="operations" class="on" aria-pressed="true">Operations</button>
       <button type="button" data-mode-btn="build" aria-pressed="false">Build</button>
+      <button type="button" data-mode-btn="operations" class="on" aria-pressed="true">Operations</button>
       <button type="button" data-mode-btn="maintenance" aria-pressed="false">Maintenance</button>
     </div>
     <span id="wl-clock">00:00</span>
@@ -507,17 +584,19 @@ html.embed #wl-theater { height: calc(100dvh - 0.7rem); min-height: 420px; flex:
   </div>
 
   <div class="wl-mode-strip" data-modes="build" hidden aria-hidden="true" aria-label="Build tools">
+    <select id="wl-feeder-build" aria-label="Feeder" title="Feeder completion grid">
+      <option value="">Feeder: village</option>
+    </select>
     <select id="wl-light" aria-label="Village lighting">
       <option value="fill" selected>Light: fill</option>
       <option value="lamps">Light: lamps</option>
       <option value="sun">Light: sun</option>
     </select>
     <span class="wl-mode-leg">
+      <span><i style="background:#b42318"></i>unmapped</span>
+      <span><i style="background:#3b6d11"></i>configured</span>
       <span><i style="background:#79624b"></i>structure</span>
       <span><i style="background:#0b6e4f"></i>device</span>
-      <span><i style="background:#7a4419"></i>junction</span>
-      <span><i style="background:#1d4e89"></i>line</span>
-      <span><i style="background:#3d5a3d"></i>subnetwork</span>
     </span>
     <span class="wl-attr" id="wl-map-status">Loading map…</span>
   </div>
@@ -635,6 +714,35 @@ html.embed #wl-theater { height: calc(100dvh - 0.7rem); min-height: 420px; flex:
           <div id="wl-house-clusters" class="house-clusters"></div>
           <p id="wl-house-count" class="house-count"></p>
           <div id="wl-houses"></div>
+        </div>
+      </div>
+      <div class="panel panel-build" data-modes="build" hidden>
+        <h2 id="wl-build-title">Build completion</h2>
+        <p class="build-leg" aria-hidden="true">
+          <span><i style="background:#b42318"></i>red = unmapped / incomplete</span>
+          <span><i style="background:#3b6d11"></i>green = mapped + API set</span>
+        </p>
+        <p id="wl-build-sub">Pick a feeder. Click a cell to arm mapping, then place a Meter.</p>
+        <div id="wl-build-feeder-view" hidden>
+          <div id="wl-build-feeder-grid" role="grid" aria-label="Build completion by EMS and meter"></div>
+        </div>
+        <p id="wl-build-empty">Select a feeder from the Build strip to open the completion grid.</p>
+        <h2>API feed</h2>
+        <p id="wl-build-cfg-intro" style="font-size:11px;color:var(--text-2);margin:0 0 0.35rem;line-height:1.35">
+          Select a mapped cell or place an asset, then set feed kind + parameters.
+        </p>
+        <div id="wl-build-config" hidden>
+          <div class="wl-build-cfg-row">
+            <label for="wl-build-cfg-asset">Asset</label>
+            <input id="wl-build-cfg-asset" type="text" readonly />
+          </div>
+          <div class="wl-build-cfg-row">
+            <label for="wl-build-cfg-kind">Feed kind</label>
+            <select id="wl-build-cfg-kind" aria-label="Feed kind"></select>
+          </div>
+          <div id="wl-build-cfg-fields"></div>
+          <p id="wl-build-cfg-status"></p>
+          <button type="button" id="wl-build-cfg-save">Save feed</button>
         </div>
       </div>
       <div class="panel panel-geoid">

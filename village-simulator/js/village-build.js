@@ -45,6 +45,63 @@ export const BUILD_ASSETS = /** @type {AssetDef[]} */ ([
 
 const byId = Object.fromEntries(BUILD_ASSETS.map((a) => [a.id, a]));
 
+/** Feed kinds from villages/_schema/feeds.schema.json */
+export const FEED_KINDS = {
+  mqtt_sunspec: {
+    label: "MQTT SunSpec",
+    fields: [
+      { key: "brokerRef", label: "Broker ref", placeholder: "env:MQTT_URL" },
+      { key: "topic", label: "Topic", placeholder: "openami/…/ems" },
+      { key: "model", label: "Model", placeholder: "SunSpec" },
+    ],
+    required: ["topic"],
+  },
+  rest_json: {
+    label: "REST JSON",
+    fields: [
+      { key: "urlTemplate", label: "URL template", placeholder: "https://…/{id}" },
+      { key: "pollSec", label: "Poll (sec)", placeholder: "60" },
+      { key: "authRef", label: "Auth ref", placeholder: "env:TOKEN" },
+    ],
+    required: ["urlTemplate"],
+  },
+  dlms: {
+    label: "DLMS",
+    fields: [
+      { key: "deviceRef", label: "Device ref", placeholder: "dlms://…" },
+      { key: "obis", label: "OBIS", placeholder: "1.8.0" },
+      { key: "authRef", label: "Auth ref", placeholder: "env:DLMS" },
+    ],
+    required: ["deviceRef"],
+  },
+  openpaygo: {
+    label: "OpenPAYGO",
+    fields: [
+      { key: "deviceId", label: "Device id", placeholder: "meter-id" },
+      { key: "tokenApiRef", label: "Token API ref", placeholder: "env:OPENPAYGO" },
+    ],
+    required: ["deviceId"],
+  },
+  groundbolt: {
+    label: "GroundBolt",
+    fields: [
+      { key: "siteRef", label: "Site ref", placeholder: "site" },
+      { key: "meterRef", label: "Meter ref", placeholder: "m-…" },
+    ],
+    required: ["meterRef"],
+  },
+  sim: {
+    label: "Sim (local)",
+    fields: [{ key: "scenarioId", label: "Scenario id", placeholder: "demo-prepaid" }],
+    required: ["scenarioId"],
+  },
+};
+
+export function feedConfigComplete(cfg) {
+  if (!cfg?.kind || !FEED_KINDS[cfg.kind]) return false;
+  return FEED_KINDS[cfg.kind].required.every((k) => String(cfg[k] ?? "").trim() !== "");
+}
+
 const ICONS = {
   pole: "M12 3v14M9 17h6M12 7h.01",
   cabinet: "M7 4h10v16H7zM7 10h10",
@@ -85,10 +142,11 @@ function svgIcon(pathD) {
  *   groundAt: (clientX: number, clientY: number) => { x: number, z: number } | null,
  *   toolbarEl: HTMLElement,
  *   hintEl?: HTMLElement | null,
+ *   onChange?: () => void,
  * }} opts
  */
 export function createBuildMode(opts) {
-  const { scene, groundAt, toolbarEl, hintEl } = opts;
+  const { scene, groundAt, toolbarEl, hintEl, onChange } = opts;
 
   const state = {
     active: false,
@@ -96,6 +154,15 @@ export function createBuildMode(opts) {
     pendingLine: /** @type {{ x: number, z: number } | null} */ (null),
     placed: /** @type {any[]} */ ([]),
     seq: 0,
+    /** houseId → placed asset id */
+    houseMap: /** @type {Record<string, string>} */ ({}),
+    /** boardId → placed asset id */
+    boardMap: /** @type {Record<string, string>} */ ({}),
+    /** assetId → feed config */
+    configs: /** @type {Record<string, Record<string, string>>} */ ({}),
+    selectedAssetId: /** @type {string | null} */ (null),
+    pendingHouseId: /** @type {string | null} */ (null),
+    pendingBoardId: /** @type {string | null} */ (null),
   };
 
   const root = new THREE.Group();
@@ -106,12 +173,38 @@ export function createBuildMode(opts) {
   ghost.visible = false;
   root.add(ghost);
 
+  function bump() {
+    onChange?.();
+  }
+
   function def() {
     return state.tool ? byId[state.tool] : null;
   }
 
   function setHint(msg) {
     if (hintEl) hintEl.textContent = msg || "";
+  }
+
+  function findPlaced(id) {
+    return state.placed.find((p) => p.id === id) || null;
+  }
+
+  function assetConfigured(assetId) {
+    return feedConfigComplete(state.configs[assetId]);
+  }
+
+  /** @returns {'red'|'green'} */
+  function houseStatus(houseId) {
+    const aid = state.houseMap[houseId];
+    if (!aid || !findPlaced(aid)) return "red";
+    return assetConfigured(aid) ? "green" : "red";
+  }
+
+  /** @returns {'red'|'green'} */
+  function boardStatus(boardId) {
+    const aid = state.boardMap[boardId];
+    if (!aid || !findPlaced(aid)) return "red";
+    return assetConfigured(aid) ? "green" : "red";
   }
 
   function syncToggle() {
@@ -128,7 +221,7 @@ export function createBuildMode(opts) {
       setHint("");
       syncTools();
     } else {
-      setHint(state.tool ? hintForTool() : "Pick an asset, then click the map.");
+      setHint(state.tool ? hintForTool() : "Pick an asset, then click the map. Grid cell = map meter.");
     }
   }
 
@@ -136,6 +229,7 @@ export function createBuildMode(opts) {
     state.active = !!on;
     if (!state.active) state.pendingLine = null;
     syncToggle();
+    bump();
   }
 
   function hintForTool() {
@@ -292,6 +386,17 @@ export function createBuildMode(opts) {
     );
     mesh.userData.recordId = rec.id;
     root.add(mesh);
+    state.selectedAssetId = rec.id;
+    if ((rec.assetClass === "meter" || rec.assetClass === "service_point") && state.pendingHouseId) {
+      state.houseMap[state.pendingHouseId] = rec.id;
+      setHint(`Mapped ${state.pendingHouseId} → ${rec.assetClass}. Configure API feed.`);
+      state.pendingHouseId = null;
+    } else if (rec.assetClass === "ems" && state.pendingBoardId) {
+      state.boardMap[state.pendingBoardId] = rec.id;
+      setHint(`Mapped EMS ${state.pendingBoardId} → placed cabinet. Configure API feed.`);
+      state.pendingBoardId = null;
+    }
+    bump();
   }
 
   function handleMapClick(clientX, clientY) {
@@ -333,7 +438,7 @@ export function createBuildMode(opts) {
       x: pt.x,
       z: pt.z,
     });
-    setHint(`${d.label} placed · click again for another`);
+    setHint(`${d.label} placed · configure feed in right panel`);
     return true;
   }
 
@@ -400,7 +505,16 @@ export function createBuildMode(opts) {
           }
         });
       }
+      for (const [hid, aid] of Object.entries(state.houseMap)) {
+        if (aid === last.id) delete state.houseMap[hid];
+      }
+      for (const [bid, aid] of Object.entries(state.boardMap)) {
+        if (aid === last.id) delete state.boardMap[bid];
+      }
+      delete state.configs[last.id];
+      if (state.selectedAssetId === last.id) state.selectedAssetId = null;
       setHint(last.assetClass + " removed");
+      bump();
     });
     toolbarEl.appendChild(undo);
   }
@@ -426,5 +540,73 @@ export function createBuildMode(opts) {
     setActive,
     handleMapClick,
     getPlaced: () => state.placed.slice(),
+    houseStatus,
+    boardStatus,
+    houseMap: () => ({ ...state.houseMap }),
+    boardMap: () => ({ ...state.boardMap }),
+    getConfig: (assetId) => (state.configs[assetId] ? { ...state.configs[assetId] } : null),
+    getSelectedAssetId: () => state.selectedAssetId,
+    getPendingHouseId: () => state.pendingHouseId,
+    getPendingBoardId: () => state.pendingBoardId,
+    selectAsset(assetId) {
+      state.selectedAssetId = assetId || null;
+      bump();
+    },
+    /** Click grid cell: select mapped asset, or arm pending house for next meter place / link. */
+    focusHouse(houseId) {
+      state.pendingBoardId = null;
+      const aid = state.houseMap[houseId];
+      if (aid && findPlaced(aid)) {
+        state.selectedAssetId = aid;
+        state.pendingHouseId = null;
+        setHint(`Selected meter for ${houseId}. Edit API feed.`);
+      } else {
+        state.pendingHouseId = houseId;
+        state.selectedAssetId = null;
+        setHint(`House ${houseId} armed · place a Meter (or Service pt) to map.`);
+      }
+      bump();
+    },
+    focusBoard(boardId) {
+      state.pendingHouseId = null;
+      const aid = state.boardMap[boardId];
+      if (aid && findPlaced(aid)) {
+        state.selectedAssetId = aid;
+        state.pendingBoardId = null;
+        setHint(`Selected EMS for ${boardId}. Edit API feed.`);
+      } else {
+        state.pendingBoardId = boardId;
+        state.selectedAssetId = null;
+        setHint(`EMS ${boardId} armed · place an EMS cabinet to map.`);
+      }
+      bump();
+    },
+    linkSelectedToHouse(houseId) {
+      if (!state.selectedAssetId) return false;
+      const rec = findPlaced(state.selectedAssetId);
+      if (!rec || (rec.assetClass !== "meter" && rec.assetClass !== "service_point")) return false;
+      state.houseMap[houseId] = state.selectedAssetId;
+      state.pendingHouseId = null;
+      setHint(`Linked ${houseId} → ${state.selectedAssetId}`);
+      bump();
+      return true;
+    },
+    linkSelectedToBoard(boardId) {
+      if (!state.selectedAssetId) return false;
+      const rec = findPlaced(state.selectedAssetId);
+      if (!rec || rec.assetClass !== "ems") return false;
+      state.boardMap[boardId] = state.selectedAssetId;
+      state.pendingBoardId = null;
+      setHint(`Linked EMS ${boardId} → ${state.selectedAssetId}`);
+      bump();
+      return true;
+    },
+    setFeedConfig(assetId, cfg) {
+      if (!assetId) return;
+      state.configs[assetId] = { ...cfg };
+      state.selectedAssetId = assetId;
+      bump();
+    },
+    findPlaced,
   };
 }

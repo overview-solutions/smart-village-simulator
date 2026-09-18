@@ -21,7 +21,7 @@ Locus is `file:../../CIR/yang/locus` in this workspace. Graphics work goes to
 ## Ownership
 
 - **Here:** energy sim, meters, feeders, tariffs, payments, village UI, GeoJSON
-  export, regional packs later, **modes** (Operations / Build / Maintenance) via
+  export, regional packs later, **modes** (Build / Operations / Maintenance) via
   `village-modes.js` + Build palette `village-build.js`.
 - **Locus:** `TimeContext`, geo conversion, `LocusGL` / `LocusMap`, examples.
 - **Wiki:** explanations, navigation, embed. Hash aliases stay.
@@ -47,7 +47,9 @@ Never copy private contacts, prices, NDA text, or CIR `internal/` here.
 | `village-simulator/js/geo.js` | Village GeoJSON; conversion from Locus |
 | `scripts/write-village-geojson.js` | Writes `grid.geojson` (legacy one-blob export) |
 | `villages/` | Per-site UN-style GeoJSON packs + API bindings (LOD fetch) — see `villages/README.md` |
-| `tests/` | Geo round-trip + TimeContext playhead |
+| `village-simulator/js/village-build.js` | Build palette + house/EMS map + feed config |
+| `village-simulator/js/village-candidates.js` | Africa KE/ZM candidate layer on zoom-out |
+| `tests/` | Geo round-trip + TimeContext playhead + minigrid candidates |
 
 **Topology packs:** Prefer `villages/<siteId>/` (structure / devices / junctions / lines /
 subnetworks + `associations.json` + `feeds/registry.json`) over growing
