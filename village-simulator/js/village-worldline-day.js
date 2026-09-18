@@ -1,5 +1,10 @@
+import { buildVillageWater } from "./village-water.js";
+import { buildProductiveUse } from "./productive-use-view.js";
+import { createVillageMap } from "./village-basemap.js";
+import { createBuildMode } from "./village-build.js";
+import { MODE_HIDE, MODE_META, bindModeSwitcher } from "./village-modes.js";
 import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
 import { Sky } from "three/addons/objects/Sky.js";
 import {
   BESS,
@@ -50,7 +55,7 @@ import {
   rfEdges,
   simulateDay,
 } from "./village-worldline-sim.js";
-import { HANG, geoidBlock } from "./geo.js";
+import { HANG, geoidBlock, ORIGIN, GROUND_SCALE, HEIGHT_SCALE } from "./geo.js";
 import { TimeContext } from "@circaevum/locus/time";
 
 function geoidCollection(features, name = "ISV village schematic") {
@@ -498,7 +503,7 @@ const state = {
   focus: null,
   scope: { kind: "village" },
   scheme: "messages",
-  hide: { reading: true, pay: true, disconnect: false, sms: false, sync: false, mesh: true, worldline: true, rf: true, phase_xfer: false, leak: false },
+  hide: { ...MODE_HIDE.operations },
   anomalyOnly: true,
   houseQ: "",
   houseCluster: "all",
@@ -532,6 +537,10 @@ let camFeederId = null;
 let camMag = 0;
 const PICK_DRAG_PX = 8;
 let pickPtr = null;
+/** @type {ReturnType<typeof createBuildMode> | null} */
+let buildMode = null;
+/** @type {'operations'|'build'|'maintenance'} */
+let appMode = "operations";
 let dtmBars = [];
 let dtmParts = [];
 let emsMesh;
@@ -550,6 +559,7 @@ let sprFut;
 let nowMark;
 let futBand;
 let renderer;
+let locusMap;
 let scene;
 let camera;
 let controls;
@@ -581,6 +591,7 @@ let sky;
 let windowMesh;
 let streetLampMesh;
 let groundMesh;
+let updateProductiveUse;
 const hutPose = [];
 const poseDummy = new THREE.Object3D();
 const SEL_FEEDER = new THREE.Color(0x5ee0ff);
@@ -788,13 +799,16 @@ function addTime(obj) {
   return obj;
 }
 
-function boot() {
+async function boot() {
   const stage = document.getElementById("wl-stage");
   if (!stage) return;
 
-  scene = new THREE.Scene();
+  locusMap = await createVillageMap(stage);
+  scene = locusMap.scene;
+  scene.scale.set(GROUND_SCALE, HEIGHT_SCALE, GROUND_SCALE);
+  document.getElementById("wl-sky").hidden = true;
   scene.background = null;
-  scene.fog = new THREE.Fog(COL.bg, 220, 780);
+  scene.fog = null;
 
   camera = new THREE.PerspectiveCamera(42, 1, 0.4, 1200);
   {
@@ -802,23 +816,11 @@ function boot() {
     camera.position.set(...home.pos);
   }
 
-  renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer = locusMap.renderer;
   renderer.localClippingEnabled = true;
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  stage.appendChild(renderer.domElement);
-
-  controls = new OrbitControls(camera, renderer.domElement);
-  controls.target.set(...camHome(true).look);
-  controls.enableDamping = true;
-  controls.maxPolarAngle = Math.PI * 0.88;
-  controls.minPolarAngle = 0.06;
-  controls.mouseButtons.LEFT = -1;
-  controls.mouseButtons.MIDDLE = THREE.MOUSE.DOLLY;
-  controls.mouseButtons.RIGHT = -1;
-  controls.touches.ONE = -1;
-  renderer.domElement.addEventListener("contextmenu", (e) => e.preventDefault());
+  // Legacy framing helpers retain a pose; Locus/MapLibre owns the visible camera.
+  controls = { target: new THREE.Vector3(...camHome(true).look), enabled: true,
+    enableDamping: false, update() {} };
 
   ambientLight = new THREE.AmbientLight(0xe8e4dc, 0.28);
   scene.add(ambientLight);
@@ -869,6 +871,8 @@ function boot() {
   sunMesh.position.set(40, 50, 30);
   scene.add(sunMesh);
   buildSky();
+  sky.visible = false;
+  sunMesh.visible = false;
 
   timeGroup = new THREE.Group();
   timeGroup.scale.y = -1;
@@ -876,6 +880,10 @@ function boot() {
   scene.add(timeGroup);
 
   buildVillage();
+  updateProductiveUse = buildProductiveUse(scene, TARIFF_PER_KWH, day.summary.kWh, timeSprite);
+  buildVillageWater(scene, timeSprite);
+  groundMesh.visible = false;
+  locusMap.camera.fitBounds({minX:Math.min(...HOUSES.map(h=>h.x))-12, maxX:Math.max(...HOUSES.map(h=>h.x))+18, minZ:Math.min(...HOUSES.map(h=>h.z))-12, maxZ:Math.max(...HOUSES.map(h=>h.z))+18}, {padding:45, duration:0, maxZoom:20});
   buildWorldlines();
   buildReadings();
   buildDisconnectKnobs();
@@ -887,6 +895,13 @@ function boot() {
   applySizeCopy();
   applyLineLegend();
   bindUi();
+  buildMode = createBuildMode({
+    scene,
+    groundAt: groundAtClient,
+    toolbarEl: document.getElementById("wl-build-bar"),
+    hintEl: document.getElementById("wl-build-hint"),
+  });
+  bindAppModes();
   fillLedger();
   fillStats();
   fillHouses();
@@ -900,7 +915,7 @@ function boot() {
   window.addEventListener("resize", resize);
   new ResizeObserver(resize).observe(stage);
   bindStagePick();
-  renderer.setAnimationLoop(tick);
+  requestAnimationFrame(tick);
 }
 
 function resize() {
@@ -909,7 +924,7 @@ function resize() {
   const h = stage.clientHeight || 480;
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
-  renderer.setSize(w, h, false);
+  locusMap.map.resize();
 }
 
 function timeSprite(text, color = "#9a9990", width = 256) {
@@ -1154,7 +1169,7 @@ function placeSun(min) {
   const y = up ? 8 + elev * 58 : -14;
   const mode = state.light === "lamps" || state.light === "sun" ? state.light : "fill";
   sunMesh.position.set(x, y, z);
-  sunMesh.visible = y > 3;
+  sunMesh.visible = !locusMap && y > 3;
   sunMesh.material.color.setHex(elev > 0.25 ? 0xffe7a8 : 0xffc078);
   if (mode === "fill") {
     sunLight.position.set(cx + 28, 62, cz + 18);
@@ -3356,6 +3371,7 @@ function setNow(min) {
   const imin = Math.floor(state.nowMin);
   if (imin === lastUiMin) return;
   lastUiMin = imin;
+  updateProductiveUse?.(state.nowMin);
   colorPowerLines();
   updateDtmBars();
   updateLeakViz();
@@ -3660,11 +3676,10 @@ function nearestScopeAt(x, z, maxD = 2.6) {
 }
 
 function bindStagePick() {
-  const el = renderer.domElement;
-  el.addEventListener("pointerdown", onStagePointerDown, true);
-  window.addEventListener("pointermove", onStagePointerMove);
-  el.addEventListener("pointerup", onStagePointerUp);
-  window.addEventListener("pointerup", onStagePointerUp);
+  locusMap.map.on('click', event => {
+    const rect = locusMap.map.getCanvas().getBoundingClientRect();
+    applyPick(rect.left + event.point.x, rect.top + event.point.y);
+  });
 }
 
 function orbitByPixels(dxPx, dyPx) {
@@ -3709,7 +3724,27 @@ function panByPixels(dxPx, dyPx) {
   }
 }
 
+function groundAtClient(clientX, clientY) {
+  if (!renderer || !camera) return null;
+  const rect = renderer.domElement.getBoundingClientRect();
+  if (rect.width < 2 || rect.height < 2) return null;
+  const mouse = new THREE.Vector2(
+    ((clientX - rect.left) / rect.width) * 2 - 1,
+    -((clientY - rect.top) / rect.height) * 2 + 1,
+  );
+  const ray = new THREE.Raycaster();
+  const inverse = locusMap.threeCamera.projectionMatrixInverse;
+  const near = new THREE.Vector3(mouse.x, mouse.y, -1).applyMatrix4(inverse);
+  const far = new THREE.Vector3(mouse.x, mouse.y, 1).applyMatrix4(inverse);
+  ray.set(near, far.sub(near).normalize());
+  const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+  const pt = new THREE.Vector3();
+  if (!ray.ray.intersectPlane(plane, pt)) return null;
+  return { x: pt.x / GROUND_SCALE, z: pt.z / GROUND_SCALE };
+}
+
 function applyPick(clientX, clientY) {
+  if (buildMode?.isActive() && buildMode.handleMapClick(clientX, clientY)) return;
   const scope = scopeAt(clientX, clientY);
   if (state.role === "customer") {
     const hid = scope.kind === "house" ? scope.id : null;
@@ -3779,14 +3814,17 @@ function scopeAt(clientX, clientY) {
   const ray = new THREE.Raycaster();
   ray.params.Line = { threshold: 0.45 };
   ray.params.Points = { threshold: 0.45 };
-  ray.setFromCamera(mouse, camera);
+  const inverse = locusMap.threeCamera.projectionMatrixInverse;
+  const near = new THREE.Vector3(mouse.x, mouse.y, -1).applyMatrix4(inverse);
+  const far = new THREE.Vector3(mouse.x, mouse.y, 1).applyMatrix4(inverse);
+  ray.set(near, far.sub(near).normalize());
   const hits = ray.intersectObjects(pickList(), true);
   const hit = preferLeakHit(hits);
   let scope = hit ? scopeFromHit(hit) : { kind: "village" };
   if (scope.kind === "village" || scope.kind === "station") {
     const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
     const pt = new THREE.Vector3();
-    if (ray.ray.intersectPlane(plane, pt)) scope = nearestScopeAt(pt.x, pt.z);
+    if (ray.ray.intersectPlane(plane, pt)) scope = nearestScopeAt(pt.x / GROUND_SCALE, pt.z / GROUND_SCALE);
   }
   return scope;
 }
@@ -3812,7 +3850,8 @@ function tick(ts) {
   panLook(dt);
   controls.update();
   scaleCompassCards();
-  renderer.render(scene, camera);
+  locusMap.map.triggerRepaint();
+  requestAnimationFrame(tick);
 }
 
 function scaleCompassCards() {
@@ -3826,6 +3865,14 @@ function scaleCompassCards() {
 }
 
 function panLook(dt) {
+  if (locusMap) {
+    if (panKeys.size) {
+      const dx = (panKeys.has('d') || panKeys.has('ArrowRight') ? 1 : 0) - (panKeys.has('a') || panKeys.has('ArrowLeft') ? 1 : 0);
+      const dy = (panKeys.has('s') || panKeys.has('ArrowDown') ? 1 : 0) - (panKeys.has('w') || panKeys.has('ArrowUp') ? 1 : 0);
+      locusMap.map.panBy([dx*dt*200,dy*dt*200],{duration:0});
+    }
+    return;
+  }
   if (!panKeys.size || !camera || !controls) return;
   if (camFly) camFly = null;
   if (controls) {
@@ -3989,6 +4036,16 @@ function feederCamPose(fid) {
 }
 
 function startCamFly(toPos, toLook, dur = 0.95) {
+  if (locusMap) {
+    const distance = toPos.distanceTo(toLook);
+    const height = locusMap.map.getCanvas().clientHeight || 600;
+    const metresPerPixel = 2 * distance * Math.tan(42 * Math.PI / 360) / height;
+    const zoom = Math.log2(40075016.686 * Math.cos(ORIGIN.lat * Math.PI / 180) / (512 * metresPerPixel));
+    const delta = toPos.clone().sub(toLook);
+    locusMap.camera.flyTo({x:toLook.x,z:toLook.z,zoom:Math.min(23,Math.max(15,zoom)),pitch:Math.min(75,Math.atan2(Math.hypot(delta.x,delta.z),Math.abs(delta.y))*180/Math.PI),bearing:Math.atan2(-delta.x,delta.z)*180/Math.PI,duration:dur});
+    camera.position.copy(toPos); controls.target.copy(toLook);
+    return;
+  }
   if (!camera || !controls) return;
   camFly = {
     t: 0,
@@ -4163,6 +4220,7 @@ function frameSelection() {
 }
 
 function flyToXZ(x, z, dist = 14) {
+  if (locusMap) { startCamFly(new THREE.Vector3(x+dist*.55, Math.max(5.5,dist*.58), z+dist*.72),new THREE.Vector3(x,.4,z)); return; }
   if (!camera || !controls) return;
   camFly = null;
   controls.enabled = true;
@@ -4478,10 +4536,28 @@ function bindUi() {
   });
   document.getElementById("wl-scheme")?.addEventListener("change", (e) => {
     state.scheme = e.target.value;
+    const m = document.getElementById("wl-scheme-maint");
+    if (m) m.value = state.scheme;
+    applySchemeColors();
+  });
+  document.getElementById("wl-scheme-maint")?.addEventListener("change", (e) => {
+    state.scheme = e.target.value;
+    const o = document.getElementById("wl-scheme");
+    if (o && [...o.options].some((opt) => opt.value === state.scheme)) o.value = state.scheme;
     applySchemeColors();
   });
   document.getElementById("wl-linegrad")?.addEventListener("change", (e) => {
     state.lineGrad = parseLineGrad(e.target.value);
+    const m = document.getElementById("wl-linegrad-maint");
+    if (m) m.value = state.lineGrad;
+    applyLineLegend();
+    colorPowerLines();
+    fillHouses(true);
+  });
+  document.getElementById("wl-linegrad-maint")?.addEventListener("change", (e) => {
+    state.lineGrad = parseLineGrad(e.target.value);
+    const o = document.getElementById("wl-linegrad");
+    if (o) o.value = state.lineGrad;
     applyLineLegend();
     colorPowerLines();
     fillHouses(true);
@@ -4516,6 +4592,9 @@ function bindUi() {
     const id = state.emsId || (state.scope?.kind === "feeder" ? state.scopeBoard : null) || BOARDS[0]?.id;
     openEms(id, false, { cam: true, from: "grid-ems" });
   });
+  document.getElementById("wl-ems-open-maint")?.addEventListener("click", () => {
+    document.getElementById("wl-ems-open")?.click();
+  });
   document.getElementById("wl-ems-close")?.addEventListener("click", () => closeEms());
   document.getElementById("wl-ems-prev")?.addEventListener("click", () => stepEms(-1));
   document.getElementById("wl-ems-next")?.addEventListener("click", () => stepEms(1));
@@ -4537,11 +4616,15 @@ function bindUi() {
     });
   });
   const anomBtn = document.getElementById("wl-anomaly");
-  anomBtn?.addEventListener("click", () => {
+  const anomMaint = document.getElementById("wl-anomaly-maint");
+  function toggleAnomaly() {
     state.anomalyOnly = !state.anomalyOnly;
-    anomBtn.classList.toggle("on", state.anomalyOnly);
+    anomBtn?.classList.toggle("on", state.anomalyOnly);
+    anomMaint?.classList.toggle("on", state.anomalyOnly);
     applyVisibility();
-  });
+  }
+  anomBtn?.addEventListener("click", toggleAnomaly);
+  anomMaint?.addEventListener("click", toggleAnomaly);
   const qEl = document.getElementById("wl-house-q");
   qEl?.addEventListener("input", () => {
     state.houseQ = qEl.value || "";
@@ -4739,24 +4822,79 @@ function onFeederGridClick(e) {
 }
 
 function fillFeederSelect() {
-  const el = document.getElementById("wl-feeder");
-  if (!el || el.dataset.ready) return;
-  el.dataset.ready = "1";
-  el.innerHTML =
+  const opts =
     `<option value="">Feeder: village</option>` +
     FEEDERS.map((f) => `<option value="${esc(f.id)}">${esc(f.label)}</option>`).join("");
-  el.addEventListener("change", () => {
-    const id = el.value;
-    if (!id) setScope({ kind: "village" }, { cam: true, from: "clear" });
-    else setScope({ kind: "feeder", id }, { cam: true, from: "map" });
-  });
+  for (const id of ["wl-feeder", "wl-feeder-maint"]) {
+    const el = document.getElementById(id);
+    if (!el || el.dataset.ready) continue;
+    el.dataset.ready = "1";
+    el.innerHTML = opts;
+    el.addEventListener("change", () => {
+      const fid = el.value;
+      if (!fid) setScope({ kind: "village" }, { cam: true, from: "clear" });
+      else setScope({ kind: "feeder", id: fid }, { cam: true, from: "map" });
+    });
+  }
 }
 
 function syncFeederSelect() {
-  const el = document.getElementById("wl-feeder");
-  if (!el) return;
   const fid = state.role === "customer" ? "" : activeFeederId() || "";
-  if (el.value !== fid) el.value = fid;
+  for (const id of ["wl-feeder", "wl-feeder-maint"]) {
+    const el = document.getElementById(id);
+    if (el && el.value !== fid) el.value = fid;
+  }
+}
+
+function applyAppMode(mode) {
+  if (!MODE_META[mode]) mode = "operations";
+  appMode = mode;
+  const meta = MODE_META[mode];
+  Object.assign(state.hide, MODE_HIDE[mode]);
+  state.anomalyOnly = meta.anomalyOnly;
+  state.scheme = meta.scheme;
+  state.lineGrad = meta.lineGrad;
+  state.role = meta.role;
+
+  document.querySelectorAll("[data-hide]").forEach((btn) => {
+    const k = btn.getAttribute("data-hide");
+    if (!k) return;
+    btn.classList.toggle("off", !!state.hide[k]);
+  });
+  document.getElementById("wl-anomaly")?.classList.toggle("on", state.anomalyOnly);
+  document.getElementById("wl-anomaly-maint")?.classList.toggle("on", state.anomalyOnly);
+
+  const schemeOps = document.getElementById("wl-scheme");
+  if (schemeOps && [...schemeOps.options].some((o) => o.value === state.scheme)) schemeOps.value = state.scheme;
+  const schemeM = document.getElementById("wl-scheme-maint");
+  if (schemeM && [...schemeM.options].some((o) => o.value === state.scheme)) schemeM.value = state.scheme;
+  const gradOps = document.getElementById("wl-linegrad");
+  if (gradOps) gradOps.value = state.lineGrad;
+  const gradM = document.getElementById("wl-linegrad-maint");
+  if (gradM) gradM.value = state.lineGrad;
+
+  buildMode?.setActive(mode === "build");
+  if (mode === "build") {
+    closeEms();
+    const cust = document.getElementById("wl-cust-card");
+    if (cust) cust.hidden = true;
+  }
+  applyRole();
+  applySchemeColors();
+  applyLineLegend();
+  colorPowerLines();
+  applyVisibility();
+  writeQuery({ mode, role: state.role });
+}
+
+function bindAppModes() {
+  const q = new URLSearchParams(location.search).get("mode");
+  if (q === "build" || q === "maintenance" || q === "operations") appMode = q;
+  bindModeSwitcher({
+    getMode: () => appMode,
+    setMode: (m) => applyAppMode(m),
+  });
+  applyAppMode(appMode);
 }
 
 function fillFeederGrid() {
@@ -5299,4 +5437,4 @@ function drawFsLoad() {
   ctx.stroke();
 }
 
-boot();
+boot().catch(error => { console.error(error); document.getElementById("wl-map-status").textContent = "Unable to initialize village map: " + error.message; });

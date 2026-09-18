@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "0.1.0",
+  "description": "Connectivity + containment associations (UN-style). Geometry lives in GeoJSON; this file is the graph.",
+  "associationTypes": {
+    "connectivity": {
+      "description": "Electrical path. fromId/toId reference feature id; optional fromTerminal/toTerminal.",
+      "fields": ["fromId", "toId", "fromTerminal", "toTerminal", "subnetworkId", "phase"]
+    },
+    "containment": {
+      "description": "Device inside structure (meter in cabinet, EMS in enclosure).",
+      "fields": ["containerId", "contentId"]
+    },
+    "attachment": {
+      "description": "Device on structure (xfmr on pole, DTM on pole).",
+      "fields": ["structureId", "attachedId"]
+    }
+  },
+  "connectivityRules": [
+    { "from": "gen", "to": ["station", "xfmr", "trunk"], "ok": true },
+    { "from": "station", "to": ["trunk", "xfmr"], "ok": true },
+    { "from": "trunk", "to": ["xfmr", "pole", "primary"], "ok": true },
+    { "from": "xfmr", "to": ["secondary", "ems", "bus"], "ok": true },
+    { "from": "ems", "to": ["secondary", "service", "meter"], "ok": true },
+    { "from": "secondary", "to": ["service", "splice", "tap"], "ok": true },
+    { "from": "service", "to": ["meter", "service_point"], "ok": true },
+    { "from": "meter", "to": ["service_point"], "ok": true }
+  ],
+  "trace": {
+    "downstream": "from subnetwork controller (feeder head / island) along connectivity edges",
+    "upstream": "from meter toward island",
+    "scope": "default filter associations where subnetworkId matches selected feeder; island trace drops filter"
+  }
+}

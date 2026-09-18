@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Africa · Mini-grid candidates</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<style>
+*{box-sizing:border-box}body{margin:0;font:15px/1.5 system-ui,sans-serif;color:#18332d;background:#f6f7f3}main{display:grid;grid-template-columns:310px 1fr;height:100dvh}aside{padding:28px 24px;overflow:auto;border-right:1px solid #d7ded5}h1{font-size:28px;line-height:1.15;margin:8px 0 18px;letter-spacing:-1px}.eyebrow{font-size:11px;font-weight:750;letter-spacing:2px;color:#587064}p{color:#53655c}label{display:block;margin:12px 0}select,button{width:100%;padding:10px;border:1px solid #b7c7be;border-radius:7px;background:white;color:inherit;font:inherit}button{cursor:pointer;margin-top:10px}a{color:#116957}#count{font-size:30px;font-weight:750;margin:22px 0 0}small{display:block;color:#67776e}.legend{display:flex;gap:18px;margin:18px 0}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}.notice{font-size:13px;border-top:1px solid #d7ded5;padding-top:16px}#map{min-height:350px;background:#e7ede7}.leaflet-popup-content{max-width:260px}.leaflet-popup-content h2{font-size:19px;margin:0 0 8px}.leaflet-popup-content p{margin:7px 0}@media(max-width:640px){main{grid-template-columns:1fr;grid-template-rows:auto 1fr}aside{padding:14px 18px;max-height:40dvh}h1{font-size:23px;margin:4px 0}#count{font-size:23px;margin:8px 0}.legend{margin:8px 0}}
+</style>
+</head>
+<body><main><aside><div class="eyebrow">ENERGY ACCESS · AFRICA</div><h1>Mini-grid candidates</h1><p>Explore proposed sites from published electrification studies.</p>
+<label for="country">Country</label><select id="country" disabled><option value="all">All sites</option value="ZM">Zambia</option><option value="KE">Kenya</option></select><button id="fit" disabled>Fit selected sites</button>
+<div id="count" role="status" aria-live="polite">Loading…</div><small>historical planning candidates</small><div class="legend"><span><i class="dot" style="background:#087f8c"></i>Zambia</span><span><i class="dot" style="background:#bd5e1b"></i>Kenya</span></div>
+<p class="notice">Current eligibility and grid service are unverified. Coverage is Kenya and Zambia only. Click a point for its source and study date.</p><p><a href="data/africa-minigrid-candidates.geojson" download>Download GeoJSON</a><br><a href="data/README.md">Sources & screening rules</a></p><small id="network">Basemap and map library require internet access.</small></aside><div id="map" aria-label="Map of mini-grid candidate sites"></div></main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+(async () => {
+  const count = document.getElementById('count');
+  try {
+    if (!window.L) throw new Error('Map library unavailable. Check your internet connection.');
+    const map = L.map('map', {preferCanvas:true}).setView([-5,30],4);
+    L.control.scale({imperial:false}).addTo(map);
+    const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+    tiles.on('tileerror', () => { document.getElementById('network').textContent = 'Some basemap tiles could not load. Candidate points remain available.'; });
+    const response = await fetch('data/africa-minigrid-candidates.geojson');
+    if (!response.ok) throw new Error('Could not load candidate data.');
+    const data = await response.json();
+    const select = document.getElementById('country');
+    let layer;
+    function popup(feature) {
+      const p = feature.properties, box = document.createElement('div');
+      const heading = document.createElement('h2'); heading.textContent = p.name; box.append(heading);
+      for (const text of [p.country + ' · ' + p.administrative_area, 'Evidence: ' + p.evidence_date, p.source_classification, 'Current eligibility: unverified', p.geometry_basis.replaceAll('_',' ')]) {
+        const row = document.createElement('p'); row.textContent = text; box.append(row);
+      }
+      const link = document.createElement('a'); link.textContent = 'View source dataset'; link.href = p.source_url; link.target = '_blank'; link.rel = 'noopener noreferrer'; box.append(link); return box;
+    }
+    function fit() { if(layer.getLayers().length) map.fitBounds(layer.getBounds(),{padding:[30,30],maxZoom:10}); }
+    function draw() {
+      if(layer) map.removeLayer(layer);
+      layer = L.geoJSON(data, {
+        filter: f => select.value === 'all' || f.properties.country_code === select.value,
+        pointToLayer: (f,ll) => L.circleMarker(ll,{radius:5,color:'#fff',weight:1,fillColor:f.properties.country_code === 'ZM' ? '#087f8c' : '#bd5e1b',fillOpacity:0.85}),
+        onEachFeature: (f,l) => l.bindPopup(() => popup(f))
+      }).addTo(map);
+      count.textContent = layer.getLayers().length.toLocaleString() + ' sites'; fit();
+    }
+    select.disabled = false; document.getElementById('fit').disabled = false;
+    select.addEventListener('change',draw); document.getElementById('fit').addEventListener('click',fit); draw();
+  } catch(error) { count.textContent = error.message; }
+})();
+</script></body></html>

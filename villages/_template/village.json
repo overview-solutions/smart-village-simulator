@@ -1,0 +1,18 @@
+{
+  "id": "example-village",
+  "name": "Example Village (template)",
+  "schemaVersion": "0.1.0",
+  "crs": "EPSG:4326",
+  "status": "hypothetical",
+  "origin": {
+    "lon": 0,
+    "lat": 0,
+    "alt": 0,
+    "note": "Set real lon/lat. Local ENU: +X east, −Z north (Locus ground)."
+  },
+  "bbox": [0, 0, 0, 0],
+  "openami": {
+    "spatialSchema": "OpenAMI-aligned GeoJSON (ISV)",
+    "notes": "Fill network/*.geojson; wire feeds/registry.json to matching feature ids."
+  }
+}

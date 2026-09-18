@@ -18,7 +18,7 @@ function sizeFromPage() {
     const n = Math.max(8, Math.round(homes));
     return { people: n * PEOPLE_PER_HOME, homes: n };
   }
-  return { people: 1000 * PEOPLE_PER_HOME, homes: 1000 };
+  return { people: 200 * PEOPLE_PER_HOME, homes: 200 };
 }
 
 const VILLAGE_SIZE = sizeFromPage();

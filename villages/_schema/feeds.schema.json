@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "0.1.0",
+  "description": "Bind feature id → telemetry / control feed. Resolved only at LOD 2+ (feeder) or LOD 3 (meter).",
+  "lodPolicy": {
+    "0": [],
+    "1": ["optional:feeder_rollup"],
+    "2": ["ems", "dtm", "feeder_head_meter", "inverter", "bess"],
+    "3": ["meter", "prepaid", "disconnect"]
+  },
+  "feedKinds": {
+    "mqtt_sunspec": { "fields": ["brokerRef", "topic", "model"] },
+    "rest_json": { "fields": ["urlTemplate", "pollSec", "authRef"] },
+    "dlms": { "fields": ["deviceRef", "obis", "authRef"] },
+    "openpaygo": { "fields": ["deviceId", "tokenApiRef"] },
+    "groundbolt": { "fields": ["siteRef", "meterRef"] },
+    "sim": { "fields": ["scenarioId"], "description": "Local simulator only — no network" }
+  },
+  "exampleBinding": {
+    "assetId": "m-h0",
+    "lod": 3,
+    "feeds": [
+      {
+        "kind": "sim",
+        "scenarioId": "voundou-prepaid-day",
+        "metrics": ["kWh", "credit", "relay"]
+      }
+    ]
+  }
+}

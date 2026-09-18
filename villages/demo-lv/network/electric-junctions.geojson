@@ -1,0 +1,226 @@
+{
+  "type": "FeatureCollection",
+  "name": "electric-junctions",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "bus-island",
+      "properties": {
+        "id": "bus-island",
+        "assetClass": "bus",
+        "assetGroup": "electric_junction",
+        "x": -18,
+        "z": -4,
+        "subnetworkId": "island-1",
+        "label": "station LV bus"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -18,
+          -4
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "j-w-head",
+      "properties": {
+        "id": "j-w-head",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": -40,
+        "z": 10,
+        "subnetworkId": "f-west",
+        "label": "feeder head"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -40,
+          10
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bus-w",
+      "properties": {
+        "id": "bus-w",
+        "assetClass": "bus",
+        "assetGroup": "electric_junction",
+        "x": -38,
+        "z": 19.2,
+        "subnetworkId": "f-west",
+        "label": "xfmr secondary bus"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -38,
+          19.2
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-w1",
+      "properties": {
+        "id": "tap-w1",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -41,
+        "z": 24,
+        "subnetworkId": "f-west",
+        "label": "tap"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -41,
+          24
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-w1",
+      "properties": {
+        "id": "sp-w1",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -44,
+        "z": 28.5,
+        "subnetworkId": "f-west",
+        "label": "SP Leila"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -44,
+          28.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-w2",
+      "properties": {
+        "id": "sp-w2",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -34,
+        "z": 30.5,
+        "subnetworkId": "f-west",
+        "label": "SP Musa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -34,
+          30.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-w3",
+      "properties": {
+        "id": "sp-w3",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -30,
+        "z": 26.5,
+        "subnetworkId": "f-west",
+        "label": "SP Hope"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -30,
+          26.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "j-m-head",
+      "properties": {
+        "id": "j-m-head",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": -10,
+        "z": 4,
+        "subnetworkId": "f-market",
+        "label": "feeder head"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -10,
+          4
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bus-m",
+      "properties": {
+        "id": "bus-m",
+        "assetClass": "bus",
+        "assetGroup": "electric_junction",
+        "x": -4,
+        "z": 9.8,
+        "subnetworkId": "f-market",
+        "label": "xfmr secondary bus"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4,
+          9.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-m1",
+      "properties": {
+        "id": "sp-m1",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 2,
+        "z": 14.5,
+        "subnetworkId": "f-market",
+        "label": "SP kiosk"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2,
+          14.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-m2",
+      "properties": {
+        "id": "sp-m2",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 6,
+        "z": 8.5,
+        "subnetworkId": "f-market",
+        "label": "SP shop"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6,
+          8.5
+        ]
+      }
+    }
+  ]
+}

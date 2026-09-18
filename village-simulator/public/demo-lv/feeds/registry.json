@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "0.1.0",
+  "bindings": [
+    {
+      "assetId": "ems-w",
+      "lod": 2,
+      "feeds": [
+        {
+          "kind": "mqtt_sunspec",
+          "brokerRef": "env:MQTT_URL",
+          "topic": "openami/demo/f-west/ems",
+          "model": "SunSpec"
+        }
+      ]
+    },
+    {
+      "assetId": "ems-m",
+      "lod": 2,
+      "feeds": [
+        {
+          "kind": "mqtt_sunspec",
+          "brokerRef": "env:MQTT_URL",
+          "topic": "openami/demo/f-market/ems",
+          "model": "SunSpec"
+        }
+      ]
+    },
+    {
+      "assetId": "dtm-w",
+      "lod": 2,
+      "feeds": [
+        {
+          "kind": "rest_json",
+          "urlTemplate": "https://example.invalid/dtm/{id}",
+          "pollSec": 60,
+          "authRef": "env:DTM_TOKEN"
+        }
+      ]
+    },
+    {
+      "assetId": "inv-1",
+      "lod": 2,
+      "feeds": [
+        {
+          "kind": "mqtt_sunspec",
+          "brokerRef": "env:MQTT_URL",
+          "topic": "openami/demo/island/inv",
+          "model": "701"
+        }
+      ]
+    },
+    {
+      "assetId": "bess-1",
+      "lod": 2,
+      "feeds": [
+        {
+          "kind": "mqtt_sunspec",
+          "brokerRef": "env:MQTT_URL",
+          "topic": "openami/demo/island/bess",
+          "model": "802"
+        }
+      ]
+    },
+    {
+      "assetId": "m-w1",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "demo-prepaid",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-w2",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "demo-prepaid",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-w3",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "dlms",
+          "deviceRef": "dlms://demo/m-w3",
+          "obis": [
+            "1.8.0"
+          ],
+          "authRef": "env:DLMS"
+        }
+      ]
+    },
+    {
+      "assetId": "m-m1",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "groundbolt",
+          "siteRef": "demo",
+          "meterRef": "m-m1"
+        }
+      ]
+    },
+    {
+      "assetId": "m-m2",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "openpaygo",
+          "deviceId": "m-m2",
+          "tokenApiRef": "env:OPENPAYGO"
+        }
+      ]
+    }
+  ]
+}

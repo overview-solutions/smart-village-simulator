@@ -232,7 +232,7 @@ html[data-role="customer"] .stage { grid-template-columns: 1fr; }
 .stat-s { display: block; font-size: 10px; color: var(--text-2); font-style: normal; margin-top: 0.05rem; }
 .stat-sec { font-size: 10px; font-weight: 500; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin: 0.1rem 0 0; }
 .stat-note { font-size: 10px; color: var(--text-2); line-height: 1.35; margin: 0; }
-.controls { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; margin-bottom: 0.75rem; }
+.controls { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; margin-bottom: 0.45rem; }
 .controls button, .controls select, [data-hide] {
   font-family: inherit; font-size: 12px; padding: 0.3rem 0.65rem; border-radius: 999px;
   border: 1px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer;
@@ -240,6 +240,31 @@ html[data-role="customer"] .stage { grid-template-columns: 1fr; }
 .controls button.primary { background: var(--green); color: #fff; border-color: var(--green); }
 .wl-skip { min-width: 2.35rem; font-size: 15px; line-height: 1; padding: 0.28rem 0.55rem; }
 .controls button.on { border-color: var(--blue); background: var(--bg-2); }
+.wl-mode-switch {
+  display: inline-flex; gap: 0.2rem; padding: 0.15rem;
+  border: 1px solid var(--border); border-radius: 999px; background: var(--bg-2);
+}
+.wl-mode-switch button {
+  border: 0; background: transparent; border-radius: 999px;
+  padding: 0.32rem 0.75rem; font-size: 12px; font-weight: 500; color: var(--text-2);
+}
+.wl-mode-switch button.on { background: var(--bg); color: var(--text); box-shadow: inset 0 0 0 1px var(--border); }
+#wl-mode-hint { font-size: 11px; color: var(--text-2); margin: 0 0 0.45rem; min-height: 1.1em; }
+.wl-mode-strip {
+  display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center;
+  margin: 0 0 0.55rem; padding: 0.4rem 0.55rem;
+  border: 1px solid var(--border); border-radius: 10px; background: var(--bg-2);
+}
+.wl-mode-strip[hidden] { display: none !important; }
+.wl-mode-leg {
+  display: flex; flex-wrap: wrap; gap: 0.45rem 0.75rem; align-items: center;
+  font-size: 10px; color: var(--text-2); margin-left: auto;
+}
+.wl-mode-leg i {
+  display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; vertical-align: middle;
+}
+.wl-attr { font-size: 10px; color: var(--text-3); }
+.wl-attr a { color: var(--text-2); }
 #wl-clock {
   font-family: "DM Mono", ui-monospace, monospace;
   font-size: 18px;
@@ -252,10 +277,42 @@ html[data-role="customer"] .stage { grid-template-columns: 1fr; }
   letter-spacing: 0.02em;
 }
 #wl-fs { flex-shrink: 0; }
-#wl-build {
-  font-family: "DM Mono", ui-monospace, monospace;
-  font-size: 10px; color: var(--text-3); letter-spacing: 0.02em;
+.wl-build-bar {
+  display: flex; flex-direction: column; gap: 0.3rem;
+  margin: 0 0 0.55rem; padding: 0.45rem 0.55rem;
+  border: 1px solid var(--border); border-radius: 10px; background: var(--bg-2);
 }
+.wl-build-bar[hidden] { display: none !important; }
+.wl-build-group { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.4rem; }
+.wl-build-group-lab {
+  font-size: 10px; font-weight: 500; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.04em; min-width: 4.2rem;
+}
+.wl-build-tools { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+.wl-build-tool {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2rem; height: 2rem; padding: 0;
+  border: 1px solid var(--border); border-radius: 8px; background: var(--bg);
+  color: var(--text-2); cursor: pointer;
+}
+.wl-build-tool:hover { border-color: var(--blue); color: var(--text); }
+.wl-build-tool.on { border-color: var(--green); color: var(--text); background: color-mix(in srgb, var(--green) 14%, var(--bg)); }
+.wl-build-tool svg { display: block; }
+.wl-build-undo {
+  align-self: flex-start; margin-top: 0.1rem;
+  font-family: inherit; font-size: 11px; padding: 0.2rem 0.55rem;
+  border-radius: 999px; border: 1px solid var(--border); background: var(--bg);
+  color: var(--text-2); cursor: pointer;
+}
+.wl-build-undo:hover { color: var(--text); border-color: var(--blue); }
+#wl-build-hint { font-size: 11px; color: var(--text-2); margin: 0 0 0.45rem; min-height: 1.1em; }
+#wl-build-hint:empty { display: none; }
+html[data-mode="build"] .panel-play,
+html[data-mode="build"] .panel-stats,
+html[data-mode="build"] .panel-log,
+html[data-mode="build"] #wl-ems-card,
+html[data-mode="build"] #wl-cust-card { display: none !important; }
+html[data-mode="maintenance"] .panel-geoid { order: -1; }
 #wl-scrub { flex: 1; min-width: 140px; }
 #wl-houses { display: flex; flex-direction: column; gap: 0.3rem; max-height: 38vh; overflow: auto; }
 #wl-feeder-view[hidden], #wl-house-view[hidden] { display: none !important; }
@@ -389,75 +446,129 @@ html.embed #wl-theater { height: calc(100dvh - 0.7rem); min-height: 420px; flex:
   <p class="back"><a href="https://isv.wiki/#village-metering/village-simulator">Village Metering</a> · Village Simulator</p>
   <div id="wl-theater">
   <div class="controls">
+    <div class="wl-mode-switch" id="wl-mode-switch" role="group" aria-label="Simulator mode">
+      <button type="button" data-mode-btn="operations" class="on" aria-pressed="true">Operations</button>
+      <button type="button" data-mode-btn="build" aria-pressed="false">Build</button>
+      <button type="button" data-mode-btn="maintenance" aria-pressed="false">Maintenance</button>
+    </div>
     <span id="wl-clock">00:00</span>
     <button type="button" class="wl-skip" id="wl-play" title="Play" aria-label="Play">▶</button>
     <input id="wl-scrub" type="range" min="0" max="1440" value="0" />
     <button type="button" class="wl-skip" id="wl-rev" title="Play reverse" aria-label="Play reverse">◀</button>
-    <select id="wl-viz" aria-label="Time layout" data-ops>
-      <option value="v2" selected>v2 · worldlines rise</option>
-      <option value="v1">v1 · worldlines drop</option>
+    <select id="wl-speed" aria-label="Playback speed">
+      <option value="15">15×</option>
+      <option value="30" selected>30×</option>
+      <option value="60">60×</option>
+      <option value="120">120×</option>
     </select>
-    <select id="wl-sky" aria-label="Sky">
-      <option value="dark" selected>Sky: dark</option>
-      <option value="bright">Sky: bright</option>
+    <select id="wl-basemap" aria-label="Basemap"><option value="liberty">Map</option><option value="bright">Bright</option><option value="positron">Light</option><option value="dark">Dark</option><option value="none">None</option></select>
+    <select id="wl-homes" aria-label="Village size" title="Reloads with ?homes=">
+      <option value="100">100 homes</option>
+      <option value="200" selected>200 homes</option>
+      <option value="1000">1000 homes</option>
     </select>
+    <button type="button" id="wl-fs" title="Fullscreen (F)">Fullscreen</button>
+  </div>
+  <p id="wl-mode-hint" role="status">Run the day — feeders, prepaid, anomalies, EMS.</p>
+
+  <div class="wl-mode-strip" data-modes="operations" aria-label="Operations tools">
+    <select id="wl-feeder" aria-label="Feeder" title="EMS × customer feeder grid">
+      <option value="">Feeder: village</option>
+    </select>
+    <button type="button" id="wl-ems-open" title="Pole MeshEMS cabinet">EMS</button>
+    <button type="button" id="wl-anomaly" class="on" title="Outage, last-breath, cutoff, high load">Anomalies</button>
+    <button type="button" data-hide="leak" title="ΔP leak span between boards">Leakage</button>
+    <button type="button" data-hide="pay" title="Prepaid payments">Pay</button>
+    <button type="button" data-hide="disconnect" title="Remote cutoffs">Cutoffs</button>
+    <button type="button" data-hide="sms" class="off" title="SMS tokens">SMS</button>
+    <select id="wl-scheme" aria-label="Color scheme">
+      <option value="messages" selected>Color: messages</option>
+      <option value="load">Color: load</option>
+      <option value="capacity">Color: capacity</option>
+      <option value="feeder">Color: feeder</option>
+    </select>
+    <select id="wl-linegrad" aria-label="Line gradient">
+      <option value="capacity" selected>Lines: capacity</option>
+      <option value="pf">Lines: PF</option>
+      <option value="harmonics">Lines: THD</option>
+    </select>
+    <span id="wl-line-legend" class="line-leg" title="Line color ramp">
+      <i class="cap-bar"></i>
+      <span id="wl-line-lo">idle</span>
+      <span id="wl-line-mid">mid</span>
+      <span id="wl-line-hi">cap</span>
+    </span>
+    <span class="wl-mode-leg" aria-hidden="true">
+      <span><i style="background:#3b6d11"></i>ok</span>
+      <span><i style="background:#ba7517"></i>warn</span>
+      <span><i style="background:#b42318"></i>fault</span>
+      <span><i style="background:#e85dff"></i>leak</span>
+    </span>
+  </div>
+
+  <div class="wl-mode-strip" data-modes="build" hidden aria-hidden="true" aria-label="Build tools">
     <select id="wl-light" aria-label="Village lighting">
       <option value="fill" selected>Light: fill</option>
       <option value="lamps">Light: lamps</option>
       <option value="sun">Light: sun</option>
     </select>
-    <select id="wl-scheme" aria-label="Color scheme" data-ops>
-      <option value="messages">Color: message types</option>
-      <option value="load">Color: load types</option>
-      <option value="capacity">Color: capacity proximity</option>
-      <option value="feeder">Color: feeder allotment</option>
-      <option value="osi">Color: OSI stack</option>
-      <option value="asset">Color: asset type</option>
-    </select>
-    <select id="wl-linegrad" aria-label="Power line gradient" data-ops>
-      <option value="capacity" selected>Lines: capacity</option>
-      <option value="pf">Lines: power factor</option>
-      <option value="harmonics">Lines: harmonics (THD)</option>
-    </select>
-    <span id="wl-line-legend" class="line-leg" title="Line / feeder-grid color ramp">
-      <i class="cap-bar"></i>
-      <span id="wl-line-lo">0% idle</span>
-      <span id="wl-line-mid">50% mid</span>
-      <span id="wl-line-hi">100% at cap</span>
+    <span class="wl-mode-leg">
+      <span><i style="background:#79624b"></i>structure</span>
+      <span><i style="background:#0b6e4f"></i>device</span>
+      <span><i style="background:#7a4419"></i>junction</span>
+      <span><i style="background:#1d4e89"></i>line</span>
+      <span><i style="background:#3d5a3d"></i>subnetwork</span>
     </span>
-    <select id="wl-speed" aria-label="Playback speed">
-      <option value="15">15× min/s</option>
-      <option value="30" selected>30× min/s</option>
-      <option value="60">60× min/s</option>
-      <option value="120">120× min/s</option>
-    </select>
-    <select id="wl-homes" aria-label="Village size" title="100 or 1000 home mock. Reloads. Size is ?homes= so other query changes keep it.">
-      <option value="100">Size: 100 homes</option>
-      <option value="1000" selected>Size: 1000 homes</option>
-    </select>
-    <select id="wl-role" aria-label="Viewer role">
-      <option value="ops" selected>View: operator</option>
-      <option value="tech">View: technician</option>
-      <option value="customer">View: customer</option>
-    </select>
-    <select id="wl-feeder" aria-label="Feeder" data-ops title="Open the EMS × customer feeder grid">
+    <span class="wl-attr" id="wl-map-status">Loading map…</span>
+  </div>
+
+  <div class="wl-mode-strip" data-modes="maintenance" hidden aria-hidden="true" aria-label="Maintenance tools">
+    <select id="wl-feeder-maint" aria-label="Feeder" title="Focus feeder">
       <option value="">Feeder: village</option>
     </select>
-    <span id="wl-build" title="Local preview stamp — if you do not see this, you are on an old cached page">local 0901-step</span>
-    <button type="button" id="wl-ems-open" title="Open pole MeshEMS cabinet card" data-ops>EMS cabinet</button>
-    <button type="button" data-hide="pay" class="off" data-ops>payments</button>
-    <button type="button" id="wl-anomaly" class="on" title="Outage, last-breath, cutoff, PF &lt; 0.80, capacity ≥ 80%, overload trip" data-ops>anomalies</button>
-    <button type="button" data-hide="leak" title="MeshEMS ΔP localizes leak to a feeder span between two boards" data-ops>leakage</button>
-    <button type="button" data-hide="worldline" class="off" data-ops>worldlines</button>
-    <button type="button" data-hide="reading" class="off" data-ops>readings</button>
-    <button type="button" data-hide="disconnect" data-ops>cutoffs</button>
-    <button type="button" data-hide="sms">SMS</button>
-    <button type="button" data-hide="sync" data-ops>sync</button>
-    <button type="button" data-hide="mesh" class="off" data-ops>mesh hops</button>
-    <button type="button" data-hide="phase_xfer" data-ops>phase xfer</button>
-    <button type="button" data-hide="rf" class="off" data-ops>RF net</button>
-    <button type="button" id="wl-fs" title="Fullscreen (F)">Fullscreen</button>
+    <button type="button" id="wl-ems-open-maint" title="Pole MeshEMS cabinet">EMS</button>
+    <button type="button" id="wl-anomaly-maint" class="on" title="Fault filter">Anomalies</button>
+    <button type="button" data-hide="leak" title="Leak localization">Leakage</button>
+    <button type="button" data-hide="disconnect" title="Cutoffs">Cutoffs</button>
+    <button type="button" data-hide="mesh" title="Mesh hops">Mesh</button>
+    <button type="button" data-hide="rf" title="RF network">RF</button>
+    <button type="button" data-hide="worldline" title="Time worldlines">Worldlines</button>
+    <button type="button" data-hide="phase_xfer" title="Phase transfer">Phase</button>
+    <select id="wl-viz" aria-label="Time layout">
+      <option value="v2" selected>Worldlines ↑</option>
+      <option value="v1">Worldlines ↓</option>
+    </select>
+    <select id="wl-scheme-maint" aria-label="Color scheme">
+      <option value="capacity" selected>Color: capacity</option>
+      <option value="osi">Color: OSI</option>
+      <option value="asset">Color: asset</option>
+      <option value="feeder">Color: feeder</option>
+    </select>
+    <select id="wl-linegrad-maint" aria-label="Line health">
+      <option value="pf" selected>Lines: PF</option>
+      <option value="harmonics">Lines: THD</option>
+      <option value="capacity">Lines: capacity</option>
+    </select>
+    <span class="wl-mode-leg">
+      <span><i style="background:#e85dff"></i>leak</span>
+      <span><i style="background:#ff4d1a"></i>last-breath</span>
+      <span><i style="background:#b42318"></i>cutoff</span>
+      <span><i style="background:#5ee0ff"></i>mesh</span>
+    </span>
   </div>
+
+  <div id="wl-build-bar" class="wl-build-bar" data-modes="build" hidden aria-hidden="true" aria-label="Build asset palette"></div>
+  <p id="wl-build-hint" data-modes="build" hidden role="status"></p>
+
+  <select id="wl-sky" hidden aria-hidden="true"><option value="dark" selected>dark</option><option value="bright">bright</option></select>
+  <select id="wl-role" hidden aria-hidden="true">
+    <option value="ops" selected>ops</option>
+    <option value="tech">tech</option>
+    <option value="customer">customer</option>
+  </select>
+  <button type="button" data-hide="reading" class="off" hidden aria-hidden="true">readings</button>
+  <button type="button" data-hide="sync" class="off" hidden aria-hidden="true">sync</button>
+
   <div class="stage" id="wl-stage-grid">
     <div class="wl-stage-col">
       <div id="wl-stage" role="img" aria-label="Village Simulator 3D scene, now at ground, past rises into the sky">
@@ -504,7 +615,7 @@ html.embed #wl-theater { height: calc(100dvh - 0.7rem); min-height: 420px; flex:
           <div id="wl-cust-body"></div>
         </aside>
       </div>
-      <label class="wl-win" id="wl-win" title="Height of stretch / scrunch boundary">
+      <label class="wl-win" id="wl-win" title="Height of stretch / scrunch boundary" data-modes="operations,maintenance">
         <span id="wl-win-hi">past</span>
         <input id="wl-window" type="range" min="8" max="42" step="1" value="36" aria-label="Stretch / scrunch boundary height" />
         <span id="wl-win-val">−2h</span>
@@ -512,6 +623,7 @@ html.embed #wl-theater { height: calc(100dvh - 0.7rem); min-height: 420px; flex:
     </div>
     <div class="side">
       <div class="panel panel-play">
+        <section id="wl-productive" style="padding:10px;border:1px solid #397481;border-radius:8px;margin-bottom:12px;font-size:12px;line-height:1.6"></section>
         <h2 id="wl-play-title">At playhead</h2>
         <input id="wl-house-q" type="search" placeholder="search name / serial" autocomplete="off" />
         <div id="wl-feeder-view" hidden>

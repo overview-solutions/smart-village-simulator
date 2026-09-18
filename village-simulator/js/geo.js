@@ -22,14 +22,17 @@ import {
 export { M_PER_DEG_LAT };
 
 /**
- * Fake origin — Null Island. Not a real settlement.
+ * Real geographic anchor; all simulated infrastructure is hypothetical.
  * Pin a real lat/lon later by changing these two numbers only.
  */
+export const GROUND_SCALE = 8; // metres per legacy schematic ground unit
+export const HEIGHT_SCALE = 3; // physical equipment height conversion
+
 export const ORIGIN = {
-  lon: 0,
-  lat: 0,
+  lon: 11.53412,
+  lat: 4.79209,
   alt: 0,
-  name: "Null Island",
+  name: "Voundou, Cameroon (hypothetical layout)",
   note: "Schematic ISV village. Local metres from here; +X east, −Z north.",
 };
 
@@ -60,16 +63,16 @@ function roundDeg(n) {
 
 /** RFC 7946 Point Feature. geometry = WGS84; properties hold local ENU + tags. */
 export function geoidBlock(id, kind, x, z, hang = 0, extra = {}) {
-  const [lon, lat, alt] = enuToLonLat(x, z, hang);
+  const [lon, lat, alt] = enuToLonLat(x * GROUND_SCALE, z * GROUND_SCALE, hang * HEIGHT_SCALE);
   return {
     type: "Feature",
     id,
     properties: {
       id,
       kind,
-      hang,
-      x: roundM(x),
-      z: roundM(z),
+      hang: hang * HEIGHT_SCALE,
+      x: roundM(x * GROUND_SCALE),
+      z: roundM(z * GROUND_SCALE),
       ...extra,
     },
     geometry: {
@@ -112,7 +115,7 @@ function line(id, kind, ax, az, bx, bz, h, props = {}) {
     },
     geometry: {
       type: "LineString",
-      coordinates: [enuToLonLat(ax, az, h), enuToLonLat(bx, bz, h)].map(([lon, lat, alt]) => [
+      coordinates: [enuToLonLat(ax * GROUND_SCALE, az * GROUND_SCALE, h * HEIGHT_SCALE), enuToLonLat(bx * GROUND_SCALE, bz * GROUND_SCALE, h * HEIGHT_SCALE)].map(([lon, lat, alt]) => [
         roundDeg(lon),
         roundDeg(lat),
         roundM(alt),
