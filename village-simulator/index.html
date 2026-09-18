@@ -45,8 +45,11 @@ a { color: var(--green); }
   align-items: stretch; flex: 1 1 auto; min-height: 0;
 }
 .stage.has-feeder { grid-template-columns: minmax(0, 1fr) minmax(300px, 360px); }
-.wl-stage-col { position: relative; min-width: 0; height: 100%; min-height: 0; }
-#wl-stage { position: relative; height: 100%; min-height: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #121214; }
+.wl-stage-col {
+  position: relative; min-width: 0; height: 100%; min-height: 0;
+  display: flex; flex-direction: column; gap: 0.4rem;
+}
+#wl-stage { position: relative; flex: 1; min-height: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #121214; }
 .wl-overlay {
   position: absolute; z-index: 8; pointer-events: auto;
   top: 8px; left: 8px; width: min(440px, calc(100% - 56px));
@@ -304,20 +307,30 @@ html[data-role="customer"] .stage { grid-template-columns: 1fr; }
 }
 #wl-fs { flex-shrink: 0; }
 .wl-build-bar {
-  display: flex; flex-direction: column; gap: 0.3rem;
-  margin: 0 0 0.55rem; padding: 0.45rem 0.55rem;
+  display: flex; flex-direction: row; flex-wrap: nowrap; align-items: stretch;
+  gap: 0;
+  margin: 0 0 0.55rem; padding: 0.35rem 0.4rem;
   border: 1px solid var(--border); border-radius: 10px; background: var(--bg-2);
+  overflow-x: auto; overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 .wl-build-bar[hidden] { display: none !important; }
-.wl-build-group { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.4rem; }
-.wl-build-group-lab {
-  font-size: 10px; font-weight: 500; color: var(--text-3);
-  text-transform: uppercase; letter-spacing: 0.04em; min-width: 4.2rem;
+.wl-build-group {
+  display: flex; flex-direction: column; align-items: center; gap: 0.22rem;
+  flex-shrink: 0; padding: 0.15rem 0.55rem;
 }
-.wl-build-tools { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+.wl-build-group + .wl-build-group {
+  border-left: 1px solid color-mix(in srgb, var(--border) 70%, var(--text-3));
+}
+.wl-build-group-lab {
+  font-size: 10px; font-weight: 600; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+  line-height: 1.1;
+}
+.wl-build-tools { display: flex; flex-wrap: nowrap; gap: 0.2rem; }
 .wl-build-tool {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 2rem; height: 2rem; padding: 0;
+  width: 1.85rem; height: 1.85rem; padding: 0; flex-shrink: 0;
   border: 1px solid var(--border); border-radius: 8px; background: var(--bg);
   color: var(--text-2); cursor: pointer;
 }
@@ -325,14 +338,84 @@ html[data-role="customer"] .stage { grid-template-columns: 1fr; }
 .wl-build-tool.on { border-color: var(--green); color: var(--text); background: color-mix(in srgb, var(--green) 14%, var(--bg)); }
 .wl-build-tool svg { display: block; }
 .wl-build-undo {
-  align-self: flex-start; margin-top: 0.1rem;
-  font-family: inherit; font-size: 11px; padding: 0.2rem 0.55rem;
-  border-radius: 999px; border: 1px solid var(--border); background: var(--bg);
-  color: var(--text-2); cursor: pointer;
+  flex-shrink: 0; align-self: center;
+  margin-left: 0.15rem; padding: 0.2rem 0.65rem 0.2rem 0.75rem;
+  border: none; border-left: 1px solid color-mix(in srgb, var(--border) 70%, var(--text-3));
+  border-radius: 0; background: transparent;
+  font-family: inherit; font-size: 11px;
+  color: var(--text-2); cursor: pointer; white-space: nowrap;
 }
-.wl-build-undo:hover { color: var(--text); border-color: var(--blue); }
+.wl-build-undo:hover { color: var(--text); }
 #wl-build-hint { font-size: 11px; color: var(--text-2); margin: 0 0 0.45rem; min-height: 1.1em; }
 #wl-build-hint:empty { display: none; }
+#wl-build-xsect {
+  flex-shrink: 0;
+  display: flex; flex-direction: column; gap: 0.28rem;
+  min-height: 7.2rem; max-height: 9.5rem;
+  padding: 0.4rem 0.55rem 0.45rem;
+  border: 1px solid var(--border); border-radius: 10px; background: var(--bg-2);
+}
+#wl-build-xsect[hidden] { display: none !important; }
+.wl-xsect-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem;
+}
+.wl-xsect-head h2 {
+  font-size: 11px; font-weight: 500; color: var(--text-2); margin: 0;
+  border: 0; padding: 0; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.wl-xsect-head h2::before { display: none; }
+#wl-build-xsect-sub { font-size: 11px; color: var(--text-3); margin: 0; }
+.wl-xsect-rail {
+  position: relative; flex: 1; min-height: 5.4rem;
+  overflow-x: auto; overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.15rem 0.2rem 0.2rem;
+}
+.wl-xsect-spine {
+  display: flex; flex-wrap: nowrap; align-items: flex-start;
+  gap: 0; min-width: max-content; padding-top: 0.15rem;
+}
+.wl-xsect-node {
+  display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+  flex-shrink: 0; width: 3.4rem;
+}
+.wl-xsect-node.is-head { width: 3.8rem; }
+.wl-xsect-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2rem; height: 2rem; padding: 0; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--bg); color: var(--text-2);
+  cursor: pointer;
+}
+.wl-xsect-btn:hover { border-color: var(--blue); color: var(--text); }
+.wl-xsect-btn.on { outline: 2px solid #e6c84a; outline-offset: 1px; }
+.wl-xsect-btn.build-red { color: #f5c4c0; border-color: #b42318; background: color-mix(in srgb, #b42318 18%, var(--bg)); }
+.wl-xsect-btn.build-green { color: #c8e6a0; border-color: #3b6d11; background: color-mix(in srgb, #3b6d11 18%, var(--bg)); }
+.wl-xsect-btn.build-pending { outline: 2px solid #e6c84a; outline-offset: 1px; }
+.wl-xsect-lab {
+  font-size: 9px; color: var(--text-3); text-align: center; line-height: 1.15;
+  max-width: 3.6rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.wl-xsect-seg {
+  display: flex; align-items: center; justify-content: center;
+  align-self: flex-start; margin-top: 0.55rem;
+  width: 1.6rem; flex-shrink: 0; color: var(--text-3); opacity: 0.85;
+}
+.wl-xsect-seg svg { display: block; }
+.wl-xsect-drops {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.15rem;
+  max-width: 3.6rem; margin-top: 0.05rem;
+}
+.wl-xsect-drop {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.15rem; height: 1.15rem; padding: 0; border-radius: 4px;
+  border: 1px solid var(--border); background: var(--bg); color: var(--text-2);
+  cursor: pointer;
+}
+.wl-xsect-drop:hover { border-color: var(--blue); color: var(--text); }
+.wl-xsect-drop.build-red { color: #f5c4c0; border-color: #b42318; background: color-mix(in srgb, #b42318 22%, var(--bg)); }
+.wl-xsect-drop.build-green { color: #c8e6a0; border-color: #3b6d11; background: color-mix(in srgb, #3b6d11 22%, var(--bg)); }
+.wl-xsect-drop.build-pending { outline: 1px solid #e6c84a; outline-offset: 0; }
+.wl-xsect-drop.on { outline: 1px solid #e6c84a; }
 html[data-mode="build"] .panel-play,
 html[data-mode="build"] .panel-stats,
 html[data-mode="build"] .panel-log,
@@ -538,7 +621,7 @@ html.embed #wl-theater { height: calc(100dvh - 0.7rem); min-height: 420px; flex:
       <option value="60">60×</option>
       <option value="120">120×</option>
     </select>
-    <select id="wl-basemap" aria-label="Basemap"><option value="liberty">Map</option><option value="bright">Bright</option><option value="positron">Light</option><option value="dark">Dark</option><option value="none">None</option></select>
+    <select id="wl-basemap" aria-label="Basemap"><option value="nature">Nature</option><option value="liberty">Map</option><option value="bright">Bright</option><option value="positron">Light</option><option value="dark">Dark</option><option value="none">None</option></select>
     <select id="wl-homes" aria-label="Village size" title="Reloads with ?homes=">
       <option value="100">100 homes</option>
       <option value="200" selected>200 homes</option>
@@ -699,6 +782,15 @@ html.embed #wl-theater { height: calc(100dvh - 0.7rem); min-height: 420px; flex:
         <input id="wl-window" type="range" min="8" max="42" step="1" value="36" aria-label="Stretch / scrunch boundary height" />
         <span id="wl-win-val">−2h</span>
       </label>
+      <div id="wl-build-xsect" hidden aria-hidden="true" aria-label="Feeder line cross-section">
+        <div class="wl-xsect-head">
+          <h2>Feeder cross-section</h2>
+          <p id="wl-build-xsect-sub">Select a feeder</p>
+        </div>
+        <div class="wl-xsect-rail">
+          <div id="wl-build-xsect-spine" class="wl-xsect-spine" role="list"></div>
+        </div>
+      </div>
     </div>
     <div class="side">
       <div class="panel panel-play">

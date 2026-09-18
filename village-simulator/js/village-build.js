@@ -102,7 +102,7 @@ export function feedConfigComplete(cfg) {
   return FEED_KINDS[cfg.kind].required.every((k) => String(cfg[k] ?? "").trim() !== "");
 }
 
-const ICONS = {
+const BUILD_ICONS = {
   pole: "M12 3v14M9 17h6M12 7h.01",
   cabinet: "M7 4h10v16H7zM7 10h10",
   pad: "M5 16h14v3H5zM7 16V9h10v7",
@@ -131,6 +131,14 @@ const ICONS = {
   island: "M12 4l7 4v8l-7 4-7-4V8l7-4z",
   feeder: "M6 6h12v4H6zM8 10v8M16 10v8M10 14h4",
 };
+
+/** @param {string} assetId @param {number} [size] */
+export function buildSvgIcon(assetId, size = 18) {
+  const d = BUILD_ICONS[assetId] || BUILD_ICONS.pole;
+  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;
+}
+
+const ICONS = BUILD_ICONS;
 
 function svgIcon(pathD) {
   return `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="${pathD}"/></svg>`;

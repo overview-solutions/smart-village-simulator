@@ -1,7 +1,7 @@
 import { buildVillageWater } from "./village-water.js";
 import { buildProductiveUse } from "./productive-use-view.js";
 import { createVillageMap } from "./village-basemap.js";
-import { createBuildMode, FEED_KINDS, feedConfigComplete } from "./village-build.js";
+import { createBuildMode, FEED_KINDS, feedConfigComplete, buildSvgIcon } from "./village-build.js";
 import { createCandidateOverlay } from "./village-candidates.js";
 import { MODE_HIDE, MODE_META, bindModeSwitcher } from "./village-modes.js";
 import * as THREE from "three";
@@ -5056,6 +5056,167 @@ function onBuildFeederGridClick(e) {
   setScope({ kind: "feeder", id: b.feederId, boardId: b.id }, { cam: true, from: "grid-ems" });
 }
 
+function xsectSeg(kind) {
+  return `<span class="wl-xsect-seg" aria-hidden="true">${buildSvgIcon(kind, 16)}</span>`;
+}
+
+function xsectNodeBtn({ asset, label, title, status, pending, on, attrs }) {
+  const cls = [
+    "wl-xsect-btn",
+    status === "green" ? "build-green" : status === "red" ? "build-red" : "",
+    pending ? "build-pending" : "",
+    on ? "on" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const attrStr = Object.entries(attrs || {})
+    .map(([k, v]) => `${k}="${esc(String(v))}"`)
+    .join(" ");
+  return `<button type="button" class="${cls}" title="${esc(title || label)}" ${attrStr}>
+    ${buildSvgIcon(asset, 18)}
+  </button>
+  <span class="wl-xsect-lab">${esc(label)}</span>`;
+}
+
+function fillBuildCrossSection() {
+  const wrap = document.getElementById("wl-build-xsect");
+  const spine = document.getElementById("wl-build-xsect-spine");
+  const sub = document.getElementById("wl-build-xsect-sub");
+  if (!wrap || !spine) return;
+  const show = appMode === "build" && !!buildMode && !!activeFeederId();
+  wrap.hidden = !show;
+  wrap.setAttribute("aria-hidden", show ? "false" : "true");
+  if (!show) {
+    spine.innerHTML = "";
+    if (sub) sub.textContent = "Select a feeder";
+    return;
+  }
+  const fid = activeFeederId();
+  const f = FEEDERS.find((x) => x.id === fid);
+  const dtm = DTMS.find((d) => d.feederId === fid);
+  const boards = boardsOnFeeder(fid);
+  const pendingH = buildMode.getPendingHouseId();
+  const pendingB = buildMode.getPendingBoardId();
+  const focusH = state.focus;
+  const focusB = state.scopeBoard;
+  if (sub) {
+    sub.textContent = `${f?.label || fid} · station → DTM → EMS poles → meters`;
+  }
+  const parts = [];
+  const st = STATIONS[0];
+  if (st) {
+    parts.push(`<div class="wl-xsect-node is-head" role="listitem">
+      ${xsectNodeBtn({
+        asset: "station",
+        label: "Station",
+        title: st.label || "Village station",
+        attrs: { "data-xsect": "station", "data-id": st.id },
+      })}
+    </div>`);
+    parts.push(xsectSeg("trunk"));
+  }
+  parts.push(`<div class="wl-xsect-node" role="listitem">
+    ${xsectNodeBtn({
+      asset: "dtm",
+      label: "DTM",
+      title: dtm?.label || `DTM · ${fid}`,
+      attrs: { "data-xsect": "dtm", "data-feeder": fid },
+    })}
+  </div>`);
+  let lastXfmr = null;
+  for (const b of boards) {
+    parts.push(xsectSeg("primary"));
+    const xf = TRANSFORMERS.find((t) => t.id === b.xfmrId);
+    if (xf && xf.id !== lastXfmr) {
+      lastXfmr = xf.id;
+      parts.push(`<div class="wl-xsect-node" role="listitem">
+        ${xsectNodeBtn({
+          asset: "xfmr",
+          label: "Xfmr",
+          title: xf.label || xf.id,
+          attrs: { "data-xsect": "xfmr", "data-id": xf.id },
+        })}
+      </div>`);
+      parts.push(xsectSeg("secondary"));
+    }
+    const stBoard = buildMode.boardStatus(b.id);
+    const lab = String(b.id || "").replace(/^ems-/, "E");
+    const homes = (b.houseIds || []).map((hid) => houseById[hid]).filter(Boolean);
+    const drops = homes
+      .map((h) => {
+        const hs = buildMode.houseStatus(h.id);
+        const dcls = [
+          "wl-xsect-drop",
+          hs === "green" ? "build-green" : "build-red",
+          pendingH === h.id ? "build-pending" : "",
+          focusH === h.id ? "on" : "",
+        ]
+          .filter(Boolean)
+          .join(" ");
+        return `<button type="button" class="${dcls}" data-xsect="meter" data-h="${esc(h.id)}" title="${esc(h.name)} · ${esc(h.serial)} · ${hs === "green" ? "configured" : "unmapped"}">
+          ${buildSvgIcon("meter", 12)}
+        </button>`;
+      })
+      .join("");
+    parts.push(`<div class="wl-xsect-node" role="listitem">
+      ${xsectNodeBtn({
+        asset: "ems",
+        label: lab,
+        title: `${b.label} · ${stBoard === "green" ? "EMS configured" : "map EMS + set API"}`,
+        status: stBoard,
+        pending: pendingB === b.id,
+        on: focusB === b.id,
+        attrs: { "data-xsect": "ems", "data-board": b.id },
+      })}
+      <div class="wl-xsect-drops">${drops}</div>
+    </div>`);
+  }
+  spine.innerHTML = parts.join("");
+  if (!spine.dataset.bound) {
+    spine.dataset.bound = "1";
+    spine.addEventListener("click", onBuildXsectClick);
+  }
+}
+
+function onBuildXsectClick(e) {
+  if (!buildMode || appMode !== "build") return;
+  const meter = e.target.closest("button[data-xsect='meter'][data-h]");
+  if (meter) {
+    const id = meter.getAttribute("data-h");
+    const h = houseById[id];
+    if (!h) return;
+    buildMode.focusHouse(id);
+    setScope({ kind: "feeder", id: h.feederId, houseId: id, boardId: h.boardId }, { cam: true, from: "xsect-home" });
+    return;
+  }
+  const ems = e.target.closest("button[data-xsect='ems'][data-board]");
+  if (ems) {
+    const bid = ems.getAttribute("data-board");
+    const b = boardById[bid];
+    if (!b) return;
+    buildMode.focusBoard(bid);
+    setScope({ kind: "feeder", id: b.feederId, boardId: b.id }, { cam: true, from: "xsect-ems" });
+    return;
+  }
+  const dtm = e.target.closest("button[data-xsect='dtm'][data-feeder]");
+  if (dtm) {
+    const fid = dtm.getAttribute("data-feeder");
+    if (fid) setScope({ kind: "feeder", id: fid }, { cam: true, from: "xsect-dtm" });
+    return;
+  }
+  const xf = e.target.closest("button[data-xsect='xfmr'][data-id]");
+  if (xf) {
+    const id = xf.getAttribute("data-id");
+    const t = TRANSFORMERS.find((x) => x.id === id);
+    if (t?.feederId) setScope({ kind: "feeder", id: t.feederId, boardId: state.scopeBoard }, { cam: true, from: "xsect-xfmr" });
+    return;
+  }
+  const st = e.target.closest("button[data-xsect='station']");
+  if (st) {
+    setScope({ kind: "village" }, { cam: true, from: "xsect-station" });
+  }
+}
+
 function bindBuildConfigForm() {
   const kindEl = document.getElementById("wl-build-cfg-kind");
   if (kindEl && !kindEl.dataset.ready) {
@@ -5135,6 +5296,7 @@ function fillBuildConfigForm() {
 function fillBuildPanel() {
   syncFeederSelect();
   fillBuildConfigForm();
+  fillBuildCrossSection();
   const view = document.getElementById("wl-build-feeder-view");
   const empty = document.getElementById("wl-build-empty");
   const sub = document.getElementById("wl-build-sub");
@@ -5280,7 +5442,6 @@ function applyAppMode(mode) {
     if (!activeFeederId() && FEEDERS[0]) {
       setScope({ kind: "feeder", id: FEEDERS[0].id }, { cam: false, from: "clear" });
     }
-    fillBuildPanel();
   }
   applyRole();
   applySchemeColors();
@@ -5288,7 +5449,11 @@ function applyAppMode(mode) {
   colorPowerLines();
   applyVisibility();
   writeQuery({ mode, role: state.role });
-  if (mode !== "build") fillHouses(true);
+  if (mode === "build") fillBuildPanel();
+  else {
+    fillBuildCrossSection();
+    fillHouses(true);
+  }
 }
 
 function bindAppModes() {
