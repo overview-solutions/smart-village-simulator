@@ -1,0 +1,91 @@
+{
+  "type": "FeatureCollection",
+  "name": "subnetworks",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "island-1",
+      "properties": {
+        "id": "island-1",
+        "assetClass": "island",
+        "assetGroup": "subnetwork",
+        "label": "Safari Park Casino island",
+        "tier": "island",
+        "x": -14.89,
+        "z": -17.64,
+        "subnetworkId": "island-1",
+        "globalId": "2bebbfc5-8b20-5060-aa60-d8ac3ef3374c"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -163.17,
+              -142.03
+            ],
+            [
+              102.49,
+              -142.03
+            ],
+            [
+              102.49,
+              156.62
+            ],
+            [
+              -163.17,
+              156.62
+            ],
+            [
+              -163.17,
+              -142.03
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "f-main",
+      "properties": {
+        "id": "f-main",
+        "assetClass": "feeder",
+        "assetGroup": "subnetwork",
+        "label": "Central feeder (spine)",
+        "tier": "feeder",
+        "controllerId": "ems-0",
+        "x": -11.43,
+        "z": -19.65,
+        "subnetworkId": "f-main",
+        "globalId": "ea44da91-0d02-5747-9374-b5059150d045"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -158.17,
+              -137.03
+            ],
+            [
+              97.49,
+              -137.03
+            ],
+            [
+              97.49,
+              151.62
+            ],
+            [
+              -158.17,
+              151.62
+            ],
+            [
+              -158.17,
+              -137.03
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

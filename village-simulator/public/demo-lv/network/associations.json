@@ -41,6 +41,11 @@
     },
     {
       "fromId": "brk-w",
+      "toId": "disc-w",
+      "subnetworkId": "f-west"
+    },
+    {
+      "fromId": "disc-w",
       "toId": "xfmr-w",
       "subnetworkId": "f-west",
       "toTerminal": "H1"
@@ -95,6 +100,11 @@
     },
     {
       "fromId": "j-m-head",
+      "toId": "recl-m",
+      "subnetworkId": "f-market"
+    },
+    {
+      "fromId": "recl-m",
       "toId": "fuse-m",
       "subnetworkId": "f-market"
     },
@@ -144,6 +154,14 @@
     {
       "containerId": "cab-m",
       "contentId": "ems-m"
+    },
+    {
+      "containerId": "encl-m",
+      "contentId": "m-m1"
+    },
+    {
+      "containerId": "encl-m",
+      "contentId": "m-m2"
     }
   ],
   "attachment": [
@@ -162,6 +180,14 @@
     {
       "structureId": "pad-gen",
       "attachedId": "gen-1"
+    },
+    {
+      "structureId": "pole-w3",
+      "attachedId": "disc-w"
+    },
+    {
+      "structureId": "pole-m1",
+      "attachedId": "recl-m"
     }
   ]
 }

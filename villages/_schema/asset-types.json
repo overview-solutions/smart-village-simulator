@@ -28,10 +28,10 @@
     "subnetwork": ["island", "feeder"]
   },
   "featureProperties": {
-    "required": ["id", "assetClass", "assetGroup"],
+    "required": ["id", "assetClass", "assetGroup", "subnetworkId"],
+    "notes": "Map Twin minimum: every feature (including island/feeder polygons) carries subnetworkId — self id for subnetwork features. Sample of every Essential + Nice-to-have layer: villages/demo-lv/.",
     "recommended": [
       "globalId",
-      "subnetworkId",
       "terminals",
       "phase",
       "nominalKv",

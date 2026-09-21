@@ -12,7 +12,9 @@
         "label": "Island \u00b7 gen + station",
         "tier": "island",
         "x": -22,
-        "z": -8
+        "z": -8,
+        "subnetworkId": "island-1",
+        "globalId": "c1c29214-e1ea-5a08-b68a-559aabc7d118"
       },
       "geometry": {
         "type": "Polygon",
@@ -53,7 +55,9 @@
         "tier": "feeder",
         "controllerId": "brk-w",
         "x": -38,
-        "z": 22
+        "z": 22,
+        "subnetworkId": "f-west",
+        "globalId": "009e3d36-93e9-5800-9021-7c0e3912eb00"
       },
       "geometry": {
         "type": "Polygon",
@@ -94,7 +98,9 @@
         "tier": "feeder",
         "controllerId": "fuse-m",
         "x": 0,
-        "z": 10
+        "z": 10,
+        "subnetworkId": "f-market",
+        "globalId": "1ed7e72b-c697-5043-9068-a29b8a2ead08"
       },
       "geometry": {
         "type": "Polygon",

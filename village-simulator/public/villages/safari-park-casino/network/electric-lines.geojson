@@ -1,0 +1,794 @@
+{
+  "type": "FeatureCollection",
+  "name": "electric-lines",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "ln-island-to-feeder",
+      "properties": {
+        "id": "ln-island-to-feeder",
+        "assetClass": "primary",
+        "assetGroup": "electric_line",
+        "subnetworkId": "island-1",
+        "label": "Pole / EMS \u2192 spine",
+        "globalId": "94ccf1c5-03e0-5a25-8cad-f1be5fbae8c8"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -14.89,
+            -17.64
+          ],
+          [
+            -13.16,
+            -18.64
+          ],
+          [
+            -11.43,
+            -19.65
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-spine",
+      "properties": {
+        "id": "ln-spine",
+        "assetClass": "trunk",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Central feeder spine",
+        "role": "spine",
+        "globalId": "aa20d22c-eae0-5233-95cb-0e0e34b5838b"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -73.72,
+            -126.72
+          ],
+          [
+            -46.85,
+            -80.53
+          ],
+          [
+            -45.57,
+            -78.33
+          ],
+          [
+            -38.89,
+            -66.85
+          ],
+          [
+            -20.15,
+            -34.63
+          ],
+          [
+            -14.56,
+            -25.02
+          ],
+          [
+            -11.43,
+            -19.65
+          ],
+          [
+            6.65,
+            11.43
+          ],
+          [
+            36.69,
+            63.07
+          ],
+          [
+            39.49,
+            67.88
+          ],
+          [
+            44.68,
+            76.8
+          ],
+          [
+            50.69,
+            87.13
+          ],
+          [
+            72.98,
+            125.42
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-feeder-12",
+      "properties": {
+        "id": "ln-feeder-12",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Feeder \u2192 North campus B",
+        "role": "lateral",
+        "fromId": "tap-12",
+        "toId": "m-12",
+        "globalId": "2e7dd779-d24b-5ad2-a1ab-29d1a0968a55"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -67.69,
+            -116.35
+          ],
+          [
+            -49.34,
+            -127.03
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-12",
+      "properties": {
+        "id": "ln-svc-12",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Service North campus B",
+        "globalId": "b5a0debf-e24d-5694-8d44-108d4ab6cc93"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -49.34,
+            -127.03
+          ],
+          [
+            -49.34,
+            -126.23
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-feeder-9",
+      "properties": {
+        "id": "ln-feeder-9",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Feeder \u2192 West service block",
+        "role": "lateral",
+        "fromId": "tap-9",
+        "toId": "m-9",
+        "globalId": "2d7a8d20-eff7-5753-a2a8-b78cfcd82427"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -46.85,
+            -80.53
+          ],
+          [
+            -148.17,
+            -21.58
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-9",
+      "properties": {
+        "id": "ln-svc-9",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Service West service block",
+        "globalId": "3135341f-0879-5099-888e-8407f82ec22c"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -148.17,
+            -21.58
+          ],
+          [
+            -148.17,
+            -20.779999999999998
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-feeder-7",
+      "properties": {
+        "id": "ln-feeder-7",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Feeder \u2192 Northwest lodge",
+        "role": "lateral",
+        "fromId": "tap-7",
+        "toId": "m-7",
+        "globalId": "d44410a7-7927-51fd-b6ff-1cbd921bc5cb"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -45.57,
+            -78.33
+          ],
+          [
+            -89.87,
+            -52.56
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-7",
+      "properties": {
+        "id": "ln-svc-7",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Service Northwest lodge",
+        "globalId": "f4be296f-3505-5729-bb5b-bf46c58839cc"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -89.87,
+            -52.56
+          ],
+          [
+            -89.87,
+            -51.760000000000005
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-feeder-11",
+      "properties": {
+        "id": "ln-feeder-11",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Feeder \u2192 North campus A",
+        "role": "lateral",
+        "fromId": "tap-11",
+        "toId": "m-11",
+        "globalId": "a89aa876-05af-542e-adcf-fba5c4dbbcec"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -38.89,
+            -66.85
+          ],
+          [
+            33.37,
+            -108.89
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-11",
+      "properties": {
+        "id": "ln-svc-11",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Service North campus A",
+        "globalId": "3b073340-8823-58f5-a9a4-b1c19632e119"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            33.37,
+            -108.89
+          ],
+          [
+            33.37,
+            -108.09
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-feeder-6",
+      "properties": {
+        "id": "ln-feeder-6",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Feeder \u2192 North conference",
+        "role": "lateral",
+        "fromId": "tap-6",
+        "toId": "m-6",
+        "globalId": "25c1d53f-1eee-5491-90c5-0a27f7fbd1c1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -20.15,
+            -34.63
+          ],
+          [
+            -3.73,
+            -44.18
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-6",
+      "properties": {
+        "id": "ln-svc-6",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Service North conference",
+        "globalId": "268a0fb0-a999-5c27-be5a-694f4a9adc0d"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -3.73,
+            -44.18
+          ],
+          [
+            -3.73,
+            -43.38
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-feeder-4",
+      "properties": {
+        "id": "ln-feeder-4",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Feeder \u2192 West garden block",
+        "role": "lateral",
+        "fromId": "tap-4",
+        "toId": "m-4",
+        "globalId": "b852a7ca-1963-54cf-9d7e-8aa57b823b9c"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -14.56,
+            -25.02
+          ],
+          [
+            -100.32,
+            24.88
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-4",
+      "properties": {
+        "id": "ln-svc-4",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Service West garden block",
+        "globalId": "5807797b-be61-5497-b77b-ec3f5e605fa5"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -100.32,
+            24.88
+          ],
+          [
+            -100.32,
+            25.68
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-feeder-10",
+      "properties": {
+        "id": "ln-feeder-10",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Feeder \u2192 Far north lodge",
+        "role": "lateral",
+        "fromId": "tap-10",
+        "toId": "m-10",
+        "globalId": "4bd685f3-d2df-5ada-bee2-506d449040c4"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -11.43,
+            -19.65
+          ],
+          [
+            87.49,
+            -77.2
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-10",
+      "properties": {
+        "id": "ln-svc-10",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Service Far north lodge",
+        "globalId": "a49d4974-44f9-5888-968f-a80de196072f"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            87.49,
+            -77.2
+          ],
+          [
+            87.49,
+            -76.4
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-feeder-8",
+      "properties": {
+        "id": "ln-feeder-8",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Feeder \u2192 Northeast annex",
+        "role": "lateral",
+        "fromId": "tap-8",
+        "toId": "m-8",
+        "globalId": "ccfa7ec8-e9eb-5c92-835a-1e55e8fcace2"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            6.65,
+            11.43
+          ],
+          [
+            74.83,
+            -28.24
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-8",
+      "properties": {
+        "id": "ln-svc-8",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Service Northeast annex",
+        "globalId": "5f1f9e15-749b-58df-8c67-7f19bb9a060c"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            74.83,
+            -28.24
+          ],
+          [
+            74.83,
+            -27.439999999999998
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-feeder-0",
+      "properties": {
+        "id": "ln-feeder-0",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Feeder \u2192 Main hotel wing",
+        "role": "lateral",
+        "fromId": "tap-0",
+        "toId": "m-0",
+        "globalId": "6aeeca98-4680-5fa2-9666-1e4d5e8524ff"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            36.69,
+            63.07
+          ],
+          [
+            12.13,
+            77.36
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-0",
+      "properties": {
+        "id": "ln-svc-0",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Service Main hotel wing",
+        "globalId": "2902dfa8-f3e8-5f5a-a174-0466e2971d8d"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            12.13,
+            77.36
+          ],
+          [
+            12.13,
+            78.16
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-feeder-5",
+      "properties": {
+        "id": "ln-feeder-5",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Feeder \u2192 Northeast lodge",
+        "role": "lateral",
+        "fromId": "tap-5",
+        "toId": "m-5",
+        "globalId": "8477dbf1-9f20-500f-917b-8c96a91df34c"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            39.49,
+            67.88
+          ],
+          [
+            82.3,
+            42.97
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-5",
+      "properties": {
+        "id": "ln-svc-5",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Service Northeast lodge",
+        "globalId": "fb3443f4-fb21-5f1d-9f8f-d72b8edef676"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            82.3,
+            42.97
+          ],
+          [
+            82.3,
+            43.769999999999996
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-feeder-1",
+      "properties": {
+        "id": "ln-feeder-1",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Feeder \u2192 East wing A",
+        "role": "lateral",
+        "fromId": "tap-1",
+        "toId": "m-1",
+        "globalId": "e392bb1a-9041-5870-b9c3-767b7abd7b45"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            44.68,
+            76.8
+          ],
+          [
+            29.34,
+            85.72
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-1",
+      "properties": {
+        "id": "ln-svc-1",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Service East wing A",
+        "globalId": "45ec44e3-ce6a-52d1-be48-9cf70ec02e7a"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            29.34,
+            85.72
+          ],
+          [
+            29.34,
+            86.52
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-feeder-3",
+      "properties": {
+        "id": "ln-feeder-3",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Feeder \u2192 East wing B",
+        "role": "lateral",
+        "fromId": "tap-3",
+        "toId": "m-3",
+        "globalId": "ad1e8645-9ad9-58eb-9f6b-58b2cf5334b1"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            50.69,
+            87.13
+          ],
+          [
+            50.69,
+            87.13
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-3",
+      "properties": {
+        "id": "ln-svc-3",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Service East wing B",
+        "globalId": "b6a5de5a-1e5b-5188-a749-55cad0e84341"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            50.69,
+            87.13
+          ],
+          [
+            50.69,
+            87.92999999999999
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-feeder-2",
+      "properties": {
+        "id": "ln-feeder-2",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Feeder \u2192 Casino / pavilion cluster",
+        "role": "lateral",
+        "fromId": "tap-2",
+        "toId": "m-2",
+        "globalId": "6ddcf844-331f-51eb-a7cd-cc85085ab74c"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            66.94,
+            115.05
+          ],
+          [
+            21.27,
+            141.62
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-2",
+      "properties": {
+        "id": "ln-svc-2",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-main",
+        "label": "Service Casino / pavilion cluster",
+        "globalId": "245bad45-0fa3-5178-8086-d522dd74b664"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            21.27,
+            141.62
+          ],
+          [
+            21.27,
+            142.42000000000002
+          ]
+        ]
+      }
+    }
+  ]
+}

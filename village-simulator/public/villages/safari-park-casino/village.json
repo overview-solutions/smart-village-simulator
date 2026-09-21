@@ -1,0 +1,27 @@
+{
+  "id": "safari-park-casino",
+  "name": "Safari Park Casino (Nairobi workshop)",
+  "schemaVersion": "0.1.0",
+  "crs": "EPSG:4326",
+  "status": "hypothetical",
+  "origin": {
+    "lon": 36.88376960769231,
+    "lat": -1.2244841923076923,
+    "alt": 0,
+    "note": "Centroid of 13 OSM buildings on Safari Park Hotel / Casino grounds. Local ENU: +X east, \u2212Z north. Electrical plant invented for MeshEMS workshop."
+  },
+  "bbox": [
+    -163.17,
+    -142.03,
+    102.49,
+    156.62
+  ],
+  "openami": {
+    "spatialSchema": "OpenAMI-aligned GeoJSON (ISV)",
+    "notes": "OSM building centroids. Open central feeder spine (PCA axis through campus \u2014 not a loop); short feeder laterals from spine taps to each building."
+  },
+  "links": {
+    "maps": "https://maps.app.goo.gl/ABcHVN1B1HpEiZYV7",
+    "meshemsOverlay": "ISV/meshems-openami-metering/data/safari-park-hotel.geojson"
+  }
+}

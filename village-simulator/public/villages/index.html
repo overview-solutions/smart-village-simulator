@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Village projects · Smart Village Simulator</title>
+<style>
+  :root {
+    --bg: #f4f4f2; --panel: #fff; --ink: #1a1a1a; --muted: #5c5c5c; --line: #c8c8c4; --accent: #0b6e4f;
+    --c0: #0b6e4f; --c1: #1d4e89; --c2: #7a4419; --c3: #6b2d5c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.45 "IBM Plex Sans", "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); }
+  header { padding: 1.1rem 1.5rem 0.4rem; max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem; align-items: end; justify-content: space-between; }
+  h1 { font-size: 1.25rem; font-weight: 500; margin: 0 0 0.25rem; }
+  .sub { color: var(--muted); font-size: 0.88rem; max-width: 52ch; margin: 0; }
+  .site-pick { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.8rem; color: var(--muted); }
+  .site-pick select { font: inherit; font-size: 0.95rem; color: var(--ink); padding: 0.35rem 0.55rem; border: 1px solid var(--line); border-radius: 6px; min-width: 14rem; background: var(--panel); }
+  .layout { display: grid; grid-template-columns: 220px 1fr; gap: 1rem; max-width: 1100px; margin: 0 auto; padding: 0.75rem 1.5rem 2rem; }
+  @media (max-width: 720px) { .layout { grid-template-columns: 1fr; } }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 0.85rem 1rem; }
+  .panel h2 { font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin: 0 0 0.65rem; }
+  label.layer { display: flex; gap: 0.5rem; align-items: flex-start; margin: 0.35rem 0; cursor: pointer; font-size: 0.9rem; }
+  label.layer code { font-size: 0.7rem; color: var(--muted); display: block; }
+  .lod { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.75rem 0 0; }
+  .lod button { border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 0.3rem 0.7rem; font: inherit; font-size: 0.8rem; cursor: pointer; }
+  .lod button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+  svg.plan { width: 100%; height: auto; background: #fafaf8; border-radius: 8px; border: 1px solid var(--line); display: block; }
+  .legend { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.6rem; font-size: 0.75rem; color: var(--muted); }
+  .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 4px; vertical-align: -1px; border-radius: 2px; }
+  .l-trunk::before { background: var(--c0); } .l-pri::before { background: var(--c1); }
+  .l-sec::before { background: var(--c2); } .l-svc::before { background: var(--c3); }
+  .detail { margin-top: 0.75rem; font-size: 0.9rem; }
+  .counts { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.75rem; }
+  .counts span { border: 1px solid var(--line); border-radius: 999px; padding: 0.2rem 0.55rem; font-size: 0.75rem; color: var(--muted); }
+  .note { font-size: 0.75rem; color: var(--muted); margin-top: 1rem; }
+  .err { color: #b42318; padding: 1rem; }
+  a.back { color: var(--accent); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1 id="title">Village projects</h1>
+    <p class="sub" id="blurb">Switch Map Twin packs. Geometry local; telemetry on demand.</p>
+    <p class="note" style="margin-top:0.4rem"><a class="back" href="/">← Worldline sim (Voundou)</a></p>
+  </div>
+  <label class="site-pick">Village project
+    <select id="site" aria-label="Village project"></select>
+  </label>
+</header>
+<div class="layout" id="app" hidden>
+  <aside class="panel" id="controls"></aside>
+  <main>
+    <div class="panel">
+      <div id="lod" class="lod"></div>
+      <svg class="plan" id="plan" viewBox="0 0 720 520" role="img" aria-label="Village Utility Network plan"></svg>
+      <div class="legend">
+        <span class="l-trunk">trunk</span>
+        <span class="l-pri">primary</span>
+        <span class="l-sec">secondary</span>
+        <span class="l-svc">service</span>
+        <span>diamond junction · circle device · dashed ring = API feed</span>
+      </div>
+      <div class="detail" id="detail"></div>
+      <div class="counts" id="counts"></div>
+      <p class="note" id="packNote"></p>
+    </div>
+  </main>
+</div>
+<p class="err" id="bootErr" hidden></p>
+<script>
+const LAYER_META = [
+  { key: "subnetworks", label: "Subnetworks", file: "network/subnetworks.geojson" },
+  { key: "structure", label: "Structure", file: "network/structure.geojson" },
+  { key: "lines", label: "Electric lines", file: "network/electric-lines.geojson" },
+  { key: "junctions", label: "Electric junctions", file: "network/electric-junctions.geojson" },
+  { key: "devices", label: "Electric devices", file: "network/electric-devices.geojson" },
+  { key: "associations", label: "Associations (trace)", file: "network/associations.json" },
+  { key: "feeds", label: "API feed bindings", file: "feeds/registry.json" },
+];
+
+const COLORS = { trunk: "#0b6e4f", primary: "#1d4e89", secondary: "#7a4419", service: "#6b2d5c",
+  island: "#3d5a3d", feeder: "#1d4e89", meter: "#6b2d5c", ems: "#0b6e4f", gen: "#3d5a3d", default: "#1d4e89", accent: "#0b6e4f" };
+
+let CATALOG = null;
+let PACK = null;
+let feedMap = new Map();
+let B = { minX: -10, maxX: 10, minZ: -10, maxZ: 10 };
+const state = {
+  layers: Object.fromEntries(LAYER_META.map(l => [l.key, true])),
+  feeder: null,
+  selected: null,
+};
+
+function qsSite() {
+  return new URLSearchParams(location.search).get("site") || "safari-park-casino";
+}
+
+async function loadCatalog() {
+  const res = await fetch("./catalog.json");
+  if (!res.ok) throw new Error("catalog.json HTTP " + res.status);
+  return res.json();
+}
+
+async function loadPack(path) {
+  const base = path.startsWith("/") ? path : "/" + path.replace(/^\.\//, "");
+  const root = base.replace(/\/$/, "");
+  async function j(rel) {
+    const r = await fetch(root + "/" + rel);
+    if (!r.ok) throw new Error(rel + " HTTP " + r.status);
+    return r.json();
+  }
+  const village = await j("village.json");
+  const structure = await j("network/structure.geojson");
+  const devices = await j("network/electric-devices.geojson");
+  const junctions = await j("network/electric-junctions.geojson");
+  const lines = await j("network/electric-lines.geojson");
+  const subnetworks = await j("network/subnetworks.geojson");
+  const associations = await j("network/associations.json");
+  const feeds = await j("feeds/registry.json");
+  return {
+    village,
+    structure: structure.features,
+    devices: devices.features,
+    junctions: junctions.features,
+    lines: lines.features,
+    subnetworks: subnetworks.features,
+    associations,
+    feeds,
+    root,
+  };
+}
+
+function xz(f) {
+  const p = f.properties || {};
+  if (typeof p.x === "number") return { x: p.x, z: p.z };
+  if (f.geometry?.type === "Point") return { x: f.geometry.coordinates[0], z: f.geometry.coordinates[1] };
+  return null;
+}
+
+function recomputeBounds() {
+  const xs = [], zs = [];
+  for (const f of [...PACK.structure, ...PACK.devices, ...PACK.junctions]) {
+    const p = xz(f); if (p) { xs.push(p.x); zs.push(p.z); }
+  }
+  for (const f of PACK.lines) for (const c of f.geometry.coordinates) { xs.push(c[0]); zs.push(c[1]); }
+  B = { minX: Math.min(...xs) - 4, maxX: Math.max(...xs) + 4, minZ: Math.min(...zs) - 4, maxZ: Math.max(...zs) + 4 };
+}
+
+const W = 720, H = 520, pad = 28;
+function project(x, z) {
+  const sx = (W - 2 * pad) / (B.maxX - B.minX);
+  const sz = (H - 2 * pad) / (B.maxZ - B.minZ);
+  const s = Math.min(sx, sz);
+  return { px: pad + (x - B.minX) * s, py: H - pad - (z - B.minZ) * s };
+}
+
+function inScope(sn) {
+  if (!state.feeder) return true;
+  if (!sn || sn === "island-1") return true;
+  return sn === state.feeder;
+}
+
+function el(tag, attrs = {}, kids = []) {
+  const n = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v === undefined) continue;
+    n.setAttribute(k, v);
+  }
+  for (const c of kids) n.appendChild(c);
+  return n;
+}
+
+function feederButtons() {
+  const feeders = PACK.subnetworks.filter(f => f.properties.assetClass === "feeder");
+  return [["", "LOD 1 · whole village"], ...feeders.map(f => [f.id, "LOD 2 · " + (f.properties.label || f.id)])];
+}
+
+function renderControls() {
+  const box = document.getElementById("controls");
+  box.innerHTML = "<h2>Layers</h2>";
+  for (const L of LAYER_META) {
+    const lab = document.createElement("label");
+    lab.className = "layer";
+    lab.innerHTML = `<input type="checkbox" ${state.layers[L.key] ? "checked" : ""} data-k="${L.key}"><span>${L.label}<code>${L.file}</code></span>`;
+    lab.querySelector("input").onchange = (e) => { state.layers[L.key] = e.target.checked; draw(); };
+    box.appendChild(lab);
+  }
+  const lod = document.getElementById("lod");
+  lod.innerHTML = "";
+  feederButtons().forEach(([id, label]) => {
+    const b = document.createElement("button");
+    b.textContent = label;
+    const active = id === "" ? state.feeder === null : state.feeder === id;
+    b.className = active ? "on" : "";
+    b.onclick = () => { state.feeder = id || null; state.selected = null; renderControls(); draw(); };
+    lod.appendChild(b);
+  });
+}
+
+function draw() {
+  const svg = document.getElementById("plan");
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+  if (state.layers.subnetworks) {
+    for (const f of PACK.subnetworks) {
+      if (!inScope(f.id)) continue;
+      const ring = f.geometry.coordinates[0];
+      const d = ring.map((c, i) => { const { px, py } = project(c[0], c[1]); return `${i ? "L" : "M"}${px},${py}`; }).join(" ") + " Z";
+      const isIsland = f.properties.assetClass === "island";
+      svg.appendChild(el("path", { d, fill: isIsland ? COLORS.island : COLORS.feeder, "fill-opacity": "0.12",
+        stroke: isIsland ? COLORS.island : COLORS.feeder, "stroke-width": "1.5",
+        "stroke-dasharray": isIsland ? "4 3" : undefined }));
+    }
+  }
+
+  if (state.layers.lines) {
+    for (const f of PACK.lines) {
+      if (!inScope(f.properties.subnetworkId)) continue;
+      const ac = f.properties.assetClass;
+      const d = f.geometry.coordinates.map((c, i) => { const { px, py } = project(c[0], c[1]); return `${i ? "L" : "M"}${px},${py}`; }).join(" ");
+      const w = ac === "trunk" ? 3.5 : ac === "primary" ? 2.5 : ac === "secondary" ? 2 : 1.5;
+      svg.appendChild(el("path", { d, fill: "none", stroke: COLORS[ac] || COLORS.default, "stroke-width": String(w), "stroke-linecap": "round" }));
+    }
+  }
+
+  if (state.layers.associations) {
+    const nodes = new Map();
+    for (const f of [...PACK.devices, ...PACK.junctions]) { const p = xz(f); if (p) nodes.set(f.id, p); }
+    for (const e of PACK.associations.connectivity) {
+      if (!inScope(e.subnetworkId)) continue;
+      const a = nodes.get(e.fromId), b = nodes.get(e.toId);
+      if (!a || !b) continue;
+      const A = project(a.x, a.z), B = project(b.x, b.z);
+      svg.appendChild(el("line", { x1: A.px, y1: A.py, x2: B.px, y2: B.py, stroke: "#888", "stroke-width": "1", "stroke-dasharray": "2 3", opacity: "0.55" }));
+    }
+  }
+
+  if (state.layers.structure) {
+    for (const f of PACK.structure) {
+      if (!inScope(f.properties.subnetworkId)) continue;
+      const p = xz(f); if (!p) continue;
+      const { px, py } = project(p.x, p.z);
+      const ac = f.properties.assetClass;
+      if (ac === "pole") {
+        svg.appendChild(el("line", { x1: px, y1: py - 10, x2: px, y2: py + 4, stroke: "#1a1a1a", "stroke-width": "2" }));
+        svg.appendChild(el("circle", { cx: px, cy: py - 10, r: 2.5, fill: "#1a1a1a" }));
+      } else if (ac === "cabinet") {
+        svg.appendChild(el("rect", { x: px - 7, y: py - 6, width: 14, height: 12, fill: "none", stroke: "#4a4a4a", "stroke-width": "1.5" }));
+      } else {
+        svg.appendChild(el("rect", { x: px - 8, y: py - 5, width: 16, height: 10, rx: 2, fill: "none", stroke: "#888", "stroke-width": "1" }));
+      }
+    }
+  }
+
+  if (state.layers.junctions) {
+    for (const f of PACK.junctions) {
+      if (!inScope(f.properties.subnetworkId)) continue;
+      const p = xz(f); if (!p) continue;
+      const { px, py } = project(p.x, p.z);
+      const g = el("g", { style: "cursor:pointer" });
+      g.addEventListener("click", () => { state.selected = f.id; draw(); showDetail(); });
+      g.appendChild(el("rect", { x: px - 4, y: py - 4, width: 8, height: 8, fill: state.selected === f.id ? COLORS.accent : "#fafaf8",
+        stroke: COLORS.secondary, "stroke-width": "1.5", transform: `rotate(45 ${px} ${py})` }));
+      svg.appendChild(g);
+    }
+  }
+
+  if (state.layers.devices) {
+    for (const f of PACK.devices) {
+      if (!inScope(f.properties.subnetworkId)) continue;
+      const p = xz(f); if (!p) continue;
+      const { px, py } = project(p.x, p.z);
+      const ac = f.properties.assetClass;
+      const r = (ac === "gen" || ac === "station") ? 9 : (ac === "xfmr" || ac === "ems" || ac === "bess" || ac === "inverter") ? 7 : ac === "meter" ? 5 : 6;
+      const fill = ac === "meter" ? COLORS.meter : (ac === "ems" || ac === "dtm") ? COLORS.ems : (ac === "gen" || ac === "bess" || ac === "inverter") ? COLORS.gen : COLORS.default;
+      const g = el("g", { style: "cursor:pointer" });
+      g.addEventListener("click", () => { state.selected = f.id; draw(); showDetail(); });
+      if (state.layers.feeds && feedMap.has(f.id)) {
+        g.appendChild(el("circle", { cx: px, cy: py, r: r + 5, fill: "none", stroke: "#0b6e4f", "stroke-width": "1.5", "stroke-dasharray": "3 2", opacity: "0.85" }));
+      }
+      g.appendChild(el("circle", { cx: px, cy: py, r, fill: state.selected === f.id ? "#0b6e4f" : fill, stroke: "#1a1a1a", "stroke-width": state.selected === f.id ? "2" : "1" }));
+      if (["gen", "station", "ems", "xfmr", "meter"].includes(ac)) {
+        const t = el("text", { x: px + r + 4, y: py + 3, fill: "#1a1a1a", "font-size": "10" });
+        t.textContent = (f.properties.label || ac).split(" ")[0];
+        g.appendChild(t);
+      }
+      svg.appendChild(g);
+    }
+  }
+
+  for (const f of PACK.subnetworks) {
+    if (!inScope(f.id) && f.id !== "island-1") continue;
+    const { px, py } = project(f.properties.x, f.properties.z);
+    const t = el("text", { x: px, y: py - 14, "text-anchor": "middle", fill: "#5c5c5c", "font-size": "11" });
+    t.textContent = f.properties.label;
+    svg.appendChild(t);
+  }
+
+  document.getElementById("counts").innerHTML = [
+    ["structure", PACK.structure.length],
+    ["devices", PACK.devices.length],
+    ["junctions", PACK.junctions.length],
+    ["lines", PACK.lines.length],
+    ["subnetworks", PACK.subnetworks.length],
+    ["connectivity", PACK.associations.connectivity.length],
+    ["feeds", PACK.feeds.bindings.length],
+  ].map(([k, n]) => `<span>${k} ${n}</span>`).join("");
+
+  showDetail();
+}
+
+function showDetail() {
+  const box = document.getElementById("detail");
+  if (!state.selected) { box.innerHTML = "<em style='color:var(--muted)'>Click a device or junction.</em>"; return; }
+  const all = [...PACK.devices, ...PACK.junctions, ...PACK.structure, ...PACK.subnetworks, ...PACK.lines];
+  const feat = all.find(f => f.id === state.selected);
+  const feed = feedMap.get(state.selected);
+  const neighbors = PACK.associations.connectivity
+    .filter(e => e.fromId === state.selected || e.toId === state.selected)
+    .map(e => e.fromId === state.selected ? `→ ${e.toId}` : `← ${e.fromId}`);
+  const p = feat?.properties || {};
+  box.innerHTML = `<strong>${p.label || state.selected}</strong>
+    · <code>${p.assetClass || feat?.geometry?.type}</code>
+    ${p.subnetworkId ? ` · subnetwork <code>${p.subnetworkId}</code>` : ""}
+    ${p.osmWayId ? ` · OSM <code>way/${p.osmWayId}</code>` : ""}
+    ${p.phase ? ` · phase ${p.phase}` : ""}
+    ${feed ? `<div style="margin-top:0.4rem"><strong>Feed · LOD ${feed.lod}</strong>${feed.lod === 3 ? " (meter — query only when selected)" : " (feeder / plant)"}<br>${feed.feeds.map(fd =>
+      `${fd.kind}${fd.topic ? " · " + fd.topic : ""}${fd.scenarioId ? " · " + fd.scenarioId : ""}`
+    ).join("<br>")}</div>` : `<div style="margin-top:0.4rem;color:var(--muted)">No live feed (geometry / structure only).</div>`}
+    ${neighbors.length ? `<div style="margin-top:0.35rem;color:var(--muted);font-size:0.8rem">Trace: ${neighbors.join(" · ")}</div>` : ""}`;
+}
+
+function fillSiteSelect(activeId) {
+  const sel = document.getElementById("site");
+  sel.innerHTML = "";
+  for (const s of CATALOG.sites) {
+    const opt = document.createElement("option");
+    opt.value = s.id;
+    opt.textContent = s.name;
+    if (s.id === activeId) opt.selected = true;
+    sel.appendChild(opt);
+  }
+  sel.onchange = () => {
+    const s = CATALOG.sites.find(x => x.id === sel.value);
+    if (!s) return;
+    if (s.kind === "worldline") {
+      location.href = "/";
+      return;
+    }
+    location.href = new URL(`index.html?site=${encodeURIComponent(s.id)}`, location.href).href;
+  };
+}
+
+async function boot() {
+  const err = document.getElementById("bootErr");
+  try {
+    CATALOG = await loadCatalog();
+    const id = qsSite();
+    fillSiteSelect(id);
+    const site = CATALOG.sites.find(s => s.id === id) || CATALOG.sites.find(s => s.kind === "pack");
+    if (!site) throw new Error("no pack sites in catalog");
+    if (site.kind === "worldline") {
+      location.href = site.href || "/";
+      return;
+    }
+    document.getElementById("title").textContent = site.name;
+    document.getElementById("blurb").textContent = site.blurb || "";
+    PACK = await loadPack(site.path);
+    feedMap = new Map(PACK.feeds.bindings.map(b => [b.assetId, b]));
+    state.feeder = null;
+    state.selected = null;
+    recomputeBounds();
+    document.getElementById("packNote").textContent =
+      `Pack: ${PACK.root} · status ${PACK.village.status || "—"} · ${PACK.village.openami?.notes || ""}`;
+    document.getElementById("app").hidden = false;
+    renderControls();
+    draw();
+  } catch (e) {
+    err.hidden = false;
+    err.textContent = "Failed to load village project: " + e.message;
+  }
+}
+
+boot();
+</script>
+</body>
+</html>

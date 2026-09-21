@@ -18,6 +18,6 @@
   ],
   "openami": {
     "spatialSchema": "OpenAMI-aligned GeoJSON (ISV)",
-    "notes": "All UN-style layers populated for LOD / feed binding demo."
+    "notes": "Map Twin sample pack: every Essential layer filled; Nice-to-have layers (junctions, enclosure, disconnect, recloser, neutral, terminals, containment/attachment, feeds/registry) also sampled."
   }
 }

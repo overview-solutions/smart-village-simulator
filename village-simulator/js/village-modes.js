@@ -41,7 +41,7 @@ export const MODE_HIDE = {
     sms: true,
     sync: true,
     mesh: false,
-    worldline: false,
+    worldline: true,
     rf: false,
     phase_xfer: false,
     leak: false,
@@ -59,7 +59,7 @@ export const MODE_META = {
   },
   build: {
     label: "Build",
-    hint: "Place assets · red grid = unmapped · green = API configured.",
+    hint: "Place assets · red grid = unmapped · green = API configured. No worldlines / playhead.",
     role: "ops",
     scheme: "asset",
     lineGrad: "capacity",
@@ -67,7 +67,7 @@ export const MODE_META = {
   },
   maintenance: {
     label: "Maintenance",
-    hint: "Trace faults — leakage, cutoffs, mesh, RF, line health.",
+    hint: "Asset health · faults, leaks, mesh — no playhead / time feeds.",
     role: "tech",
     scheme: "capacity",
     lineGrad: "pf",

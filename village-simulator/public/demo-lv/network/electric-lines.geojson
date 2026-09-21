@@ -10,7 +10,8 @@
         "assetClass": "trunk",
         "assetGroup": "electric_line",
         "subnetworkId": "island-1",
-        "label": "gen\u2192station"
+        "label": "gen\u2192station",
+        "globalId": "b2dc21f3-427d-56b3-bd3b-b987c2a20afa"
       },
       "geometry": {
         "type": "LineString",
@@ -38,7 +39,8 @@
         "assetClass": "trunk",
         "assetGroup": "electric_line",
         "subnetworkId": "island-1",
-        "label": "bess link"
+        "label": "bess link",
+        "globalId": "6ae0d156-ee00-557c-bbb4-8b9e03021e9b"
       },
       "geometry": {
         "type": "LineString",
@@ -62,7 +64,8 @@
         "assetClass": "trunk",
         "assetGroup": "electric_line",
         "subnetworkId": "island-1",
-        "label": "trunk\u2192west"
+        "label": "trunk\u2192west",
+        "globalId": "4f7e6b75-97e8-5d99-bc5d-fe7ffbac04ca"
       },
       "geometry": {
         "type": "LineString",
@@ -90,7 +93,8 @@
         "assetClass": "trunk",
         "assetGroup": "electric_line",
         "subnetworkId": "island-1",
-        "label": "trunk\u2192market"
+        "label": "trunk\u2192market",
+        "globalId": "3596e54d-f7d2-5c81-bc29-cfaadee079d5"
       },
       "geometry": {
         "type": "LineString",
@@ -118,7 +122,8 @@
         "assetClass": "primary",
         "assetGroup": "electric_line",
         "subnetworkId": "f-west",
-        "label": "west primary"
+        "label": "west primary",
+        "globalId": "9611bd38-93e5-505f-8697-274945c7f6a3"
       },
       "geometry": {
         "type": "LineString",
@@ -154,7 +159,8 @@
         "assetClass": "secondary",
         "assetGroup": "electric_line",
         "subnetworkId": "f-west",
-        "label": "west secondary"
+        "label": "west secondary",
+        "globalId": "287956d4-ee30-50cd-b384-c7097b8c25ef"
       },
       "geometry": {
         "type": "LineString",
@@ -182,7 +188,8 @@
         "assetClass": "service",
         "assetGroup": "electric_line",
         "subnetworkId": "f-west",
-        "label": "service Leila"
+        "label": "service Leila",
+        "globalId": "b6481f95-858d-5731-b9e7-4ccfa1bd5bb2"
       },
       "geometry": {
         "type": "LineString",
@@ -206,7 +213,8 @@
         "assetClass": "service",
         "assetGroup": "electric_line",
         "subnetworkId": "f-west",
-        "label": "service Musa"
+        "label": "service Musa",
+        "globalId": "8cfb67ad-dc4d-5371-8e33-bce37b4597d8"
       },
       "geometry": {
         "type": "LineString",
@@ -230,7 +238,8 @@
         "assetClass": "service",
         "assetGroup": "electric_line",
         "subnetworkId": "f-west",
-        "label": "service Hope"
+        "label": "service Hope",
+        "globalId": "902f4813-18e6-5d84-9efd-2a0ea6be8908"
       },
       "geometry": {
         "type": "LineString",
@@ -254,7 +263,8 @@
         "assetClass": "primary",
         "assetGroup": "electric_line",
         "subnetworkId": "f-market",
-        "label": "market primary"
+        "label": "market primary",
+        "globalId": "352b21ff-bd77-5925-ac0f-168d0619c6aa"
       },
       "geometry": {
         "type": "LineString",
@@ -286,7 +296,8 @@
         "assetClass": "secondary",
         "assetGroup": "electric_line",
         "subnetworkId": "f-market",
-        "label": "market secondary"
+        "label": "market secondary",
+        "globalId": "26b52a1b-412e-54b1-bf69-7c0030f4a2e4"
       },
       "geometry": {
         "type": "LineString",
@@ -314,7 +325,8 @@
         "assetClass": "service",
         "assetGroup": "electric_line",
         "subnetworkId": "f-market",
-        "label": "service kiosk"
+        "label": "service kiosk",
+        "globalId": "176c3f2b-fadb-5a4a-b0d4-ff4866cb501c"
       },
       "geometry": {
         "type": "LineString",
@@ -338,7 +350,8 @@
         "assetClass": "service",
         "assetGroup": "electric_line",
         "subnetworkId": "f-market",
-        "label": "service shop"
+        "label": "service shop",
+        "globalId": "afd08b91-5d97-540d-87a8-f8afbf015415"
       },
       "geometry": {
         "type": "LineString",
@@ -350,6 +363,36 @@
           [
             6,
             8
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-w-neut",
+      "properties": {
+        "id": "ln-w-neut",
+        "assetClass": "neutral",
+        "assetGroup": "electric_line",
+        "subnetworkId": "f-west",
+        "label": "west neutral (sample)",
+        "phase": "N",
+        "globalId": "b212479c-51c3-5b74-ba44-4e17458d26bd"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -38,
+            19.2
+          ],
+          [
+            -37.5,
+            19.5
+          ],
+          [
+            -41,
+            24
           ]
         ]
       }

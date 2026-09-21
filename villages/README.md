@@ -1,11 +1,21 @@
 # Village microgrid packs — GeoJSON Utility Network (open)
 
-Per-village folder packs for **map + topology trace + API bindings**.
-Circaevum / Locus stay separate: Locus draws; this tree owns energy topology.
+**Offline browse:** use the [ISV wiki](https://github.com/overview-solutions/isv-ai-wiki#offline-in-one-go-start-here) (`./preview.sh`) — Village Simulator embed includes schematic village data. This folder is for **live** pack / UN GeoJSON work in `smart-village-simulator`.
+
+**Human map of this contract:** wiki page `meter-village-geojson-un.html` → `#village-metering/village-geojson-un` (Map Twin essential vs nice-to-have layers).
+
+Per-village folder packs for **Map Twin** (geometry + topology) and optional
+**Live Twin** (`feeds/registry.json` API bindings). Circaevum / Locus stay
+separate: Locus draws; this tree owns energy topology.
 
 Model target: **Esri Utility Network semantics** (devices, junctions, lines,
 terminals, subnetworks, associations) expressed as **GeoJSON + JSON**, OpenAMI-
 aligned — no ArcGIS lock-in. See wiki standards note (Esri UN ↔ OpenAMI GeoJSON).
+
+**Sample layers:** `demo-lv/` ships at least one feature in every Essential file
+and every Nice-to-have class the schema lists (junctions, enclosure, disconnect,
+recloser, neutral, terminals, containment / attachment, feed bindings). Copy it
+or start from `_template/`.
 
 ## LOD (fetch contract)
 
@@ -46,8 +56,9 @@ export** until a pack migrates Voundou into `villages/voundou/`. Do not fork bot
 | Subnetwork | `network/subnetworks.geojson` | Point or Polygon | `island`, `feeder` |
 | Connectivity / containment | `network/associations.json` | — | edges only |
 
-Every feature: stable `id` (string), optional `globalId` (UUID), `subnetworkId`
-(feeder), `terminals[]` when multi-port (xfmr, EMS).
+Every feature: stable `id` (string), `assetClass`, `assetGroup`, `subnetworkId`
+(self id on island/feeder features; feeder id on everything else). Optional
+`globalId` (UUID), `terminals[]` when multi-port (xfmr, EMS).
 
 Trace = walk `associations.json` `connectivity` edges (± direction) within one
 `subnetworkId`, then climb to island via feeder head → station.
@@ -60,9 +71,35 @@ No secrets in pack — refs to env / leaf config only.
 
 ## Demo pack + viz
 
-`demo-lv/` — small hypothetical island + 2 feeders with **every** layer filled.
-Open `demo-lv/layers.html` in a browser (or Cursor canvas `demo-lv-microgrid-layers`)
-to toggle layers / LOD / feeder and click devices for feed bindings.
+`demo-lv/` — hypothetical island + two feeders; **sample of every Essential and
+Nice-to-have layer**. Open `villages/demo-lv/index.html` or
+`http://localhost:5176/demo-lv/` (Vite serves `village-simulator/public/demo-lv/`).
+Layer toggles · feeder select = LOD 2 · meter click = LOD 3 feed binding.
+
+After editing pack JSON, rebuild the embedded `PACK` and sync public:
+
+```sh
+npm run villages:sync-demo
+```
+
+
+## Switch sites in the simulator
+
+Catalog: [`catalog.json`](catalog.json). Hub UI: `/villages/index.html?site=<id>` (Vite).
+
+| id | Kind |
+|----|------|
+| `voundou` | Worldline prepaid day (`/`) |
+| `demo-lv` | Map Twin pack (`/demo-lv/` or hub) |
+| `safari-park-casino` | Map Twin pack — Nairobi workshop |
+
+Main sim toolbar **Site:** dropdown jumps to the hub for pack sites. After editing a pack:
+
+```sh
+npm run villages:sync
+# demo-lv embedded PACK still:
+npm run villages:sync-demo
+```
 
 ## New village
 
@@ -70,10 +107,5 @@ to toggle layers / LOD / feeder and click devices for feed bindings.
 cp -R villages/_template villages/<siteId>
 # edit village.json origin + network GeoJSON
 # register feeds/registry.json ids to match feature ids
+# or copy villages/demo-lv as a filled sample and rename
 ```
-
-## Demo pack + viz
-
-`demo-lv/` — hypothetical island + two feeders with **every** layer filled.
-Open `villages/demo-lv/index.html` (embedded data) or `npx serve villages/demo-lv`.
-Layer toggles · feeder select = LOD 2 · meter click = LOD 3 feed binding.

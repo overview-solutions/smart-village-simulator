@@ -1,0 +1,573 @@
+{
+  "type": "FeatureCollection",
+  "name": "electric-junctions",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "j-main",
+      "properties": {
+        "id": "j-main",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": -11.43,
+        "z": -19.65,
+        "subnetworkId": "f-main",
+        "label": "Central feeder \u00b7 spine mid",
+        "globalId": "ec02a1cb-5ba6-5925-84f9-d2c93224498c"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -11.43,
+          -19.65
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-12",
+      "properties": {
+        "id": "tap-12",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -67.69,
+        "z": -116.35,
+        "subnetworkId": "f-main",
+        "label": "Tap \u00b7 North campus B",
+        "globalId": "c43f53ef-c5f0-5a8e-a920-74356bed5171"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -67.69,
+          -116.35
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-12",
+      "properties": {
+        "id": "sp-12",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -49.34,
+        "z": -126.23,
+        "subnetworkId": "f-main",
+        "label": "SP North campus B",
+        "globalId": "d41ad742-e6a0-5d79-b66c-296d9d095d78"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -49.34,
+          -126.23
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-9",
+      "properties": {
+        "id": "tap-9",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -46.85,
+        "z": -80.53,
+        "subnetworkId": "f-main",
+        "label": "Tap \u00b7 West service block",
+        "globalId": "184c1331-ad3d-5ca7-93b3-82a5bd37c526"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -46.85,
+          -80.53
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-9",
+      "properties": {
+        "id": "sp-9",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -148.17,
+        "z": -20.779999999999998,
+        "subnetworkId": "f-main",
+        "label": "SP West service block",
+        "globalId": "f103be41-8279-590b-888a-42213f778a7e"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -148.17,
+          -20.779999999999998
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-7",
+      "properties": {
+        "id": "tap-7",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -45.57,
+        "z": -78.33,
+        "subnetworkId": "f-main",
+        "label": "Tap \u00b7 Northwest lodge",
+        "globalId": "f23678f6-30a8-549b-bee2-ab467ffa30b8"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -45.57,
+          -78.33
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-7",
+      "properties": {
+        "id": "sp-7",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -89.87,
+        "z": -51.760000000000005,
+        "subnetworkId": "f-main",
+        "label": "SP Northwest lodge",
+        "globalId": "d72ba521-b906-54b2-9936-192dc5476e6d"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -89.87,
+          -51.760000000000005
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-11",
+      "properties": {
+        "id": "tap-11",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -38.89,
+        "z": -66.85,
+        "subnetworkId": "f-main",
+        "label": "Tap \u00b7 North campus A",
+        "globalId": "f611499f-5d7c-5acf-87db-31ea537178f1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -38.89,
+          -66.85
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-11",
+      "properties": {
+        "id": "sp-11",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 33.37,
+        "z": -108.09,
+        "subnetworkId": "f-main",
+        "label": "SP North campus A",
+        "globalId": "4295d277-b188-57ff-a52f-5f4e0b981523"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.37,
+          -108.09
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-6",
+      "properties": {
+        "id": "tap-6",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -20.15,
+        "z": -34.63,
+        "subnetworkId": "f-main",
+        "label": "Tap \u00b7 North conference",
+        "globalId": "5578875f-9aa1-5f01-b77c-fc401d3f94d9"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -20.15,
+          -34.63
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-6",
+      "properties": {
+        "id": "sp-6",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -3.73,
+        "z": -43.38,
+        "subnetworkId": "f-main",
+        "label": "SP North conference",
+        "globalId": "abf544b2-ee57-5d8b-9ff3-dbc9ef7fa663"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.73,
+          -43.38
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-4",
+      "properties": {
+        "id": "tap-4",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -14.56,
+        "z": -25.02,
+        "subnetworkId": "f-main",
+        "label": "Tap \u00b7 West garden block",
+        "globalId": "ec48adb7-ecfc-59ca-86c3-a53ed56fc28a"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -14.56,
+          -25.02
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-4",
+      "properties": {
+        "id": "sp-4",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -100.32,
+        "z": 25.68,
+        "subnetworkId": "f-main",
+        "label": "SP West garden block",
+        "globalId": "6d95ee3c-0b6f-5fba-b692-a3eed637c6ec"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -100.32,
+          25.68
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-10",
+      "properties": {
+        "id": "tap-10",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -11.43,
+        "z": -19.65,
+        "subnetworkId": "f-main",
+        "label": "Tap \u00b7 Far north lodge",
+        "globalId": "10b6fafc-c7dd-5b11-9ede-de0337e46f3d"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -11.43,
+          -19.65
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-10",
+      "properties": {
+        "id": "sp-10",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 87.49,
+        "z": -76.4,
+        "subnetworkId": "f-main",
+        "label": "SP Far north lodge",
+        "globalId": "54c2f69d-aad9-5236-bfb6-eab8a7992310"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          87.49,
+          -76.4
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-8",
+      "properties": {
+        "id": "tap-8",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": 6.65,
+        "z": 11.43,
+        "subnetworkId": "f-main",
+        "label": "Tap \u00b7 Northeast annex",
+        "globalId": "5003ecf6-70ad-5e77-9c22-fc92f689a18b"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.65,
+          11.43
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-8",
+      "properties": {
+        "id": "sp-8",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 74.83,
+        "z": -27.439999999999998,
+        "subnetworkId": "f-main",
+        "label": "SP Northeast annex",
+        "globalId": "7a77f1ae-afac-5848-8fd3-560758f6e221"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          74.83,
+          -27.439999999999998
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-0",
+      "properties": {
+        "id": "tap-0",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": 36.69,
+        "z": 63.07,
+        "subnetworkId": "f-main",
+        "label": "Tap \u00b7 Main hotel wing",
+        "globalId": "532ee879-297d-5180-8894-cded1d2f9b64"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.69,
+          63.07
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-0",
+      "properties": {
+        "id": "sp-0",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 12.13,
+        "z": 78.16,
+        "subnetworkId": "f-main",
+        "label": "SP Main hotel wing",
+        "globalId": "2b6daa33-1e2f-5b4a-919e-7f75e74b1a08"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.13,
+          78.16
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-5",
+      "properties": {
+        "id": "tap-5",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": 39.49,
+        "z": 67.88,
+        "subnetworkId": "f-main",
+        "label": "Tap \u00b7 Northeast lodge",
+        "globalId": "4fed2f25-253f-521b-b98b-24e1ef8c85f9"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.49,
+          67.88
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-5",
+      "properties": {
+        "id": "sp-5",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 82.3,
+        "z": 43.769999999999996,
+        "subnetworkId": "f-main",
+        "label": "SP Northeast lodge",
+        "globalId": "44eb8be5-90f6-5793-a323-16145e7bda0b"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          82.3,
+          43.769999999999996
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-1",
+      "properties": {
+        "id": "tap-1",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": 44.68,
+        "z": 76.8,
+        "subnetworkId": "f-main",
+        "label": "Tap \u00b7 East wing A",
+        "globalId": "2f4a2d48-c2e4-5115-be96-e007e8e54875"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.68,
+          76.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-1",
+      "properties": {
+        "id": "sp-1",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 29.34,
+        "z": 86.52,
+        "subnetworkId": "f-main",
+        "label": "SP East wing A",
+        "globalId": "fcffab69-490c-5dc0-8fed-2a4a10f33c5a"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.34,
+          86.52
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-3",
+      "properties": {
+        "id": "tap-3",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": 50.69,
+        "z": 87.13,
+        "subnetworkId": "f-main",
+        "label": "Tap \u00b7 East wing B",
+        "globalId": "1d7f55c7-cc5d-558d-ba87-f5a02146fec4"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          50.69,
+          87.13
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-3",
+      "properties": {
+        "id": "sp-3",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 50.69,
+        "z": 87.92999999999999,
+        "subnetworkId": "f-main",
+        "label": "SP East wing B",
+        "globalId": "7f351260-6dd6-5526-b13a-c682e5caf41c"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          50.69,
+          87.92999999999999
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-2",
+      "properties": {
+        "id": "tap-2",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": 66.94,
+        "z": 115.05,
+        "subnetworkId": "f-main",
+        "label": "Tap \u00b7 Casino / pavilion cluster",
+        "globalId": "76104ab4-2df6-5e1a-8f41-cc7911f824a8"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          66.94,
+          115.05
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-2",
+      "properties": {
+        "id": "sp-2",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 21.27,
+        "z": 142.42000000000002,
+        "subnetworkId": "f-main",
+        "label": "SP Casino / pavilion cluster",
+        "globalId": "8fa26af8-d4ff-5ea9-aec2-f9f783f1223d"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.27,
+          142.42000000000002
+        ]
+      }
+    }
+  ]
+}

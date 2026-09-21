@@ -10,8 +10,9 @@ This repo **is** the village app. Source of the extract: `CIR/yang/locus/village
 **live static embed** until a Pages cutover is verified. Do not keep editing both.
 
 ```sh
+# One-click macOS: double-click Start Simulator.command
 npm install
-npm start   # :5176
+npm start   # :5176 (browser opens)
 npm test
 ```
 
@@ -47,6 +48,8 @@ Never copy private contacts, prices, NDA text, or CIR `internal/` here.
 | `village-simulator/js/geo.js` | Village GeoJSON; conversion from Locus |
 | `scripts/write-village-geojson.js` | Writes `grid.geojson` (legacy one-blob export) |
 | `villages/` | Per-site UN-style GeoJSON packs + API bindings (LOD fetch) — see `villages/README.md` |
+| `villages/catalog.json` | Site switcher catalog (Voundou · demo-lv · safari-park-casino) |
+| `village-simulator/public/villages/` | Vite-served hub `/villages/index.html?site=` + pack copies (`npm run villages:sync`) |
 | `village-simulator/js/village-build.js` | Build palette + house/EMS map + feed config |
 | `village-simulator/js/village-candidates.js` | Africa KE/ZM candidate layer on zoom-out |
 | `tests/` | Geo round-trip + TimeContext playhead + minigrid candidates |

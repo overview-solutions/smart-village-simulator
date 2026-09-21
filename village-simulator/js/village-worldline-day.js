@@ -3,6 +3,7 @@ import { buildProductiveUse } from "./productive-use-view.js";
 import { createVillageMap } from "./village-basemap.js";
 import { createBuildMode, FEED_KINDS, feedConfigComplete, buildSvgIcon } from "./village-build.js";
 import { createCandidateOverlay } from "./village-candidates.js";
+import { buildKpiReport, kpiHit, fmtKpi } from "./village-kpi.js";
 import { MODE_HIDE, MODE_META, bindModeSwitcher } from "./village-modes.js";
 import * as THREE from "three";
 
@@ -56,7 +57,7 @@ import {
   rfEdges,
   simulateDay,
 } from "./village-worldline-sim.js";
-import { HANG, geoidBlock, ORIGIN, GROUND_SCALE, HEIGHT_SCALE, lonLatToEnu } from "./geo.js";
+import { HANG, geoidBlock, ORIGIN, GROUND_SCALE, HEIGHT_SCALE, lonLatToEnu, enuToLonLat } from "./geo.js";
 import { TimeContext } from "@circaevum/locus/time";
 
 function geoidCollection(features, name = "ISV village schematic") {
@@ -612,8 +613,6 @@ let breakerPick = [];
 let camFly = null;
 let camFeederId = null;
 let camMag = 0;
-const PICK_DRAG_PX = 12;
-let pickPtr = null;
 /** @type {ReturnType<typeof createBuildMode> | null} */
 let buildMode = null;
 /** @type {ReturnType<typeof createCandidateOverlay> | null} */
@@ -991,6 +990,8 @@ async function boot() {
   candidateOverlay?.load();
   fillLedger();
   fillStats();
+  fillKpi();
+  bindKpiUi();
   fillHouses();
   fillGeoid();
   const startMin = applyQuery();
@@ -2824,7 +2825,17 @@ function leakBetween(a, b) {
   );
 }
 
+function quietClockMode() {
+  return appMode === "build" || appMode === "maintenance";
+}
+
+/** Playhead sample for ops only; build/maint freeze midday (no scrub feeds). */
+function feedSampleMin() {
+  return quietClockMode() ? 720 : state.nowMin;
+}
+
 function leakLive(lk) {
+  if (quietClockMode()) return false;
   return !!(lk && state.nowMin >= lk.min && state.nowMin < lk.restore);
 }
 
@@ -2945,6 +2956,7 @@ function updateLeakViz() {
 
 function updateDtmBars() {
   if (!dtmBars.length) return;
+  if (quietClockMode()) return;
   const { last } = loadsAt(state.nowMin);
   const by = {};
   const perF = {};
@@ -3081,7 +3093,8 @@ function updateSelectHalos() {
 }
 
 function colorHardware(loads) {
-  const asset = state.scheme === "asset";
+  const asset = state.scheme === "asset" || appMode === "build";
+  const maint = appMode === "maintenance";
   const fid = activeFeederId();
   const last = loads?.last;
   const byXfmr = loads?.byXfmr || {};
@@ -3092,6 +3105,12 @@ function colorHardware(loads) {
       const rank = state.role === "customer" ? (b.feederId === fid ? 1 : 0) : boardSelectRank(b);
       if (rank <= 0) {
         c = new THREE.Color(asset ? ASSET.board : 0xff6a2a);
+      } else if (maint) {
+        c = healthColor(boardDayHealth(b.id).stress).clone();
+        const leakHit = LEAKS.find(
+          (lk) => lk.feederId === fid && (lk.fromBoardId === b.id || lk.toBoardId === b.id),
+        );
+        if (leakHit) c.lerp(new THREE.Color(COL.leak), 0.24);
       } else {
         c = state.scheme === "feeder" ? feederColorForHouse(b.houseIds?.[0], last) : houseIdsMetricColor(b.houseIds, last);
         const leakHit = LEAKS.find(
@@ -3246,7 +3265,10 @@ function updateLampWindows(last) {
 
 function colorHouses(last) {
   if (!hutMesh || !roofMesh) return;
-  const src = last || loadsAt(state.nowMin).last;
+  const maint = appMode === "maintenance";
+  const quiet = quietClockMode();
+  const healthMap = maint ? ensureHouseHealth() : null;
+  const src = last || loadsAt(feedSampleMin()).last;
   const red = new THREE.Color(COL.outage);
   const roof = new THREE.Color();
   const lamps = state.light === "lamps";
@@ -3254,12 +3276,15 @@ function colorHouses(last) {
   for (let i = 0; i < HOUSE_N; i++) {
     const h = HOUSES[i];
     const r = src[h.id];
-    const out = !!(r?.feederOut || outageHit(h, state.nowMin));
+    const out = !quiet && !!(r?.feederOut || outageHit(h, state.nowMin));
     let c;
-    if (out) c = red.clone();
+    if (maint) {
+      const hh = healthMap[h.id] || computeHouseDayHealth(h.id);
+      c = healthColor(hh.stress).clone();
+    } else if (out) c = red.clone();
     else if (state.scheme === "feeder") c = feederColorForHouse(h.id, src);
     else c = readingMetricColor(r);
-    if (lamps && !out) {
+    if (!quiet && lamps && !out) {
       const on = !!(r?.on && !r?.feederOut);
       if (on) c = c.clone().lerp(lampWarm, 0.28);
       else c = lampDark.clone();
@@ -3268,7 +3293,7 @@ function colorHouses(last) {
     const rank = pick ? houseSelectRank(h) : 1;
     if (pick) tintSelectRank(c, rank);
     hutMesh.setColorAt(i, c);
-    roof.copy(c).multiplyScalar(lamps && !out && !(r?.on) ? 0.45 : 0.78);
+    roof.copy(c).multiplyScalar(!quiet && lamps && !out && !(r?.on) ? 0.45 : 0.78);
     roofMesh.setColorAt(i, roof);
     const p = hutPose[i];
     if (p) {
@@ -3289,20 +3314,22 @@ function colorHouses(last) {
   roofMesh.instanceColor.needsUpdate = true;
   hutMesh.instanceMatrix.needsUpdate = true;
   roofMesh.instanceMatrix.needsUpdate = true;
-  updateLampWindows(src);
+  if (!quietClockMode()) updateLampWindows(src);
 }
 
 function colorPowerLines() {
   if (!powerLineMesh) return;
   _feederColMin = -1;
-  const { last, byFeeder, byXfmr } = loadsAt(state.nowMin);
+  const sample = feedSampleMin();
+  const quiet = quietClockMode();
+  const { last, byFeeder, byXfmr } = loadsAt(sample);
   const feederCols = state.scheme === "feeder" ? feederAllotColors(last) : null;
-  const civic = civicW(state.nowMin);
+  const civic = civicW(sample);
   const civicQ = civic * Math.tan(Math.acos(CIVIC_PF));
-  const asset = state.scheme === "asset";
+  const asset = state.scheme === "asset" || appMode === "build";
   const fid = activeFeederId();
   lvSegMeta.forEach((s, i) => {
-    const hit = outageCovers(s, state.nowMin);
+    const hit = quiet ? false : outageCovers(s, state.nowMin);
     let p = 0;
     let q = 0;
     let thd = 0;
@@ -3372,7 +3399,7 @@ function colorFeederBuffers(last, byFeeder, byXfmr) {
   const caps = g.children.find((m) => m.geometry?.type === "CircleGeometry");
   if (ribbon?.userData.segs && ribbon.instanceColor) {
     ribbon.userData.segs.forEach((s, i) => {
-      const hit = outageCovers(s, state.nowMin);
+      const hit = quietClockMode() ? false : outageCovers(s, state.nowMin);
       let p = 0;
       let cap = s.capW || XFMR_CAPACITY_W;
       let q = 0;
@@ -3447,6 +3474,10 @@ let lastUiMin = -1;
 
 function setNow(min) {
   state.nowMin = Math.max(0, Math.min(DAY_MIN, min));
+  if (quietClockMode()) {
+    lastUiMin = Math.floor(state.nowMin);
+    return;
+  }
   if (timeGroup) timeGroup.position.y = isV2() ? yAt(state.nowMin) : 0;
   timeUniforms.uNow.value = state.nowMin;
   placeSun(state.nowMin);
@@ -3471,30 +3502,45 @@ function setNow(min) {
 }
 
 function applyVisibility() {
-  const buildQuiet = appMode === "build";
-  const hideStack = buildQuiet || state.hide.worldline;
-  if (readingMesh) readingMesh.visible = !buildQuiet && !state.hide.reading;
-  if (worldlineMesh) worldlineMesh.visible = !hideStack;
-  if (knobMesh) knobMesh.visible = !buildQuiet && !state.hide.disconnect;
-  if (timeGroup) timeGroup.visible = !buildQuiet && !hideStack;
-  if (nowPlane) nowPlane.visible = !buildQuiet;
-  if (winBand) winBand.visible = !buildQuiet && isV2();
-  if (pastBand) pastBand.visible = !buildQuiet && isV2();
-  if (futBand) futBand.visible = !buildQuiet && isV2();
-  if (sprWin) sprWin.visible = !buildQuiet && isV2();
-  if (sprPast) sprPast.visible = !buildQuiet && isV2();
-  if (sprFut) sprFut.visible = !buildQuiet && isV2();
-  for (const m of rfFloorMeshes) m.visible = !buildQuiet && !state.hide.rf;
-  timeUniforms.uAnomalyOnly.value = buildQuiet ? 0 : state.anomalyOnly ? 1 : 0;
+  const noWorldlines = appMode === "build" || appMode === "maintenance";
+  const hideStack = noWorldlines || state.hide.worldline;
+
+  if (worldlineMesh) worldlineMesh.visible = !noWorldlines && !state.hide.worldline;
+  if (readingMesh) readingMesh.visible = !noWorldlines && !state.hide.reading;
+  if (timeGroup) timeGroup.visible = !hideStack;
+  if (nowPlane) nowPlane.visible = !noWorldlines;
+  if (winBand) winBand.visible = !noWorldlines && isV2();
+  if (pastBand) pastBand.visible = !noWorldlines && isV2();
+  if (futBand) futBand.visible = !noWorldlines && isV2();
+  if (sprWin) sprWin.visible = !noWorldlines && isV2();
+  if (sprPast) sprPast.visible = !noWorldlines && isV2();
+  if (sprFut) sprFut.visible = !noWorldlines && isV2();
+
+  if (knobMesh) knobMesh.visible = appMode !== "build" && !state.hide.disconnect;
+  for (const m of rfFloorMeshes) m.visible = appMode !== "build" && !state.hide.rf;
+  timeUniforms.uAnomalyOnly.value = appMode === "build" ? 0 : state.anomalyOnly ? 1 : 0;
   timeUniforms.uFocusHid.value = state.focus == null ? -1 : houseIndex[state.focus];
 
   for (const m of eventMeshes) {
-    if (buildQuiet) {
+    if (noWorldlines && appMode === "build") {
       m.visible = false;
       continue;
     }
     const kind = m.userData.kind;
     if (!kind) continue;
+    // Build/Maintenance: never show time-axis crumbs (they ride the worldline stack).
+    if (
+      noWorldlines &&
+      (kind === "pay" ||
+        kind === "sms" ||
+        kind === "reading" ||
+        kind === "credit" ||
+        kind === "sync" ||
+        kind === "phase_xfer")
+    ) {
+      m.visible = false;
+      continue;
+    }
     const hideType =
       !!state.hide[kind] ||
       ((kind === "leak" || kind === "leak_clear") && state.hide.leak) ||
@@ -3789,31 +3835,38 @@ function nearestScopeAt(x, z, maxD = 2.6) {
 
 function bindStagePick() {
   const map = locusMap.map;
+
+  // MapLibre: left-drag pan, right-drag rotate, wheel zoom. App: click → hop.
+  const enableGestures = () => {
+    map.dragPan.enable();
+    map.dragRotate.enable();
+    map.touchPitch?.enable?.();
+    map.scrollZoom.enable();
+    map.touchZoomRotate.enable();
+    map.keyboard.disable(); // WASD via panLook
+    map.boxZoom.disable();
+    map.doubleClickZoom.enable();
+    map.resize();
+  };
+  enableGestures();
+
   const canvas = map.getCanvas();
-
-  // Own gestures: left-drag orbit, right-drag pan, click hop. Keep wheel zoom.
-  map.dragPan.disable();
-  map.dragRotate.disable();
-  map.touchPitch?.disable?.();
-  map.scrollZoom.enable();
-  map.keyboard.disable(); // WASD via panLook
-  map.boxZoom.disable();
-  map.doubleClickZoom.enable();
-
-  canvas.addEventListener("pointerdown", onStagePointerDown);
-  canvas.addEventListener("pointermove", onStagePointerMove);
-  canvas.addEventListener("pointerup", onStagePointerUp);
-  canvas.addEventListener("pointercancel", onStagePointerUp);
   canvas.addEventListener("contextmenu", (e) => e.preventDefault());
 
-  // Backup hop path — fires when MapLibre classifies the gesture as a click.
-  map.on("click", (event) => {
-    if (pickPtr?.dragged) return;
-    const rect = map.getCanvas().getBoundingClientRect();
-    applyPickOnce(rect.left + event.point.x, rect.top + event.point.y);
+  const onMapClick = (event) => {
+    if (event.originalEvent?.defaultPrevented) return;
+    const rect = canvas.getBoundingClientRect();
+    const pt = event.point || { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    applyPickOnce(rect.left + pt.x, rect.top + pt.y);
+  };
+  map.on("click", onMapClick);
+  // Backup: container height bugs can swallow MapLibre click; canvas still gets DOM clicks.
+  canvas.addEventListener("click", (e) => {
+    if (e.detail === 0) return; // ignore synthetic non-user
+    applyPickOnce(e.clientX, e.clientY);
   });
 
-  // Sync stub THREE cam after MapLibre settles (wheel zoom, double-click, our jumps).
+  map.on("style.load", enableGestures);
   map.on("moveend", syncThreeCamFromMap);
   syncThreeCamFromMap();
 }
@@ -3836,27 +3889,6 @@ function syncThreeCamFromMap() {
   const hy = Math.max(3.5, dist * Math.sin(pitch) + 1.2);
   camera.position.set(tx - Math.sin(bearing) * horiz, hy, tz - Math.cos(bearing) * horiz);
   camera.lookAt(controls.target);
-}
-
-function orbitByPixels(dxPx, dyPx) {
-  if (!locusMap) return;
-  const map = locusMap.map;
-  map.stop();
-  camFly = null;
-  const bearing = map.getBearing() - dxPx * 0.32;
-  const pitch = Math.max(5, Math.min(78, map.getPitch() - dyPx * 0.22));
-  map.jumpTo({ bearing, pitch });
-  syncThreeCamFromMap();
-}
-
-/** Right-drag: grab the scene (same feel as OrbitControls pan). */
-function panByPixels(dxPx, dyPx) {
-  if (!locusMap) return;
-  const map = locusMap.map;
-  map.stop();
-  camFly = null;
-  map.panBy([-dxPx, -dyPx], { duration: 0 });
-  syncThreeCamFromMap();
 }
 
 function showCandidatePopup(lngLat, feature) {
@@ -3913,17 +3945,58 @@ function groundAtClient(clientX, clientY) {
   return { x: enu.x / GROUND_SCALE, z: enu.z / GROUND_SCALE };
 }
 
-function pickSnapRadius() {
-  if (!locusMap) return 2.6;
-  const z = locusMap.map.getZoom();
-  // Schematic units: generous when zoomed out, tighter when close.
-  return Math.max(1.4, Math.min(10, 0.22 * 2 ** (19.5 - z)));
+/** Project schematic XZ → canvas pixel for hit-testing. */
+function projectSchematic(x, z) {
+  const [lon, lat] = enuToLonLat(x * GROUND_SCALE, z * GROUND_SCALE, 0, ORIGIN);
+  return locusMap.map.project([lon, lat]);
 }
 
+/**
+ * Screen-space pick — MapLibre-native. Avoids broken THREE rays on custom-layer matrix.
+ * Prefer houses / EMS over long feeder spans when distances are close.
+ */
 function scopeAt(clientX, clientY) {
-  const g = groundAtClient(clientX, clientY);
-  if (!g) return { kind: "village" };
-  return nearestScopeAt(g.x, g.z, pickSnapRadius());
+  if (!locusMap) return { kind: "village" };
+  const map = locusMap.map;
+  const rect = map.getCanvas().getBoundingClientRect();
+  if (rect.width < 2 || rect.height < 2) return { kind: "village" };
+  const px = clientX - rect.left;
+  const py = clientY - rect.top;
+  // Hit radius grows when zoomed out (assets smaller on screen).
+  const zoom = map.getZoom();
+  const hitPx = Math.max(22, Math.min(56, 14 + (20 - zoom) * 8));
+  let best = null;
+  let bestD = hitPx * hitPx;
+
+  const consider = (x, z, scope, weight = 1) => {
+    const p = projectSchematic(x, z);
+    const dx = p.x - px;
+    const dy = p.y - py;
+    const score = (dx * dx + dy * dy) / weight;
+    if (score < bestD) {
+      bestD = score;
+      best = scope;
+    }
+  };
+
+  for (const h of HOUSES) consider(h.x, h.z, { kind: "house", id: h.id }, 1.35);
+  for (const b of BOARDS) consider(b.x, b.z, { kind: "board", id: b.id }, 1.25);
+  for (const t of TRANSFORMERS) consider(t.x, t.z, { kind: "feeder", id: t.feederId }, 1.1);
+  for (const f of FEEDERS) consider(f.x, f.z, { kind: "feeder", id: f.id });
+  for (const p of POLES) {
+    if (p.feederId) consider(p.x, p.z, { kind: "feeder", id: p.feederId });
+  }
+  for (const lk of LEAKS) consider(lk.x, lk.z, leakScope(lk), 1.15);
+
+  // Feeder line midpoints when nothing closer.
+  if (!best) {
+    for (const s of GRID_SEGS) {
+      if (!s.feederId) continue;
+      consider((s.ax + s.bx) / 2, (s.az + s.bz) / 2, { kind: "feeder", id: s.feederId }, 0.7);
+    }
+  }
+
+  return best || { kind: "village" };
 }
 
 function applyPick(clientX, clientY) {
@@ -3941,42 +4014,6 @@ function applyPick(clientX, clientY) {
   setScope(scope, { cam: true, from: "map" });
 }
 
-function onStagePointerDown(ev) {
-  abortCamFly();
-  locusMap?.map.stop();
-  const mouse = ev.pointerType === "mouse";
-  if (mouse && ev.button !== 0 && ev.button !== 2) return;
-  if (pickPtr && ev.pointerId !== pickPtr.id) return;
-  pickPtr = {
-    id: ev.pointerId,
-    button: ev.button,
-    x: ev.clientX,
-    y: ev.clientY,
-    lx: ev.clientX,
-    ly: ev.clientY,
-    dragged: false,
-  };
-  try {
-    ev.currentTarget.setPointerCapture(ev.pointerId);
-  } catch {
-    /* ignore */
-  }
-}
-
-function onStagePointerMove(ev) {
-  if (!pickPtr || ev.pointerId !== pickPtr.id) return;
-  const ox = ev.clientX - pickPtr.x;
-  const oy = ev.clientY - pickPtr.y;
-  if (ox * ox + oy * oy >= PICK_DRAG_PX * PICK_DRAG_PX) pickPtr.dragged = true;
-  if (!pickPtr.dragged) return;
-  const dx = ev.clientX - pickPtr.lx;
-  const dy = ev.clientY - pickPtr.ly;
-  if (pickPtr.button === 2) panByPixels(dx, dy);
-  else orbitByPixels(dx, dy);
-  pickPtr.lx = ev.clientX;
-  pickPtr.ly = ev.clientY;
-}
-
 let lastPickAt = 0;
 function applyPickOnce(clientX, clientY) {
   const now = performance.now();
@@ -3985,23 +4022,10 @@ function applyPickOnce(clientX, clientY) {
   applyPick(clientX, clientY);
 }
 
-function onStagePointerUp(ev) {
-  if (!pickPtr || ev.pointerId !== pickPtr.id) return;
-  const g = pickPtr;
-  pickPtr = null;
-  try {
-    ev.currentTarget?.releasePointerCapture?.(g.id);
-  } catch {
-    /* ignore */
-  }
-  if (g.dragged || g.button === 2) return;
-  applyPickOnce(g.x, g.y);
-}
-
 function tick(ts) {
   const dt = lastTs ? (ts - lastTs) / 1000 : 0;
   lastTs = ts;
-  if (state.playing) {
+  if (state.playing && !quietClockMode()) {
     const next = state.nowMin + dt * state.speed * state.dir;
     if (next >= DAY_MIN) {
       setNow(DAY_MIN);
@@ -4208,19 +4232,9 @@ function startCamFly(toPos, toLook, dur = 0.95) {
   if (locusMap) {
     camFly = null;
     locusMap.map.stop();
-    const distance = toPos.distanceTo(toLook);
-    const height = locusMap.map.getCanvas().clientHeight || 600;
-    const metresPerPixel = (2 * distance * Math.tan((42 * Math.PI) / 360)) / height;
-    const zoom = Math.log2(
-      (40075016.686 * Math.cos((ORIGIN.lat * Math.PI) / 180)) / (512 * metresPerPixel),
-    );
-    const delta = toPos.clone().sub(toLook);
-    locusMap.camera.flyTo({
-      x: toLook.x,
-      z: toLook.z,
-      zoom: Math.min(23, Math.max(15, zoom)),
-      pitch: Math.min(75, (Math.atan2(Math.hypot(delta.x, delta.z), Math.abs(delta.y)) * 180) / Math.PI),
-      bearing: (Math.atan2(-delta.x, delta.z) * 180) / Math.PI,
+    hopToSchematic(toLook.x, toLook.z, {
+      zoom: zoomForDistance(toPos.distanceTo(toLook)),
+      pitch: 55,
       duration: dur,
     });
     camera.position.copy(toPos);
@@ -4358,15 +4372,25 @@ function progressCamera(next, opts = {}) {
     return;
   }
 
-  // Empty / village scope: step between village overview and Africa candidates.
+  // Empty ground: zoom out one level (house→feeder→village). Never auto-Africa on miss.
   if (target.mag === 0) {
-    if (from === "map" && camMag < 0) applyCamMag(0, target);
-    else if (from === "map" && camMag === 0) applyCamMag(-1, target);
-    else applyCamMag(0, target);
+    if (from === "map" && camMag < 0) {
+      applyCamMag(0, target);
+      return;
+    }
+    if (from === "map" && camMag >= 2) {
+      applyCamMag(1, { fid: camFeederId, bid: null, hid: null, mag: 1 });
+      return;
+    }
+    if (from === "map" && camMag === 1) {
+      applyCamMag(0, target);
+      return;
+    }
+    // camMag 0 + empty click → stay put (Africa via frame / explicit only).
     return;
   }
 
-  // Click a feeder component → hop camera straight there (old behavior).
+  // Re-click same house → pull back to feeder overview.
   if (
     from === "map" &&
     camMag >= 2 &&
@@ -4374,7 +4398,6 @@ function progressCamera(next, opts = {}) {
     target.hid === opts.prevFocus &&
     target.fid === camFeederId
   ) {
-    // Re-click same house → pull back to feeder overview.
     applyCamMag(1, { fid: target.fid, bid: target.bid, hid: null, mag: 1 });
     return;
   }
@@ -4383,16 +4406,33 @@ function progressCamera(next, opts = {}) {
 }
 
 function framePoint(x, z, dist = 22) {
-  if (!camera || !controls) return;
-  const toLook = new THREE.Vector3(x, 0.45, z);
-  orbitOffset.copy(camera.position).sub(controls.target);
-  if (orbitOffset.lengthSq() < 0.04) orbitOffset.set(dist * 0.55, Math.max(5.5, dist * 0.58), dist * 0.72);
-  orbitSpherical.setFromVector3(orbitOffset);
-  orbitSpherical.radius = dist;
-  orbitSpherical.phi = Math.max(0.32, Math.min(1.2, orbitSpherical.phi));
-  orbitSpherical.makeSafe();
-  orbitOffset.setFromSpherical(orbitSpherical);
-  startCamFly(toLook.clone().add(orbitOffset), toLook, 0.75);
+  if (!locusMap) return;
+  const zoom = dist <= 18 ? 20.2 : dist <= 24 ? 19.4 : 18.2;
+  hopToSchematic(x, z, { zoom, pitch: 58, duration: 0.75 });
+  controls.target.set(x, 0.45, z);
+  camera.position.set(x + dist * 0.55, Math.max(5.5, dist * 0.58), z + dist * 0.72);
+}
+
+/** Direct MapLibre fly — schematic coords in, lon/lat out. No GROUND_SCALE wrapper games. */
+function hopToSchematic(x, z, { zoom = 19, pitch = 55, bearing, duration = 0.8 } = {}) {
+  if (!locusMap) return;
+  const [lon, lat] = enuToLonLat(x * GROUND_SCALE, z * GROUND_SCALE, 0, ORIGIN);
+  locusMap.map.stop();
+  locusMap.map.flyTo({
+    center: [lon, lat],
+    zoom,
+    pitch,
+    bearing: bearing ?? locusMap.map.getBearing(),
+    duration: duration * 1000,
+    essential: true,
+  });
+}
+
+function zoomForDistance(schematicDist) {
+  if (schematicDist <= 16) return 20.4;
+  if (schematicDist <= 22) return 19.6;
+  if (schematicDist <= 40) return 18.4;
+  return 17.2;
 }
 
 function frameSelection() {
@@ -4551,8 +4591,59 @@ function fillEms() {
   const dtm = DTMS.find((d) => d.feederId === b.feederId);
   const xf = TRANSFORMERS.find((t) => t.id === b.xfmrId);
   const leak = LEAKS.find((lk) => lk && (lk.fromBoardId === b.id || lk.toBoardId === b.id));
-  const leakLive = leak && state.nowMin >= leak.min && state.nowMin < leak.restore;
   const idx = BOARDS.findIndex((x) => x.id === b.id);
+  if (title) title.textContent = b.label || "MeshEMS";
+  if (sub) {
+    sub.textContent =
+      appMode === "maintenance"
+        ? `${idx + 1} / ${BOARDS.length} · day health · ${feeder?.label || b.feederId}`
+        : `${idx + 1} / ${BOARDS.length} · ${houses.length} meters · ${feeder?.label || b.feederId}`;
+  }
+
+  if (appMode === "maintenance") {
+    const healthMap = ensureHouseHealth();
+    const bh = boardDayHealth(b.id);
+    let badN = 0;
+    let warnN = 0;
+    const rows = houses.map((h, i) => {
+      const hh = healthMap[h.id] || computeHouseDayHealth(h.id);
+      if (hh.grade === "bad") badN += 1;
+      else if (hh.grade === "warn") warnN += 1;
+      return { h, hh, port: i + 1, ph: h.phase || "A" };
+    });
+    const hops = houses[0] ? hopsToUsb(houses[0].id) : "—";
+    const check = [
+      { cls: bh.grade === "bad" ? "bad" : bh.grade === "warn" ? "warn" : "done", t: `Board day stress ${Math.round(bh.stress * 100)}% · ${bh.grade}` },
+      { cls: leak ? "warn" : "done", t: leak ? `Leak span mapped · ${leak.label} · +${leak.leakW} W ΔP` : "No leak span on this pole pair" },
+      { cls: xf ? "done" : "warn", t: xf ? `LV from ${xf.label || xf.id}` : "No xfmr id on this board" },
+      { cls: "done", t: `RF hops to USB GW ≈ ${hops} · ${LANDMARKS.usb?.label || "USB GW"}` },
+      { cls: "done", t: "No playhead metering in Maintenance — day aggregates only" },
+    ];
+    body.innerHTML = `
+      <div class="wl-ov-grid">
+        <div class="wl-ov-stat ${bh.grade === "ok" ? "ok" : bh.grade === "warn" ? "warn" : "bad"}"><span>Day stress</span><b>${Math.round(bh.stress * 100)}%</b></div>
+        <div class="wl-ov-stat ${badN ? "bad" : warnN ? "warn" : "ok"}"><span>Meters</span><b>${badN} bad · ${warnN} warn</b></div>
+      </div>
+      <p class="wl-ov-k">Cabinet ports · day health</p>
+      <table class="wl-ports">
+        <thead><tr><th>#</th><th>Meter</th><th>φ</th><th>PF</th><th>THD</th><th>Grade</th></tr></thead>
+        <tbody>
+          ${rows
+            .map((row) => {
+              const cls = row.hh.grade === "bad" ? "is-out" : row.hh.grade === "warn" ? "is-off" : "";
+              return `<tr class="${cls}"><td>${row.port}</td><td>${esc(row.h.name)} <code>${esc(row.h.serial)}</code></td><td>${row.ph}</td><td>${row.hh.avgPf.toFixed(2)}</td><td>${row.hh.avgThd.toFixed(0)}%</td><td>${row.hh.grade.toUpperCase()}</td></tr>`;
+            })
+            .join("")}
+        </tbody>
+      </table>
+      <p class="wl-ov-k">Health walk</p>
+      <ul class="wl-check">${check.map((c) => `<li class="${c.cls}">${esc(c.t)}</li>`).join("")}</ul>
+      <p class="wl-ov-note">Day-roll health card. No clock / scrub / live W.</p>
+    `;
+    return;
+  }
+
+  const leakNow = leak && state.nowMin >= leak.min && state.nowMin < leak.restore;
   let boardW = 0;
   let onN = 0;
   let darkN = 0;
@@ -4569,8 +4660,6 @@ function fillEms() {
     phases[ph] = (phases[ph] || 0) + 1;
     return { h, r, o, watts, on, ph, port: i + 1 };
   });
-  if (title) title.textContent = b.label || "MeshEMS";
-  if (sub) sub.textContent = `${idx + 1} / ${BOARDS.length} · ${houses.length} meters · ${feeder?.label || b.feederId}`;
   const hops = houses[0] ? hopsToUsb(houses[0].id) : "—";
   const check = [
     { cls: "done", t: `Pole label ${b.id} · feeder ${b.feederId} · ${b.cluster}` },
@@ -4580,9 +4669,9 @@ function fillEms() {
     { cls: "done", t: `Heartbeat ${SLOT_MIN} min · MQTT northbound (OpenAMI)` },
     { cls: xf ? "done" : "warn", t: xf ? `LV from ${xf.label || xf.id}` : "No xfmr id on this board" },
     {
-      cls: leakLive ? "bad" : leak ? "warn" : "done",
+      cls: leakNow ? "bad" : leak ? "warn" : "done",
       t: leak
-        ? leakLive
+        ? leakNow
           ? `Leak live on span · ${leak.label} · +${leak.leakW} W ΔP`
           : `Leak span mapped · ${leak.label} (not now)`
         : "No leak span on this pole pair",
@@ -4797,6 +4886,12 @@ function bindUi() {
     if (!Number.isFinite(n) || n === TARGET_HOMES) return;
     writeQuery({ homes: n, light: state.light, role: state.role, t: Math.round(state.nowMin) }, true);
   });
+  document.getElementById("wl-site")?.addEventListener("change", (e) => {
+    const id = e.target.value;
+    if (!id || id === "voundou") return;
+    // Explicit index.html — Vite SPA fallback otherwise serves the worldline shell at /villages/
+    location.href = new URL(`villages/index.html?site=${encodeURIComponent(id)}`, location.href).href;
+  });
   document.getElementById("wl-role")?.addEventListener("change", (e) => {
     const v = e.target.value;
     state.role = v === "tech" || v === "customer" ? v : "ops";
@@ -4970,6 +5065,130 @@ function fillStats() {
         .join("; ") +
       `. Last breath needs ≤${LAST_BREATH_MAX_HOPS} hops; RF channel cap ${RF_CHANNEL_CAP}.`;
   }
+}
+
+/** @type {{ cat: string, missOnly: boolean, focusId: string | null, report: ReturnType<typeof buildKpiReport> | null }} */
+const kpiUi = { cat: "all", missOnly: false, focusId: null, report: null };
+
+function fillKpi() {
+  const body = document.getElementById("wl-kpi-body");
+  const sum = document.getElementById("wl-kpi-sum");
+  const catEl = document.getElementById("wl-kpi-cat");
+  if (!body) return;
+  const report = buildKpiReport(day, { houseN: HOUSES.length, scopeFeederId: activeFeederId() });
+  kpiUi.report = report;
+  if (catEl && !catEl.dataset.ready) {
+    catEl.dataset.ready = "1";
+    catEl.innerHTML =
+      `<option value="all">All categories</option>` +
+      report.groups.map((g) => `<option value="${esc(g.id)}">${esc(g.label)}</option>`).join("");
+    catEl.value = kpiUi.cat;
+  }
+  if (sum) {
+    sum.textContent = `${report.periodLabel} · ${report.hitN} on target · ${report.missN} miss · click row to focus`;
+  }
+  const parts = [];
+  for (const g of report.groups) {
+    if (kpiUi.cat !== "all" && g.id !== kpiUi.cat) continue;
+    const rows = g.rows.filter((r) => !kpiUi.missOnly || !kpiHit(r));
+    if (!rows.length) continue;
+    parts.push(`<tr class="kpi-cat"><td colspan="4">${esc(g.label)}</td></tr>`);
+    for (const r of rows) {
+      const hit = kpiHit(r);
+      parts.push(`<tr class="kpi-row${kpiUi.focusId === r.id ? " is-focus" : ""}" data-kpi="${esc(r.id)}" data-focus="${esc(r.focus || "")}" title="Focus: ${esc(r.focus || g.id)}">
+        <td>${esc(r.label)}</td>
+        <td class="kpi-uom">${esc(r.uom)}</td>
+        <td class="kpi-num">${esc(fmtKpi(r, "target"))}</td>
+        <td class="kpi-num ${hit ? "kpi-hit" : "kpi-miss"}">${esc(fmtKpi(r, "actual"))}</td>
+      </tr>`);
+    }
+  }
+  body.innerHTML = parts.join("") || `<tr><td colspan="4">No metrics in this filter.</td></tr>`;
+}
+
+function focusKpiRow(focusKey, kpiId) {
+  kpiUi.focusId = kpiId || null;
+  const key = focusKey || "";
+  if (key === "production") {
+    state.anomalyOnly = false;
+    state.scheme = "capacity";
+    state.hide.leak = true;
+    state.hide.disconnect = true;
+    setScope({ kind: "village" }, { cam: true, from: "kpi" });
+  } else if (key === "customer") {
+    state.anomalyOnly = false;
+    state.scheme = "messages";
+    if (!activeFeederId() && FEEDERS[0]) {
+      setScope({ kind: "feeder", id: FEEDERS[0].id }, { cam: true, from: "kpi" });
+    } else {
+      setScope(state.scope?.kind === "feeder" ? state.scope : { kind: "village" }, { cam: true, from: "kpi" });
+    }
+  } else if (key === "losses") {
+    state.anomalyOnly = true;
+    state.hide.leak = false;
+    state.hide.disconnect = true;
+    const lk = LEAKS[0];
+    if (lk) setScope({ kind: "feeder", id: lk.feederId, boardId: lk.fromBoardId }, { cam: true, from: "kpi" });
+  } else if (key === "battery") {
+    state.anomalyOnly = false;
+    state.scheme = "asset";
+    setScope({ kind: "village" }, { cam: true, from: "kpi" });
+  } else if (key === "generator") {
+    state.anomalyOnly = false;
+    state.scheme = "capacity";
+    setScope({ kind: "village" }, { cam: true, from: "kpi" });
+  } else if (key === "outages" || key === "uptime") {
+    state.anomalyOnly = true;
+    state.hide.disconnect = false;
+    state.hide.leak = true;
+    const o = (day.summary.outages || [])[0];
+    if (o?.feederId) setScope({ kind: "feeder", id: o.feederId }, { cam: true, from: "kpi" });
+    else setScope({ kind: "village" }, { cam: true, from: "kpi" });
+  } else if (key === "operations") {
+    state.anomalyOnly = false;
+    state.scheme = "messages";
+    document.getElementById("wl-kpi-table-wrap")?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
+  document.getElementById("wl-anomaly")?.classList.toggle("on", state.anomalyOnly);
+  document.getElementById("wl-anomaly-maint")?.classList.toggle("on", state.anomalyOnly);
+  document.querySelectorAll("[data-hide]").forEach((btn) => {
+    const k = btn.getAttribute("data-hide");
+    if (!k) return;
+    btn.classList.toggle("off", !!state.hide[k]);
+  });
+  applySchemeColors();
+  applyVisibility();
+  fillKpi();
+  fillHouses(true);
+}
+
+function bindKpiUi() {
+  const catEl = document.getElementById("wl-kpi-cat");
+  catEl?.addEventListener("change", () => {
+    kpiUi.cat = catEl.value || "all";
+    fillKpi();
+  });
+  const missBtn = document.getElementById("wl-kpi-miss-only");
+  missBtn?.addEventListener("click", () => {
+    kpiUi.missOnly = !kpiUi.missOnly;
+    missBtn.classList.toggle("on", kpiUi.missOnly);
+    fillKpi();
+  });
+  document.getElementById("wl-kpi-body")?.addEventListener("click", (e) => {
+    const tr = e.target.closest("tr.kpi-row[data-kpi]");
+    if (!tr) return;
+    focusKpiRow(tr.getAttribute("data-focus") || "", tr.getAttribute("data-kpi") || "");
+  });
+  document.getElementById("wl-kpi-open")?.addEventListener("click", () => {
+    const panel = document.querySelector(".panel-kpi");
+    panel?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    fillKpi();
+  });
+  document.getElementById("wl-kpi-open-maint")?.addEventListener("click", () => {
+    const panel = document.querySelector(".panel-kpi");
+    panel?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    fillKpi();
+  });
 }
 
 function fillLedger() {
@@ -5410,6 +5629,7 @@ function applyAppMode(mode) {
   appMode = mode;
   const meta = MODE_META[mode];
   Object.assign(state.hide, MODE_HIDE[mode]);
+  if (mode === "build" || mode === "maintenance") state.hide.worldline = true;
   state.anomalyOnly = meta.anomalyOnly;
   state.scheme = meta.scheme;
   state.lineGrad = meta.lineGrad;
@@ -5433,12 +5653,18 @@ function applyAppMode(mode) {
   if (gradM) gradM.value = state.lineGrad;
 
   buildMode?.setActive(mode === "build");
-  if (mode === "build") {
-    closeEms();
+  if (mode === "build" || mode === "maintenance") {
+    if (state.playing) {
+      state.playing = false;
+      syncPlayBtn();
+    }
     const cust = document.getElementById("wl-cust-card");
     if (cust) cust.hidden = true;
     const stream = document.getElementById("wl-stream-panel");
     if (stream) stream.hidden = true;
+  }
+  if (mode === "build") {
+    closeEms();
     if (!activeFeederId() && FEEDERS[0]) {
       setScope({ kind: "feeder", id: FEEDERS[0].id }, { cam: false, from: "clear" });
     }
@@ -5697,6 +5923,23 @@ function fillHouses(rebuild) {
   el.querySelectorAll("button").forEach((btn) => {
     const id = btn.getAttribute("data-h");
     const h = houseById[id];
+    btn.classList.toggle("active", state.focus === id);
+    const st = btn.querySelector("[data-st]");
+    if (appMode === "maintenance") {
+      const hh = ensureHouseHealth()[id] || computeHouseDayHealth(id);
+      btn.classList.toggle("is-off", hh.grade === "bad");
+      btn.classList.toggle("is-outage", hh.grade === "bad");
+      if (st) {
+        const bits = [
+          hh.grade.toUpperCase(),
+          `stress ${Math.round(hh.stress * 100)}%`,
+          hh.nBreathLost ? "last-breath lost" : hh.nBreath ? "last-breath" : null,
+          hh.disconnects ? `${hh.disconnects} cutoff` : null,
+        ].filter(Boolean);
+        st.textContent = bits.join(" · ");
+      }
+      return;
+    }
     const r = readingAt(id, state.nowMin);
     let wallet = r ? r.wallet : h.startCredit;
     let on = r ? r.on : h.startCredit > 0;
@@ -5715,23 +5958,26 @@ function fillHouses(rebuild) {
     const lastBreathArrived = !!breath?.lastBreathArrived;
     const lastBreathChannel = breath?.lastBreathReason === "channel";
     if (feederOut) on = false;
-    btn.classList.toggle("active", state.focus === id);
     btn.classList.toggle("is-off", !on);
     btn.classList.toggle("is-outage", feederOut);
-    btn.querySelector("[data-st]").textContent = feederOut
-      ? lastBreathArrived
-        ? `OUTAGE · last breath @ ${fmtClock(o.min)} · ${wallet.toFixed(0)}`
-        : lastBreathChannel
-          ? `OUTAGE · silent (RF channel) · ${wallet.toFixed(0)}`
-          : lastBreath
-            ? `OUTAGE · silent (mesh) · ${wallet.toFixed(0)}`
-            : `OUTAGE · ${wallet.toFixed(0)}`
-      : on
-        ? `ON · ${wallet.toFixed(0)} · ${LOAD_TYPES[loadType]?.label || loadType} · ${Math.round(capacity * 100)}% of ${limit} W · PF ${(r?.pf ?? 1).toFixed(2)} · THD ${(r?.thd || 0).toFixed(0)}%`
-        : `OFF · ${wallet.toFixed(0)}`;
+    if (st) {
+      st.textContent = feederOut
+        ? lastBreathArrived
+          ? `OUTAGE · last breath @ ${fmtClock(o.min)} · ${wallet.toFixed(0)}`
+          : lastBreathChannel
+            ? `OUTAGE · silent (RF channel) · ${wallet.toFixed(0)}`
+            : lastBreath
+              ? `OUTAGE · silent (mesh) · ${wallet.toFixed(0)}`
+              : `OUTAGE · ${wallet.toFixed(0)}`
+        : on
+          ? `ON · ${wallet.toFixed(0)} · ${LOAD_TYPES[loadType]?.label || loadType} · ${Math.round(capacity * 100)}% of ${limit} W · PF ${(r?.pf ?? 1).toFixed(2)} · THD ${(r?.thd || 0).toFixed(0)}%`
+          : `OFF · ${wallet.toFixed(0)}`;
+    }
   });
-  drawStream();
-  drawFsLoad();
+  if (appMode !== "maintenance") {
+    drawStream();
+    drawFsLoad();
+  }
   fillRolePanels();
 }
 

@@ -11,6 +11,7 @@ npm start
 
 GitHub Pages (after deploy): `…/demo-lv/` on the Pages site.
 
-Pack source of truth: this folder (`village.json`, `network/`, `feeds/`). Public HTML is a served copy — re-copy after pack edits, or edit `public/demo-lv/index.html` if only the viz changed.
+Pack source of truth: `villages/demo-lv/` (`village.json`, `network/`, `feeds/`).
+This public folder is a served copy — run `npm run villages:sync-demo` after pack edits.
 
 Canvas twin: Cursor canvas `demo-lv-microgrid-layers`.

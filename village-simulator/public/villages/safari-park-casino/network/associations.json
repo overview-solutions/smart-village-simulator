@@ -1,0 +1,294 @@
+{
+  "schemaVersion": "0.1.0",
+  "connectivity": [
+    {
+      "fromId": "ems-0",
+      "toId": "j-main",
+      "subnetworkId": "island-1"
+    },
+    {
+      "fromId": "j-main",
+      "toId": "tap-10",
+      "subnetworkId": "f-main"
+    },
+    {
+      "fromId": "tap-12",
+      "toId": "tap-9",
+      "subnetworkId": "f-main",
+      "via": "ln-spine"
+    },
+    {
+      "fromId": "tap-9",
+      "toId": "tap-7",
+      "subnetworkId": "f-main",
+      "via": "ln-spine"
+    },
+    {
+      "fromId": "tap-7",
+      "toId": "tap-11",
+      "subnetworkId": "f-main",
+      "via": "ln-spine"
+    },
+    {
+      "fromId": "tap-11",
+      "toId": "tap-6",
+      "subnetworkId": "f-main",
+      "via": "ln-spine"
+    },
+    {
+      "fromId": "tap-6",
+      "toId": "tap-4",
+      "subnetworkId": "f-main",
+      "via": "ln-spine"
+    },
+    {
+      "fromId": "tap-4",
+      "toId": "tap-10",
+      "subnetworkId": "f-main",
+      "via": "ln-spine"
+    },
+    {
+      "fromId": "tap-10",
+      "toId": "tap-8",
+      "subnetworkId": "f-main",
+      "via": "ln-spine"
+    },
+    {
+      "fromId": "tap-8",
+      "toId": "tap-0",
+      "subnetworkId": "f-main",
+      "via": "ln-spine"
+    },
+    {
+      "fromId": "tap-0",
+      "toId": "tap-5",
+      "subnetworkId": "f-main",
+      "via": "ln-spine"
+    },
+    {
+      "fromId": "tap-5",
+      "toId": "tap-1",
+      "subnetworkId": "f-main",
+      "via": "ln-spine"
+    },
+    {
+      "fromId": "tap-1",
+      "toId": "tap-3",
+      "subnetworkId": "f-main",
+      "via": "ln-spine"
+    },
+    {
+      "fromId": "tap-3",
+      "toId": "tap-2",
+      "subnetworkId": "f-main",
+      "via": "ln-spine"
+    },
+    {
+      "fromId": "tap-12",
+      "toId": "m-12",
+      "subnetworkId": "f-main",
+      "via": "ln-feeder-12"
+    },
+    {
+      "fromId": "m-12",
+      "toId": "sp-12",
+      "subnetworkId": "f-main"
+    },
+    {
+      "fromId": "tap-9",
+      "toId": "m-9",
+      "subnetworkId": "f-main",
+      "via": "ln-feeder-9"
+    },
+    {
+      "fromId": "m-9",
+      "toId": "sp-9",
+      "subnetworkId": "f-main"
+    },
+    {
+      "fromId": "tap-7",
+      "toId": "m-7",
+      "subnetworkId": "f-main",
+      "via": "ln-feeder-7"
+    },
+    {
+      "fromId": "m-7",
+      "toId": "sp-7",
+      "subnetworkId": "f-main"
+    },
+    {
+      "fromId": "tap-11",
+      "toId": "m-11",
+      "subnetworkId": "f-main",
+      "via": "ln-feeder-11"
+    },
+    {
+      "fromId": "m-11",
+      "toId": "sp-11",
+      "subnetworkId": "f-main"
+    },
+    {
+      "fromId": "tap-6",
+      "toId": "m-6",
+      "subnetworkId": "f-main",
+      "via": "ln-feeder-6"
+    },
+    {
+      "fromId": "m-6",
+      "toId": "sp-6",
+      "subnetworkId": "f-main"
+    },
+    {
+      "fromId": "tap-4",
+      "toId": "m-4",
+      "subnetworkId": "f-main",
+      "via": "ln-feeder-4"
+    },
+    {
+      "fromId": "m-4",
+      "toId": "sp-4",
+      "subnetworkId": "f-main"
+    },
+    {
+      "fromId": "tap-10",
+      "toId": "m-10",
+      "subnetworkId": "f-main",
+      "via": "ln-feeder-10"
+    },
+    {
+      "fromId": "m-10",
+      "toId": "sp-10",
+      "subnetworkId": "f-main"
+    },
+    {
+      "fromId": "tap-8",
+      "toId": "m-8",
+      "subnetworkId": "f-main",
+      "via": "ln-feeder-8"
+    },
+    {
+      "fromId": "m-8",
+      "toId": "sp-8",
+      "subnetworkId": "f-main"
+    },
+    {
+      "fromId": "tap-0",
+      "toId": "m-0",
+      "subnetworkId": "f-main",
+      "via": "ln-feeder-0"
+    },
+    {
+      "fromId": "m-0",
+      "toId": "sp-0",
+      "subnetworkId": "f-main"
+    },
+    {
+      "fromId": "tap-5",
+      "toId": "m-5",
+      "subnetworkId": "f-main",
+      "via": "ln-feeder-5"
+    },
+    {
+      "fromId": "m-5",
+      "toId": "sp-5",
+      "subnetworkId": "f-main"
+    },
+    {
+      "fromId": "tap-1",
+      "toId": "m-1",
+      "subnetworkId": "f-main",
+      "via": "ln-feeder-1"
+    },
+    {
+      "fromId": "m-1",
+      "toId": "sp-1",
+      "subnetworkId": "f-main"
+    },
+    {
+      "fromId": "tap-3",
+      "toId": "m-3",
+      "subnetworkId": "f-main",
+      "via": "ln-feeder-3"
+    },
+    {
+      "fromId": "m-3",
+      "toId": "sp-3",
+      "subnetworkId": "f-main"
+    },
+    {
+      "fromId": "tap-2",
+      "toId": "m-2",
+      "subnetworkId": "f-main",
+      "via": "ln-feeder-2"
+    },
+    {
+      "fromId": "m-2",
+      "toId": "sp-2",
+      "subnetworkId": "f-main"
+    }
+  ],
+  "containment": [
+    {
+      "containerId": "cab-ems",
+      "contentId": "ems-0"
+    }
+  ],
+  "attachment": [
+    {
+      "structureId": "pole-ems",
+      "attachedId": "ems-0"
+    },
+    {
+      "structureId": "pad-m12",
+      "attachedId": "m-12"
+    },
+    {
+      "structureId": "pad-m9",
+      "attachedId": "m-9"
+    },
+    {
+      "structureId": "pad-m7",
+      "attachedId": "m-7"
+    },
+    {
+      "structureId": "pad-m11",
+      "attachedId": "m-11"
+    },
+    {
+      "structureId": "pad-m6",
+      "attachedId": "m-6"
+    },
+    {
+      "structureId": "pad-m4",
+      "attachedId": "m-4"
+    },
+    {
+      "structureId": "pad-m10",
+      "attachedId": "m-10"
+    },
+    {
+      "structureId": "pad-m8",
+      "attachedId": "m-8"
+    },
+    {
+      "structureId": "pad-m0",
+      "attachedId": "m-0"
+    },
+    {
+      "structureId": "pad-m5",
+      "attachedId": "m-5"
+    },
+    {
+      "structureId": "pad-m1",
+      "attachedId": "m-1"
+    },
+    {
+      "structureId": "pad-m3",
+      "attachedId": "m-3"
+    },
+    {
+      "structureId": "pad-m2",
+      "attachedId": "m-2"
+    }
+  ]
+}

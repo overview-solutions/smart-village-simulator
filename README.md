@@ -1,22 +1,51 @@
 # Smart Village Simulator
 
-Village energy simulation built on [Circaevum Locus](https://github.com/Circaevum/locus).
+Village energy simulation built on [Circaevum Locus](https://github.com/Circaevum/locus).  
 Repository: [overview-solutions/smart-village-simulator](https://github.com/overview-solutions/smart-village-simulator).
 
 Hypothetical GroundBolt prepaid day — not live telemetry. Layout is synthetic
 (Voundou, Cameroon; hypothetical infrastructure). Placing it on a real basemap later does not make it a survey.
 
-## Run (this workspace)
+---
+
+## Offline via the ISV wiki (start here)
+
+Want to **open** the simulator inside the knowledge base — workshop, village kit, no Node?
+
+You do **not** need this repo for that.
+
+1. Clone and run the wiki (one command after clone):
+
+   ```bash
+   git clone https://github.com/overview-solutions/isv-ai-wiki.git
+   cd isv-ai-wiki
+   ./preview.sh
+   ```
+
+2. Open [http://127.0.0.1:8765/index.html#village-metering/village-simulator](http://127.0.0.1:8765/index.html#village-metering/village-simulator)
+
+The wiki embeds a **frozen snapshot** of the sim (`isv-ai-wiki/village-simulator/`). Same sidebar as [isv.wiki](https://isv.wiki/). Details: [isv-ai-wiki README → Offline in one go](https://github.com/overview-solutions/isv-ai-wiki#offline-in-one-go-start-here).
+
+---
+
+## Develop / run the live app (this repo)
+
+**One-click (macOS):** double-click **`Start Simulator.command`** in this folder (or the Desktop alias **Start Village Simulator**). Uses Homebrew arm64 Node when present (avoids nvm Rosetta × wrong `@rollup/rollup-darwin-*`). First run may `npm install`; then Vite opens [http://127.0.0.1:5176/](http://127.0.0.1:5176/). Leave the Terminal window open; Ctrl+C stops the server. Needs Node/npm and the workbench `CIR/yang/locus` checkout (`file:` dependency).
+
+For **editing** simulator code, BUILD/MAINT UX, or cutting a new freeze into the wiki:
 
 ```sh
-cd ISV/smart-village-simulator
+cd smart-village-simulator   # or ISV/smart-village-simulator in the workbench
 npm install
-npm start    # http://localhost:5176
+npm start                    # http://127.0.0.1:5176 (opens browser)
 npm test
 ```
 
-`@circaevum/locus` is a `file:` dependency on `CIR/yang/locus`. Standalone clones
-must point that dep at `github:Circaevum/locus` (or an npm pack) before CI/Pages.
+`@circaevum/locus` is a `file:` dependency on `CIR/yang/locus` in the Overview/Circaevum workbench. Standalone clones must point that dep at `github:Circaevum/locus` (or an npm pack) before CI/Pages.
+
+Offline basemaps: run `npm run map:prepare` once while online, then `npm start`. Satellite still needs internet; other packs are local when prepared.
+
+**Do not** develop against the wiki’s frozen `village-simulator/` copy — change this repo, then refresh the wiki snapshot when ready.
 
 ## Boundary
 

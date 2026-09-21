@@ -1,25 +1,7 @@
 import { LocusMap } from '@circaevum/locus/map';
 import { ORIGIN, GROUND_SCALE } from './geo.js';
 
-/** Online raster — Carto Voyager (green land, blue water, warm urban). */
-const natureRaster = {
-  version: 8,
-  sources: {
-    voyager: {
-      type: 'raster',
-      tileSize: 256,
-      maxzoom: 20,
-      tiles: [
-        'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
-        'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
-        'https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
-      ],
-      attribution: '© OpenStreetMap © CARTO',
-    },
-  },
-  layers: [{ id: 'nature', type: 'raster', source: 'voyager' }],
-};
-
+/** Online satellite (Esri). Nature = local bright pack + lush green paints (offline-safe). */
 const satellite = {
   version: 8,
   sources: {
@@ -37,9 +19,25 @@ const satellite = {
   layers: [{ id: 'satellite', type: 'raster', source: 'imagery' }],
 };
 
+const GREEN = {
+  background: '#4f8f35',
+  wood: '#2f6b28',
+  grass: '#6cb84a',
+  park: '#5aa83c',
+  wetland: '#4a8f68',
+  sand: '#d4c478',
+  water: '#3d7eae',
+  residential: 'hsla(95, 28%, 72%, 0.35)',
+  suburb: 'hsla(95, 32%, 70%, 0.25)',
+  cemetery: '#7aad5c',
+  school: '#8fbf6a',
+  pitch: '#5aa83c',
+  industrial: 'hsla(85, 20%, 75%, 0.3)',
+  commercial: 'hsla(90, 18%, 78%, 0.28)',
+};
+
 /**
- * Push liberty / bright vector packs toward a landscape palette
- * (wood, grass, water, earth). Safe no-ops when layer ids missing.
+ * Heavy green landscape — background alone reads as “lots of green” where landcover is sparse.
  * @param {import('maplibre-gl').Map} map
  */
 function applyNaturalColors(map) {
@@ -49,45 +47,56 @@ function applyNaturalColors(map) {
     try {
       map.setPaintProperty(id, prop, value);
     } catch {
-      /* layer type mismatch — skip */
+      /* skip */
     }
   };
 
-  set('background', 'background-color', '#dce8c8');
+  set('background', 'background-color', GREEN.background);
 
-  // Liberty (OpenMapTiles) ids
-  set('park', 'fill-color', '#7cb35a');
-  set('park', 'fill-opacity', 0.75);
-  set('landcover_wood', 'fill-color', '#3f8a3a');
-  set('landcover_wood', 'fill-opacity', 0.62);
-  set('landcover_grass', 'fill-color', '#9ccc6e');
-  set('landcover_grass', 'fill-opacity', 0.55);
-  set('landcover_sand', 'fill-color', '#e8d39a');
-  set('landcover_wetland', 'fill-color', '#6aa88a');
-  set('water', 'fill-color', '#4a90c8');
-  set('waterway_river', 'line-color', '#4a90c8');
-  set('waterway_other', 'line-color', '#5aa0d0');
-  set('landuse_residential', 'fill-color', 'hsla(42, 42%, 82%, 0.45)');
-  set('landuse_cemetery', 'fill-color', '#b5c99a');
-  set('landuse_school', 'fill-color', '#c5d4a0');
-  set('landuse_pitch', 'fill-color', '#8fbf6a');
-  set('landuse_track', 'fill-color', '#a8c97a');
+  // Liberty (demo)
+  set('park', 'fill-color', GREEN.park);
+  set('park', 'fill-opacity', 0.9);
+  set('landcover_wood', 'fill-color', GREEN.wood);
+  set('landcover_wood', 'fill-opacity', 0.85);
+  set('landcover_grass', 'fill-color', GREEN.grass);
+  set('landcover_grass', 'fill-opacity', 0.95);
+  set('landcover_sand', 'fill-color', GREEN.sand);
+  set('landcover_wetland', 'fill-color', GREEN.wetland);
+  set('landcover_wetland', 'fill-opacity', 0.85);
+  set('water', 'fill-color', GREEN.water);
+  set('waterway_river', 'line-color', GREEN.water);
+  set('waterway_other', 'line-color', GREEN.water);
+  set('landuse_residential', 'fill-color', GREEN.residential);
+  set('landuse_cemetery', 'fill-color', GREEN.cemetery);
+  set('landuse_school', 'fill-color', GREEN.school);
+  set('landuse_pitch', 'fill-color', GREEN.pitch);
+  set('landuse_track', 'fill-color', GREEN.grass);
 
-  // Bright (OpenMapTiles bright) ids
-  set('landcover-wood', 'fill-color', '#3f8a3a');
-  set('landcover-wood', 'fill-opacity', 0.45);
-  set('landcover-grass', 'fill-color', '#9ccc6e');
-  set('landcover-grass-park', 'fill-color', '#7cb35a');
-  set('landcover-sand', 'fill-color', '#e8d39a');
-  set('water', 'fill-color', '#4a90c8');
-  set('waterway-river', 'line-color', '#4a90c8');
-  set('waterway-other', 'line-color', '#5aa0d0');
-  set('waterway-stream-canal', 'line-color', '#5aa0d0');
-  set('park', 'fill-color', '#7cb35a');
+  // Bright (demo-bright)
+  set('landcover-wood', 'fill-color', GREEN.wood);
+  set('landcover-wood', 'fill-opacity', 0.85);
+  set('landcover-grass', 'fill-color', GREEN.grass);
+  set('landcover-grass', 'fill-opacity', 1);
+  set('landcover-grass-park', 'fill-color', GREEN.park);
+  set('landcover-grass-park', 'fill-opacity', 0.95);
+  set('landcover-sand', 'fill-color', GREEN.sand);
+  set('water', 'fill-color', GREEN.water);
+  set('waterway-river', 'line-color', GREEN.water);
+  set('waterway-other', 'line-color', GREEN.water);
+  set('waterway-stream-canal', 'line-color', GREEN.water);
+  set('park', 'fill-color', GREEN.park);
+  set('park', 'fill-opacity', 0.85);
+  set('landuse-residential', 'fill-color', GREEN.residential);
+  set('landuse-suburb', 'fill-color', GREEN.suburb);
+  set('landuse-cemetery', 'fill-color', GREEN.cemetery);
+  set('landuse-school', 'fill-color', GREEN.school);
+  set('landuse-industrial', 'fill-color', GREEN.industrial);
+  set('landuse-commercial', 'fill-color', GREEN.commercial);
+  set('landuse-railway', 'fill-color', GREEN.suburb);
 }
 
 function needsNetwork(key) {
-  return key === 'satellite' || key === 'nature';
+  return key === 'satellite';
 }
 
 export async function createVillageMap(container) {
@@ -100,11 +109,20 @@ export async function createVillageMap(container) {
     dark: 'demo-dark',
   };
 
+  const localStyleUrl = (key) => new URL(`maps/${paths[key]}/style.json`, location.href).href;
+
   const style = (key) => {
-    if (key === 'nature') return natureRaster;
     if (key === 'satellite') return satellite;
-    if (key === 'none') return { version: 8, sources: {}, layers: [] };
-    return new URL(`maps/${paths[key]}/style.json`, location.href).href;
+    if (key === 'none') {
+      return {
+        version: 8,
+        sources: {},
+        layers: [{ id: 'background', type: 'background', paint: { 'background-color': GREEN.background } }],
+      };
+    }
+    // Nature = local bright (or liberty) URL — greens applied on style.load
+    if (key === 'nature') return localStyleUrl('bright');
+    return localStyleUrl(key);
   };
 
   let selected = new URLSearchParams(location.search).get('basemap') || 'nature';
@@ -112,9 +130,8 @@ export async function createVillageMap(container) {
     selected = 'nature';
   }
 
-  // Ensure Nature sits first among online options in the control.
   if (![...select.options].some((o) => o.value === 'nature')) {
-    select.add(new Option('Map: nature (online)', 'nature'), 0);
+    select.add(new Option('Nature', 'nature'), 0);
   }
   if (![...select.options].some((o) => o.value === 'satellite')) {
     select.add(new Option('Map: satellite (online)', 'satellite'));
@@ -130,19 +147,22 @@ export async function createVillageMap(container) {
     style: style(selected),
     onError: () => {
       status.textContent =
-        'Map asset unavailable · check local packs or nature/satellite connection';
+        'Map asset unavailable · run npm run map:prepare or pick satellite online';
     },
   });
 
-  // Gesture ownership: village-worldline-day owns drag orbit/pan + click hop.
-  viewer.map.scrollZoom.enable();
-  viewer.map.touchZoomRotate.enable();
-  viewer.map.dragPan.disable();
-  viewer.map.dragRotate.disable();
-  viewer.map.keyboard.disable();
+  const enableGestures = () => {
+    viewer.map.scrollZoom.enable();
+    viewer.map.touchZoomRotate.enable();
+    viewer.map.dragPan.enable();
+    viewer.map.dragRotate.enable();
+    viewer.map.touchPitch?.enable?.();
+    viewer.map.keyboard.disable();
+  };
+  enableGestures();
 
   const labelFor = (key) => {
-    if (key === 'nature') return 'nature · Carto Voyager online';
+    if (key === 'nature') return 'nature · lush green';
     if (key === 'satellite') return 'satellite online';
     if (key === 'none') return 'no basemap';
     return 'local map';
@@ -153,12 +173,21 @@ export async function createVillageMap(container) {
   };
 
   const afterStyle = () => {
-    // Offline nature falls back to bright pack — push greens/blues there.
-    if (selected === 'nature') applyNaturalColors(viewer.map);
+    enableGestures();
+    if (selected === 'nature') {
+      applyNaturalColors(viewer.map);
+      // Retry once tiles/layers settle — first paint can race style.load.
+      requestAnimationFrame(() => applyNaturalColors(viewer.map));
+      setTimeout(() => applyNaturalColors(viewer.map), 200);
+    }
     copy();
+    viewer.map.triggerRepaint();
   };
 
   viewer.map.on('style.load', afterStyle);
+  viewer.map.on('idle', () => {
+    if (selected === 'nature') applyNaturalColors(viewer.map);
+  });
   viewer.map.on('render', () => {
     if (viewer.map.isStyleLoaded() && viewer.map.areTilesLoaded()) copy();
   });
@@ -174,14 +203,12 @@ export async function createVillageMap(container) {
       await viewer.setBasemap(style(selected));
       afterStyle();
     } catch {
-      // Offline fallback for nature → local bright + landscape paint.
       if (selected === 'nature') {
         try {
           viewer.offline = true;
-          await viewer.setBasemap(style('bright'));
-          applyNaturalColors(viewer.map);
-          status.textContent =
-            'Locus · Voundou · nature offline fallback (bright + landscape colors)';
+          await viewer.setBasemap(localStyleUrl('liberty'));
+          afterStyle();
+          status.textContent = 'Locus · Voundou · nature greens (liberty pack)';
           return;
         } catch {
           /* fall through */

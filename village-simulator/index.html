@@ -49,7 +49,25 @@ a { color: var(--green); }
   position: relative; min-width: 0; height: 100%; min-height: 0;
   display: flex; flex-direction: column; gap: 0.4rem;
 }
-#wl-stage { position: relative; flex: 1; min-height: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #121214; }
+#wl-stage {
+  position: relative; flex: 1; min-height: 0;
+  border: 1px solid var(--border); border-radius: 10px;
+  overflow: hidden; background: #121214;
+}
+/* MapLibre mounts ON #wl-stage — fill hit box so pan/zoom/click work */
+#wl-stage.maplibregl-map { width: 100%; height: 100%; }
+#wl-stage .maplibregl-canvas-container {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+#wl-stage .maplibregl-canvas {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
 .wl-overlay {
   position: absolute; z-index: 8; pointer-events: auto;
   top: 8px; left: 8px; width: min(440px, calc(100% - 56px));
@@ -220,6 +238,46 @@ html[data-role="customer"] .stage { grid-template-columns: 1fr; }
 .panel-play h2::before { background: #2bb6a3; }
 .panel-geoid h2::before { background: #5c7cfa; }
 .panel-stats h2::before { background: #3b6d11; }
+.panel-kpi h2::before { background: #ba7517; }
+#wl-kpi-toolbar {
+  display: flex; flex-wrap: wrap; gap: 0.3rem; align-items: center;
+  margin: 0 0 0.45rem;
+}
+#wl-kpi-cat {
+  font-family: inherit; font-size: 11px; padding: 0.2rem 0.4rem;
+  border-radius: 6px; border: 1px solid var(--border); background: var(--bg); color: var(--text);
+}
+#wl-kpi-miss-only {
+  font-family: inherit; font-size: 11px; padding: 0.18rem 0.5rem;
+  border-radius: 999px; border: 1px solid var(--border); background: var(--bg);
+  color: var(--text-2); cursor: pointer;
+}
+#wl-kpi-miss-only.on { border-color: #b42318; color: #f5c4c0; background: color-mix(in srgb, #b42318 12%, var(--bg)); }
+#wl-kpi-sum { font-size: 11px; color: var(--text-2); margin: 0 0 0.35rem; line-height: 1.35; }
+#wl-kpi-table-wrap { max-height: 42vh; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
+#wl-kpi-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+#wl-kpi-table th {
+  position: sticky; top: 0; z-index: 1;
+  text-align: left; padding: 0.28rem 0.4rem;
+  background: #1a3d2e; color: #e8e6dc; font-weight: 500;
+}
+#wl-kpi-table td { padding: 0.22rem 0.4rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+#wl-kpi-table tr.kpi-cat td {
+  background: #c47a3a; color: #1a1208; font-weight: 600; letter-spacing: 0.02em;
+  border-bottom: 0;
+}
+#wl-kpi-table tr.kpi-row { cursor: pointer; }
+#wl-kpi-table tr.kpi-row:hover td { background: color-mix(in srgb, var(--blue) 10%, var(--bg)); }
+#wl-kpi-table tr.kpi-row.is-focus td { background: color-mix(in srgb, #e6c84a 14%, var(--bg)); }
+#wl-kpi-table .kpi-uom { color: var(--text-3); white-space: nowrap; }
+#wl-kpi-table .kpi-num { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+#wl-kpi-table .kpi-hit { color: #3b6d11; font-weight: 600; }
+#wl-kpi-table .kpi-miss { color: #b42318; font-weight: 600; }
+#wl-kpi-note { font-size: 10px; color: var(--text-3); margin: 0.4rem 0 0; line-height: 1.35; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
 .panel-log h2::before { background: #c9a227; }
 #wl-geoid-sub { font-size: 11px; color: var(--text-2); margin: 0 0 0.35rem; line-height: 1.35; }
 #wl-geoid-json {
@@ -418,6 +476,7 @@ html[data-role="customer"] .stage { grid-template-columns: 1fr; }
 .wl-xsect-drop.on { outline: 1px solid #e6c84a; }
 html[data-mode="build"] .panel-play,
 html[data-mode="build"] .panel-stats,
+html[data-mode="build"] .panel-kpi,
 html[data-mode="build"] .panel-log,
 html[data-mode="build"] #wl-ems-card,
 html[data-mode="build"] #wl-cust-card,
@@ -427,6 +486,26 @@ html[data-mode="build"] #wl-productive,
 html[data-mode="build"] #wl-win,
 html[data-mode="build"] #wl-fs-load { display: none !important; }
 html[data-mode="build"] .panel-build { display: block !important; }
+/* Build + Maintenance: no playhead / time-of-day feeds */
+html[data-mode="build"] #wl-clock,
+html[data-mode="build"] #wl-play,
+html[data-mode="build"] #wl-scrub,
+html[data-mode="build"] #wl-rev,
+html[data-mode="build"] #wl-speed,
+html[data-mode="maintenance"] #wl-clock,
+html[data-mode="maintenance"] #wl-play,
+html[data-mode="maintenance"] #wl-scrub,
+html[data-mode="maintenance"] #wl-rev,
+html[data-mode="maintenance"] #wl-speed,
+html[data-mode="maintenance"] #wl-productive,
+html[data-mode="maintenance"] #wl-stream-panel,
+html[data-mode="maintenance"] .tbl-wrap,
+html[data-mode="maintenance"] #wl-cust-card,
+html[data-mode="maintenance"] #wl-win,
+html[data-mode="maintenance"] #wl-fs-load,
+html[data-mode="maintenance"] .panel-kpi,
+html[data-mode="maintenance"] .panel-stats,
+html[data-mode="maintenance"] .panel-log { display: none !important; }
 .panel-build { display: none; }
 .panel-build h2 { margin-top: 0.85rem; }
 .panel-build h2:first-child { margin-top: 0; }
@@ -611,17 +690,22 @@ html.embed #wl-theater { height: calc(100dvh - 0.7rem); min-height: 420px; flex:
       <button type="button" data-mode-btn="operations" class="on" aria-pressed="true">Operations</button>
       <button type="button" data-mode-btn="maintenance" aria-pressed="false">Maintenance</button>
     </div>
-    <span id="wl-clock">00:00</span>
-    <button type="button" class="wl-skip" id="wl-play" title="Play" aria-label="Play">▶</button>
-    <input id="wl-scrub" type="range" min="0" max="1440" value="0" />
-    <button type="button" class="wl-skip" id="wl-rev" title="Play reverse" aria-label="Play reverse">◀</button>
-    <select id="wl-speed" aria-label="Playback speed">
+    <span id="wl-clock" data-modes="operations">00:00</span>
+    <button type="button" class="wl-skip" id="wl-play" title="Play" aria-label="Play" data-modes="operations">▶</button>
+    <input id="wl-scrub" type="range" min="0" max="1440" value="0" data-modes="operations" />
+    <button type="button" class="wl-skip" id="wl-rev" title="Play reverse" aria-label="Play reverse" data-modes="operations">◀</button>
+    <select id="wl-speed" aria-label="Playback speed" data-modes="operations">
       <option value="15">15×</option>
       <option value="30" selected>30×</option>
       <option value="60">60×</option>
       <option value="120">120×</option>
     </select>
     <select id="wl-basemap" aria-label="Basemap"><option value="nature">Nature</option><option value="liberty">Map</option><option value="bright">Bright</option><option value="positron">Light</option><option value="dark">Dark</option><option value="none">None</option></select>
+    <select id="wl-site" aria-label="Village project" title="Switch village Map Twin / worldline site">
+      <option value="voundou" selected>Site: Voundou</option>
+      <option value="demo-lv">Site: Demo LV</option>
+      <option value="safari-park-casino">Site: Safari Park Casino</option>
+    </select>
     <select id="wl-homes" aria-label="Village size" title="Reloads with ?homes=">
       <option value="100">100 homes</option>
       <option value="200" selected>200 homes</option>
@@ -664,6 +748,7 @@ html.embed #wl-theater { height: calc(100dvh - 0.7rem); min-height: 420px; flex:
       <span><i style="background:#b42318"></i>fault</span>
       <span><i style="background:#e85dff"></i>leak</span>
     </span>
+    <button type="button" id="wl-kpi-open" title="Fake demo KPIs · target vs actual">KPIs</button>
   </div>
 
   <div class="wl-mode-strip" data-modes="build" hidden aria-hidden="true" aria-label="Build tools">
@@ -694,12 +779,7 @@ html.embed #wl-theater { height: calc(100dvh - 0.7rem); min-height: 420px; flex:
     <button type="button" data-hide="disconnect" title="Cutoffs">Cutoffs</button>
     <button type="button" data-hide="mesh" title="Mesh hops">Mesh</button>
     <button type="button" data-hide="rf" title="RF network">RF</button>
-    <button type="button" data-hide="worldline" title="Time worldlines">Worldlines</button>
     <button type="button" data-hide="phase_xfer" title="Phase transfer">Phase</button>
-    <select id="wl-viz" aria-label="Time layout">
-      <option value="v2" selected>Worldlines ↑</option>
-      <option value="v1">Worldlines ↓</option>
-    </select>
     <select id="wl-scheme-maint" aria-label="Color scheme">
       <option value="capacity" selected>Color: capacity</option>
       <option value="osi">Color: OSI</option>
@@ -717,6 +797,7 @@ html.embed #wl-theater { height: calc(100dvh - 0.7rem); min-height: 420px; flex:
       <span><i style="background:#b42318"></i>cutoff</span>
       <span><i style="background:#5ee0ff"></i>mesh</span>
     </span>
+    <button type="button" id="wl-kpi-open-maint" title="Fake demo KPIs · target vs actual" hidden aria-hidden="true">KPIs</button>
   </div>
 
   <div id="wl-build-bar" class="wl-build-bar" data-modes="build" hidden aria-hidden="true" aria-label="Build asset palette"></div>
@@ -777,7 +858,7 @@ html.embed #wl-theater { height: calc(100dvh - 0.7rem); min-height: 420px; flex:
           <div id="wl-cust-body"></div>
         </aside>
       </div>
-      <label class="wl-win" id="wl-win" title="Height of stretch / scrunch boundary" data-modes="operations,maintenance">
+      <label class="wl-win" id="wl-win" title="Height of stretch / scrunch boundary" data-modes="operations">
         <span id="wl-win-hi">past</span>
         <input id="wl-window" type="range" min="8" max="42" step="1" value="36" aria-label="Stretch / scrunch boundary height" />
         <span id="wl-win-val">−2h</span>
@@ -845,17 +926,39 @@ html.embed #wl-theater { height: calc(100dvh - 0.7rem); min-height: 420px; flex:
         <p id="wl-geoid-sub">FeatureCollection · select a feeder or home</p>
         <pre id="wl-geoid-json">{"type":"FeatureCollection","features":[]}</pre>
       </div>
-      <div class="panel panel-stats">
+      <div class="panel panel-kpi" data-modes="operations">
+        <h2>Demo KPIs</h2>
+        <div id="wl-kpi-toolbar">
+          <label>
+            <span class="visually-hidden">KPI category</span>
+            <select id="wl-kpi-cat" aria-label="KPI category">
+              <option value="all">All categories</option>
+            </select>
+          </label>
+          <button type="button" id="wl-kpi-miss-only" title="Show only metrics missing target">Misses only</button>
+        </div>
+        <p id="wl-kpi-sum"></p>
+        <div id="wl-kpi-table-wrap">
+          <table id="wl-kpi-table" aria-label="Fake demo day KPIs target versus actual">
+            <thead>
+              <tr><th>Metric</th><th>UoM</th><th>Target</th><th>Actual</th></tr>
+            </thead>
+            <tbody id="wl-kpi-body"></tbody>
+          </table>
+        </div>
+        <p id="wl-kpi-note">Invented demo figures for this sim day · not any real site report. Click a row to focus map layers.</p>
+      </div>
+      <div class="panel panel-stats" data-modes="operations">
         <h2>Day totals</h2>
         <div id="wl-stats"></div>
       </div>
-      <div class="panel panel-log">
+      <div class="panel panel-log" data-modes="operations">
         <h2>Recent events</h2>
         <ul id="wl-log"></ul>
       </div>
     </div>
   </div>
-  <div id="wl-fs-load">
+  <div id="wl-fs-load" data-modes="operations">
     <header class="fs-load-head">
       <div>
         <h2 id="wl-fs-load-title">Village load</h2>

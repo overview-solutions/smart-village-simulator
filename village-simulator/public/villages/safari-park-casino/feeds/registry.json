@@ -1,0 +1,226 @@
+{
+  "schemaVersion": "0.1.0",
+  "bindings": [
+    {
+      "assetId": "ems-0",
+      "lod": 2,
+      "feeds": [
+        {
+          "kind": "mqtt_sunspec",
+          "brokerRef": "env:MQTT_URL",
+          "topic": "openami/safari-park/ems",
+          "model": "SunSpec"
+        }
+      ]
+    },
+    {
+      "assetId": "j-main",
+      "lod": 2,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "safari-park-feeder",
+          "metrics": [
+            "kW",
+            "A"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-12",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "safari-park-workshop",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-9",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "safari-park-workshop",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-7",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "safari-park-workshop",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-11",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "safari-park-workshop",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-6",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "safari-park-workshop",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-4",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "safari-park-workshop",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-10",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "safari-park-workshop",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-8",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "safari-park-workshop",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-0",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "safari-park-workshop",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-5",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "safari-park-workshop",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-1",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "safari-park-workshop",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-3",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "safari-park-workshop",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-2",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "safari-park-workshop",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    }
+  ]
+}
