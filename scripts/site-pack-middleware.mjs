@@ -5,9 +5,9 @@ import { spawn } from "node:child_process";
 import { mkdir, writeFile, readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { findLocusPrepareScript } from "./locus-pack-path.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const packScript = join(root, "../../CIR/yang/locus/scripts/prepare-map-pack.mjs");
 
 function slug(lat, lon, name) {
   const n = String(name || "")
@@ -35,6 +35,7 @@ function readJsonBody(req) {
 }
 
 function runPack({ out, lon, lat, km, base }) {
+  const packScript = findLocusPrepareScript();
   return new Promise((resolve, reject) => {
     const child = spawn(
       process.execPath,

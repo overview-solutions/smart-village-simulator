@@ -1,110 +1,128 @@
 # Smart Village Simulator
 
-Village energy simulation built on [Circaevum Locus](https://github.com/Circaevum/locus).  
-Repository: [overview-solutions/smart-village-simulator](https://github.com/overview-solutions/smart-village-simulator).
+Live 3D village energy app on [Circaevum Locus](https://github.com/Circaevum/locus).  
+Repository: [overview-solutions/smart-village-simulator](https://github.com/overview-solutions/smart-village-simulator).  
+License: **Apache-2.0**. `package.json` is `"private": true` (not published to npm).
 
-Hypothetical GroundBolt prepaid day — not live telemetry. Layout is synthetic
-(Voundou, Cameroon; hypothetical infrastructure). Placing it on a real basemap later does not make it a survey.
-
----
-
-## Offline via the ISV wiki (start here)
-
-Want to **open** the simulator inside the knowledge base — workshop, village kit, no Node?
-
-You do **not** need this repo for that.
-
-1. Clone and run the wiki (one command after clone):
-
-   ```bash
-   git clone https://github.com/overview-solutions/isv-ai-wiki.git
-   cd isv-ai-wiki
-   ./preview.sh
-   ```
-
-2. Open [http://127.0.0.1:8765/index.html#village-metering/village-simulator](http://127.0.0.1:8765/index.html#village-metering/village-simulator)
-
-The wiki embeds a **frozen snapshot** of the sim (`isv-ai-wiki/village-simulator/`). Same sidebar as [isv.wiki](https://isv.wiki/). Details: [isv-ai-wiki README → Offline in one go](https://github.com/overview-solutions/isv-ai-wiki#offline-in-one-go-start-here).
+Hypothetical GroundBolt prepaid day — not live telemetry. Default layout is synthetic
+(Voundou, Cameroon; hypothetical infrastructure). A real basemap does not make it a survey.
 
 ---
 
-## Develop / run the live app (this repo)
+## This repo vs [isv.wiki](https://isv.wiki/)
 
-**One-click (macOS):** double-click **`Start Simulator.command`** in this folder (or the Desktop alias **Start Village Simulator**). Uses Homebrew arm64 Node when present (avoids nvm Rosetta × wrong `@rollup/rollup-darwin-*`). First run may `npm install`; then Vite opens [http://127.0.0.1:5176/](http://127.0.0.1:5176/). Leave the Terminal window open; Ctrl+C stops the server. Needs Node/npm and the workbench `CIR/yang/locus` checkout (`file:` dependency).
+| | [isv.wiki](https://isv.wiki/) | This repo |
+|---|---|---|
+| What | Static knowledge base (meters, AMI/EMS notes, citations). No login. | Runnable 3D simulator (Build / Operations / Loads / Maintenance / Energy Assets). |
+| Repo | [overview-solutions/isv-ai-wiki](https://github.com/overview-solutions/isv-ai-wiki) | This tree |
+| Sim on the site | Frozen embed (may be older than `main` here). Do not treat wiki numbers as this app’s runtime. | Live scene you `npm start` |
 
-For **editing** simulator code, BUILD/MAINT UX, or cutting a new freeze into the wiki:
+ISV volunteer knowledge vs a scene you can build and run. Public writing never copies private facts from `isv-ai-wiki-private` (contacts, prices, NDA text).
 
-```sh
-cd smart-village-simulator   # or ISV/smart-village-simulator in the workbench
-npm install
-npm start                    # http://127.0.0.1:5176 (opens browser)
-npm test
+**Open the wiki only** (no Node, workshop / village kit):
+
+```bash
+git clone https://github.com/overview-solutions/isv-ai-wiki.git
+cd isv-ai-wiki
+./preview.sh
 ```
 
-`@circaevum/locus` is a `file:` dependency on `CIR/yang/locus` in the Overview/Circaevum workbench. Standalone clones must point that dep at `github:Circaevum/locus` (or an npm pack) before CI/Pages.
+Then [http://127.0.0.1:8765/index.html#village-metering/village-simulator](http://127.0.0.1:8765/index.html#village-metering/village-simulator). Details: [isv-ai-wiki README](https://github.com/overview-solutions/isv-ai-wiki#offline-in-one-go-start-here).
 
-Offline basemaps: run `npm run map:prepare` once while online, then `npm start`. Satellite still needs internet; other packs are local when prepared.
+Do **not** develop against the wiki’s frozen `village-simulator/` copy. Change this repo; refresh the wiki snapshot when ready.
 
-**Do not** develop against the wiki’s frozen `village-simulator/` copy — change this repo, then refresh the wiki snapshot when ready.
+---
+
+## Run (no Circaevum workbench required)
+
+Need **Node 18.18+** (20+ recommended). **macOS** is first-class. **Linux** should work. **Windows** is untested.
+
+```sh
+git clone https://github.com/overview-solutions/smart-village-simulator.git
+cd smart-village-simulator
+npm install
+npm start
+```
+
+Browser opens [http://127.0.0.1:5176/](http://127.0.0.1:5176/). Leave the terminal open; Ctrl+C stops Vite.
+
+`@circaevum/locus` is the real package name (Circaevum Locus). It is **not** on the public npm registry. `npm install` pulls [`github:Circaevum/locus`](https://github.com/Circaevum/locus).
+
+**macOS one-click:** double-click `Start Simulator.command` in this folder. Prefers Homebrew arm64 Node when present (avoids nvm Rosetta × wrong `@rollup/rollup-darwin-*`). First run may `npm install`.
+
+```sh
+npm test
+npm run villages:sync    # copy villages/ packs → village-simulator/public/villages/
+```
+
+Pack contract, catalog, and LOD rules: [`villages/README.md`](villages/README.md). Catalog: [`villages/catalog.json`](villages/catalog.json).
+
+---
+
+## First session
+
+Default scene is the hypothetical Voundou / GroundBolt day. Empty project is the planning path.
+
+1. **New / empty project** — File menu → **New project…**. Drops the schematic village. Pin bar appears.
+2. **Place / coords** — type a town, address, or `lat, lon` in **Place**, Enter or Go. Dev server calls `GET /api/geocode` (Nominatim; needs internet). Origin becomes that WGS84 point. XZ ground, +X east, −Z north; Y is Locus playhead time (diagram, not altitude).
+3. **BUILD** — place gen → station/switch → primary → secondary / LV. Click a feeder in the Build strip for the completion grid.
+4. **Seed customers** — **Seed customers** on the Build strip (needs LV). Density: none on 11 kV; ≥10/pole on 0.38 kV; denser (≥14/pole) on 0.22 kV. Load diversity: use-class mix (homes, market/shop, civic, industry, ag, …) from community center out. Then **Loads** to inspect classes.
+5. **Modes** (top strip):
+   - **Build** — place assets; no playhead.
+   - **Operations** — prepaid day, feeders, anomalies, EMS.
+   - **Loads** — critical vs non-critical / use-class (productive-use overlay on the demo village; empty canvas uses seeded customers).
+   - **Maintenance** — faults, leaks, mesh; no playhead.
+   - **Energy Assets** — diesel / solar / wind / battery (demo village overlay).
+6. **Feeder select** — click a feeder (or pick one in Build). Scope filters plant and meters. Packs use LOD 2 on feeder, LOD 3 only after a meter is selected — see [`villages/README.md`](villages/README.md).
+7. **Offline maps / geocode / site-pack** — `GET /api/geocode` and `POST /api/site-pack` exist on the Vite dev server only. Place triggers a local OpenFreeMap + OSM cache under `village-simulator/public/maps/sites/` (gitignored). For the default Voundou packs:
+
+   ```sh
+   npm run map:prepare   # once, online
+   npm start
+   ```
+
+   Satellite still needs internet. Other styles use the local pack when present. `map:prepare` and `/api/site-pack` run `scripts/prepare-map-pack.mjs` from **installed** `@circaevum/locus` (GitHub tree includes it).
+
+---
+
+## If you sit next to a CIR clone
+
+Workbench layout `GitHub/CIR/yang/locus` next to `GitHub/ISV/smart-village-simulator` (`../../CIR/yang/locus` from this repo). `preinstall` / `postinstall` symlink `node_modules/@circaevum/locus` to that tree so local Locus edits apply. `package.json` stays `github:Circaevum/locus` — do not commit a `file:` override.
+
+Graphics issues → [Circaevum/locus](https://github.com/Circaevum/locus). App / energy / modes → this repo.
+
+---
 
 ## Boundary
 
 | Layer | Owns |
 |-------|------|
 | Locus (`@circaevum/locus`) | Time→Y (`TimeContext`), ENU↔WGS84, `LocusGL` / `LocusMap` |
-| This app | Meters, feeders, tariffs, payments, village meshes, UI |
-| ISV wiki | Docs, nav, hash aliases. Live embed is still the wiki's frozen static copy until Pages cutover |
+| This app | Meters, feeders, tariffs, payments, village meshes, UI, modes |
+| [isv.wiki](https://isv.wiki/) | Docs, nav, hash aliases. Embed is still the wiki’s frozen static copy until a Pages cutover |
 
-LocusMap owns the visible canvas, basemaps, camera, and shared renderer. Village
-meshes and time geometry attach directly to its scene. Drag to pan, right-drag
-to rotate/pitch, scroll to zoom. Satellite requires internet; other basemaps use
-local packs. The offscreen ground texture has been removed.
+LocusMap owns the visible canvas, basemaps, camera, and shared renderer. Village meshes attach to its scene. Drag to pan, right-drag to rotate/pitch, scroll to zoom.
 
-## Wiki embed
+Wiki hashes `#village-metering/village-simulator` (and `worldline-day` aliases) stay. After this app is on GitHub Pages, point the wiki iframe at that URL with `?embed=1`.
 
-Wiki hashes `#village-metering/village-simulator` (and `worldline-day` aliases)
-stay. After this app is on GitHub Pages, point the wiki iframe at that URL with
-`?embed=1`. Until then the wiki keeps serving its local `village-simulator/`.
+---
 
 ## Physical equipment
 
-The village renderer includes pole crossarms and insulators, segmented sagging
-overhead conductors, pole-mounted transformer tanks and shelves, EMS cabinets
-with mounting posts and solar caps, and RF enclosures with whip antennas. These
-are schematic visual assets, not construction dimensions or an RF propagation
-model. Shared equipment elevations live in `js/geo.js`; regenerate the exported
-GeoJSON with `npm run geojson` after changing them.
+Pole crossarms and insulators, sagging overhead conductors, pole-mounted transformers, EMS cabinets, RF enclosures. Schematic visuals — not construction dimensions or an RF model. Elevations in `js/geo.js`; regenerate GeoJSON with `npm run geojson` after changing them.
 
-## Village basemap
+Voundou anchor: 4.79209 N, 11.53412 E (user-confirmed pin; infrastructure still hypothetical). Legacy schematic ground units convert to 8 metres; equipment heights convert by 3. Homes about 4.7–6.4 m wide and ~2.1–2.2 m wall height; poles about 8.4 m. Layout is generated, not traced footprints. Do not infer population or existing assets.
 
-Run `npm run map:prepare` while connected, then `npm start`. The ignored local
-packs ship in Vite builds when present. Geographic, bright, light, dark, satellite (online), and no-map
-options are available. Map tiles are zoom 12–14, overscaled for the village; this
-is a geographic map, not terrain. The Voundou anchor does not
-make the generated houses or electrical network surveyed infrastructure.
+---
 
-## Productive-use scenario
+## Productive-use scenario (demo village)
 
-The planning panel toggles four irrigation pumps, a cold room, two mills, a
-welding shop, two tailors, a produce market, repair/charging shop, bakery, and six
-street lights. Each has geometry, a schedule and a demand profile. Expand
-“Businesses and equipment” for per-asset energy, tariff charges and water output.
-Scrubbing updates the scenario and its comparison with baseline consumption.
-Inputs are illustrative additional loads. The overlay assumes supplied power;
-it does not yet change feeder dispatch, outages or household billing. No thermal,
-spoilage, solar-surplus or business-income claims are inferred.
+Planning panel: four irrigation pumps, a cold room, two mills, a welding shop, two tailors, a produce market, repair/charging shop, bakery, and six street lights. Illustrative extra loads. Overlay assumes supplied power; it does not yet change feeder dispatch, outages, or household billing. No thermal, spoilage, solar-surplus, or business-income claims.
 
-## Scale and water infrastructure
+Productive buildings use the schematic home footprint as a scale reference. `village-water.js` adds an explicitly hypothetical river, intake, treatment, tank, standpipes, and wastewater path. Pipes are conceptual, not hydraulic design.
 
-Productive buildings use the existing schematic home footprint as a reference
-(shops about 1–1.4 scene units wide; homes about 0.6–0.8). This is proportional
-schematic geometry, not full-size surveyed buildings. `village-water.js` adds an
-explicitly hypothetical river beyond the settlement edge, intake, treatment,
-elevated tank, standpipes, wastewater collection, treatment basins and a wetland
-reuse area. Colored pipes show conceptual connections, not hydraulic design.
+---
 
-Voundou anchor confirmed by user: 4.79209 N, 11.53412 E. Legacy schematic
-ground units convert to 8 metres; equipment heights convert by 3. Homes are
-about 4.7–6.4 m wide and ~2.1–2.2 m wall height; poles about 8.4 m.
-Layout remains generated, not traced building footprints. Time-Y is a diagram,
-not physical altitude. Do not infer population or existing assets from this scenario.
+## License
+
+Apache-2.0. See [LICENSE](LICENSE). How to contribute: [CONTRIBUTING.md](CONTRIBUTING.md).

@@ -22,10 +22,8 @@ if ! command -v npm >/dev/null 2>&1; then
   exit 1
 fi
 
-if [[ ! -d ../../CIR/yang/locus ]]; then
-  echo "Missing CIR/yang/locus (file: dep). Open the GitHub workbench clone, or retarget @circaevum/locus in package.json."
-  read -r -p "Press Enter to close…"
-  exit 1
+if [[ -d ../../CIR/yang/locus ]]; then
+  echo "CIR sibling found — npm install will link local @circaevum/locus."
 fi
 
 NODE_ARCH="$(node -p process.arch)"
