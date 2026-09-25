@@ -1,0 +1,237 @@
+{
+  "type": "FeatureCollection",
+  "name": "electric-junctions",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "bus-island",
+      "properties": {
+        "id": "bus-island",
+        "assetClass": "bus",
+        "assetGroup": "electric_junction",
+        "x": -18,
+        "z": -4,
+        "subnetworkId": "island-1",
+        "label": "station LV bus",
+        "globalId": "9727621d-f126-5485-ae47-ee410199704d"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -18,
+          -4
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "j-w-head",
+      "properties": {
+        "id": "j-w-head",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": -40,
+        "z": 10,
+        "subnetworkId": "f-west",
+        "label": "feeder head",
+        "globalId": "840f21bc-e25f-5a12-9450-bc25a558d948"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -40,
+          10
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bus-w",
+      "properties": {
+        "id": "bus-w",
+        "assetClass": "bus",
+        "assetGroup": "electric_junction",
+        "x": -38,
+        "z": 19.2,
+        "subnetworkId": "f-west",
+        "label": "xfmr secondary bus",
+        "globalId": "30a6306d-e2de-508c-b9e7-679b718c228f"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -38,
+          19.2
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-w1",
+      "properties": {
+        "id": "tap-w1",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -41,
+        "z": 24,
+        "subnetworkId": "f-west",
+        "label": "tap",
+        "globalId": "68bd8b47-dead-55e6-b5e4-9e558335bbb4"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -41,
+          24
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-w1",
+      "properties": {
+        "id": "sp-w1",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -44,
+        "z": 28.5,
+        "subnetworkId": "f-west",
+        "label": "SP Leila",
+        "globalId": "467d7a90-6e24-53f9-88ad-d90970e07440"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -44,
+          28.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-w2",
+      "properties": {
+        "id": "sp-w2",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -34,
+        "z": 30.5,
+        "subnetworkId": "f-west",
+        "label": "SP Musa",
+        "globalId": "8e293a4a-4ecb-57b7-89d7-83cfa70e0fa0"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -34,
+          30.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-w3",
+      "properties": {
+        "id": "sp-w3",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -30,
+        "z": 26.5,
+        "subnetworkId": "f-west",
+        "label": "SP Hope",
+        "globalId": "803a9355-4572-5f2d-bf6a-86197adb5f80"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -30,
+          26.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "j-m-head",
+      "properties": {
+        "id": "j-m-head",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": -10,
+        "z": 4,
+        "subnetworkId": "f-market",
+        "label": "feeder head",
+        "globalId": "ef6b1039-e0a8-5c6f-8333-cd8041abd123"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -10,
+          4
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bus-m",
+      "properties": {
+        "id": "bus-m",
+        "assetClass": "bus",
+        "assetGroup": "electric_junction",
+        "x": -4,
+        "z": 9.8,
+        "subnetworkId": "f-market",
+        "label": "xfmr secondary bus",
+        "globalId": "e2199e2c-ff1f-575d-af3b-cb12953841bb"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4,
+          9.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-m1",
+      "properties": {
+        "id": "sp-m1",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 2,
+        "z": 14.5,
+        "subnetworkId": "f-market",
+        "label": "SP kiosk",
+        "globalId": "71556cc9-2474-5eaa-8792-ce726a94282a"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2,
+          14.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-m2",
+      "properties": {
+        "id": "sp-m2",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 6,
+        "z": 8.5,
+        "subnetworkId": "f-market",
+        "label": "SP shop",
+        "globalId": "50f99537-0569-544b-8fe6-b62a3c2be5a8"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6,
+          8.5
+        ]
+      }
+    }
+  ]
+}

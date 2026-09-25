@@ -69,6 +69,46 @@ export const SLOT_MIN = 15;
 export const DAY_MIN = 24 * 60;
 export const SLOTS = DAY_MIN / SLOT_MIN;
 
+const DEMO_CTX = {
+  houses: HOUSES,
+  feeders: FEEDERS,
+  outages: OUTAGES,
+  leaks: LEAKS,
+  vendors: VENDORS,
+  usb: null,
+  hopsToUsb: null,
+  nextTowardUsb: null,
+  pvNameplateW: null,
+  xfmrCapW: null,
+};
+
+/** Active village for this sim pass — demo layout or BUILD-seeded customers. */
+let ACTIVE = { ...DEMO_CTX };
+
+export function setSimContext(ctx) {
+  _adj = null;
+  if (!ctx) {
+    ACTIVE = { ...DEMO_CTX };
+    return;
+  }
+  ACTIVE = {
+    houses: ctx.houses || DEMO_CTX.houses,
+    feeders: ctx.feeders || DEMO_CTX.feeders,
+    outages: ctx.outages || DEMO_CTX.outages,
+    leaks: ctx.leaks || DEMO_CTX.leaks,
+    vendors: ctx.vendors || DEMO_CTX.vendors,
+    usb: ctx.usb || null,
+    hopsToUsb: ctx.hopsToUsb || null,
+    nextTowardUsb: ctx.nextTowardUsb || null,
+    pvNameplateW: ctx.pvNameplateW ?? null,
+    xfmrCapW: ctx.xfmrCapW ?? null,
+  };
+}
+
+export function getSimContext() {
+  return ACTIVE;
+}
+
 /** Stretched hamlets: RF does not cover the whole site. Units schematic metres-ish. */
 export const LANDMARKS = {
   gen: { x: -26.0, z: -11.0, label: "gen + solar" },
@@ -174,12 +214,13 @@ export function sunElev(min) {
 }
 
 export function pvFarmW(min) {
-  return Math.round((PV_FARM.nameplateW || 0) * sunElev(min));
+  const nameplate = ACTIVE.pvNameplateW ?? PV_FARM.nameplateW ?? 0;
+  return Math.round(nameplate * sunElev(min));
 }
 
 export function civicW(min) {
   const h = min / 60;
-  const scale = Math.sqrt(Math.max(1, HOUSES.length / 60));
+  const scale = Math.sqrt(Math.max(1, (ACTIVE.houses || HOUSES).length / 60));
   if (h >= 17 && h < 21) return Math.round(700 * scale);
   if (h >= 8 && h < 17) return Math.round(280 * scale);
   return Math.round(90 * scale);
@@ -197,9 +238,11 @@ export const USB_MAX_NEIGHBORS = 16;
 export const RF_CHANNEL_CAP = 3;
 
 function rfNodes() {
+  const homes = ACTIVE.houses || HOUSES;
+  const usb = ACTIVE.usb || LANDMARKS.usb;
   return [
-    ...HOUSES.map((h) => ({ id: h.id, x: h.x, z: h.z })),
-    { id: "usb", x: LANDMARKS.usb.x, z: LANDMARKS.usb.z },
+    ...homes.map((h) => ({ id: h.id, x: h.x, z: h.z })),
+    { id: "usb", x: usb.x, z: usb.z },
   ];
 }
 
@@ -316,12 +359,14 @@ export function meshPath(houseId, dir, seed) {
 }
 
 export function hopsToUsb(houseId) {
+  if (ACTIVE.hopsToUsb) return ACTIVE.hopsToUsb(houseId);
   const d = distTo(rfAdj(), "usb")[houseId];
   return d == null ? 99 : d;
 }
 
 /** Next hop on the hop-count gradient toward the USB Gateway. */
 export function nextTowardUsb(houseId) {
+  if (ACTIVE.nextTowardUsb) return ACTIVE.nextTowardUsb(houseId);
   const adj = rfAdj();
   const dist = distTo(adj, "usb");
   const d0 = dist[houseId];
@@ -347,12 +392,55 @@ function hid(house) {
 }
 
 function loudHouse(house) {
+  if (house?.loud != null) return !!house.loud;
   const i = hid(house);
   return i % 41 === 0;
 }
 
 function inWin(min, start, dur) {
   return min >= start && min < start + dur;
+}
+
+function applyUseClassMix(house, min, out, i) {
+  const uc = house.useClass;
+  if (!uc) return;
+  const hr = min / 60;
+  if (uc === "streetlight") {
+    for (const k of Object.keys(out)) delete out[k];
+    if (hr >= 18.2 || hr < 6.2) out.lighting = 40 + (i % 8);
+    else out.lighting = 2;
+    return;
+  }
+  if (uc === "medical") {
+    out.fridge = Math.max(out.fridge || 0, 72);
+    out.lighting = Math.max(out.lighting || 0, hr >= 7 && hr < 20 ? 38 : 16);
+    out.ict = Math.max(out.ict || 0, 24);
+  } else if (uc === "water") {
+    if ((hr >= 6 && hr < 8) || (hr >= 16.5 && hr < 18.5)) out.pump = Math.max(out.pump || 0, 220);
+  } else if (uc === "school") {
+    if (hr >= 7.5 && hr < 16) {
+      out.lighting = Math.max(out.lighting || 0, 28);
+      out.ict = Math.max(out.ict || 0, 36);
+    }
+  } else if (uc === "worship") {
+    if ((hr >= 5.5 && hr < 8) || (hr >= 17.5 && hr < 20.5)) out.lighting = Math.max(out.lighting || 0, 46);
+  } else if (uc === "telecom") {
+    out.ict = Math.max(out.ict || 0, 88);
+  } else if (uc === "market" || uc === "commercial") {
+    if (hr >= 7 && hr < 19) {
+      out.ict = Math.max(out.ict || 0, 18);
+      out.lighting = Math.max(out.lighting || 0, 14);
+    }
+  } else if (uc === "industrial" && hr >= 8 && hr < 17) {
+    out.tools = Math.max(out.tools || 0, 160);
+  } else if (uc === "agricultural") {
+    if ((hr >= 7 && hr < 11) || (hr >= 14 && hr < 17)) out.ag = Math.max(out.ag || 0, 90);
+  } else if (uc === "leisure") {
+    if (hr >= 17 && hr < 22) out.lighting = Math.max(out.lighting || 0, 50);
+  } else if (uc === "security" || uc === "fire") {
+    out.lighting = Math.max(out.lighting || 0, 18);
+    out.ict = Math.max(out.ict || 0, 12);
+  }
 }
 
 /**
@@ -426,6 +514,8 @@ function activityMix(house, min, shed = false) {
     }
   }
 
+  applyUseClassMix(house, min, out, i);
+
   if (shed) {
     for (const k of ["cooking", "tools", "ag", "laundry", "pump"]) {
       if (out[k]) out[k] = Math.round(out[k] * 0.45);
@@ -442,7 +532,7 @@ function activityMix(house, min, shed = false) {
 
 export function outageHit(house, min) {
   if (!house) return null;
-  for (const o of OUTAGES) {
+  for (const o of ACTIVE.outages || OUTAGES) {
     if (min <= o.min || min >= o.restore) continue;
     if (o.feederId && house.feederId === o.feederId) return o;
     if (o.xfmrId && house.xfmrId === o.xfmrId) return o;
@@ -451,7 +541,7 @@ export function outageHit(house, min) {
 }
 
 export function outageCovers(seg, min) {
-  for (const o of OUTAGES) {
+  for (const o of ACTIVE.outages || OUTAGES) {
     if (min <= o.min || min >= o.restore) continue;
     if (o.xfmrId && seg.xfmrId === o.xfmrId) return o;
     if (o.feederId && seg.feederId === o.feederId) return o;
@@ -498,7 +588,7 @@ function costOf(energyWh) {
 }
 
 function runDtmTransfers(byId, min, shed, events, lastXfer, xferCount) {
-  for (const f of FEEDERS) {
+  for (const f of ACTIVE.feeders || FEEDERS) {
     if ((xferCount[f.id] || 0) >= 2) continue;
     if (lastXfer[f.id] != null && min - lastXfer[f.id] < 75) continue;
     const live = Object.values(byId).filter((h) => h.feederId === f.id && h.on && !outageHit(h, min));
@@ -545,11 +635,17 @@ function runDtmTransfers(byId, min, shed, events, lastXfer, xferCount) {
  *   summary: object
  * }}
  */
-export function simulateDay() {
+export function simulateDay(ctx) {
+  if (ctx) setSimContext(ctx);
+  const houses = ACTIVE.houses || HOUSES;
+  const outages = ACTIVE.outages || OUTAGES;
+  const leaks = ACTIVE.leaks || LEAKS;
+  const vendors = ACTIVE.vendors || VENDORS;
+  const xfmrCap = ACTIVE.xfmrCapW ?? XFMR_CAPACITY_W;
   const events = [];
   const readings = [];
   const byId = Object.fromEntries(
-    HOUSES.map((h) => [
+    houses.map((h) => [
       h.id,
       {
         ...h,
@@ -582,7 +678,7 @@ export function simulateDay() {
   let pfWarnN = 0;
   let recN = 0;
   let smsN = 0;
-  const outageLog = OUTAGES.map((o) => ({ ...o, lastBreathArrived: 0, lastBreathSilent: 0, nDark: 0 }));
+  const outageLog = outages.map((o) => ({ ...o, lastBreathArrived: 0, lastBreathSilent: 0, nDark: 0 }));
 
   for (const h of Object.values(byId)) {
     if (!h.on && loudHouse(h)) {
@@ -610,7 +706,7 @@ export function simulateDay() {
         paySum += pay.amount;
         const loud = loudHouse(h);
         if (loud) {
-          const vendor = VENDORS.find((v) => v.id === h.vendorId);
+          const vendor = vendors.find((v) => v.id === h.vendorId);
           const via = h.payVia || "vendor";
           const where =
             via === "vendor"
@@ -664,7 +760,7 @@ export function simulateDay() {
       });
     }
 
-    for (const o of OUTAGES) {
+    for (const o of outages) {
       if (min === o.min + 15) {
         events.push({
           min,
@@ -902,10 +998,10 @@ export function simulateDay() {
 
     runDtmTransfers(byId, min, shed, events, lastXfer, xferCount);
 
-    for (const o of OUTAGES) {
+    for (const o of outages) {
       if (o.min !== min) continue;
       const silentByCluster = {};
-      const slotReadings = readings.slice(readings.length - HOUSES.length);
+      const slotReadings = readings.slice(readings.length - houses.length);
       const hit = (h) => (o.xfmrId ? h.xfmrId === o.xfmrId : h.feederId === o.feederId);
       for (const r of slotReadings) {
         if (!hit(byId[r.houseId])) continue;
@@ -991,7 +1087,7 @@ export function simulateDay() {
     }
   }
 
-  for (const lk of LEAKS) {
+  for (const lk of leaks) {
     events.push({
       min: lk.min,
       kind: "leak",
@@ -1012,19 +1108,19 @@ export function simulateDay() {
 
   const kWh = readings.reduce((s, r) => s + r.energyWh, 0) / 1000;
   const summary = {
-    customers: HOUSES.length,
+    customers: houses.length,
     tariff: TARIFF_PER_KWH,
     heartbeatMin: SLOT_MIN,
-    xfmrCapW: XFMR_CAPACITY_W,
+    xfmrCapW: xfmrCap,
     peakFeederW: Math.round(peakFeederW),
     pvNameplateW: PV_FARM.nameplateW || 0,
     pvPeakW: Math.round(peakPvW),
     pvKWh: Math.round((pvWh / 1000) * 10) / 10,
-    tripMin: OUTAGES[0]?.min ?? null,
-    restoreMin: OUTAGES[OUTAGES.length - 1]?.restore ?? null,
+    tripMin: outages[0]?.min ?? null,
+    restoreMin: outages[outages.length - 1]?.restore ?? null,
     outages: outageLog,
-    faultAt: OUTAGES.map((o) => o.label).join(" · "),
-    faultCluster: OUTAGES.map((o) => o.label).join(", "),
+    faultAt: outages.map((o) => o.label).join(" · "),
+    faultCluster: outages.map((o) => o.label).join(", "),
     faultClusterW: 0,
     civicAtTrip: 0,
     lastBreathArrived: lastBreathArrivedN,
@@ -1040,12 +1136,12 @@ export function simulateDay() {
     pfWarns: pfWarnN,
     reconnects: recN,
     sms: smsN,
-    leaks: LEAKS.length,
-    leakW: LEAKS.reduce((s, lk) => s + (lk.leakW || 0), 0),
+    leaks: leaks.length,
+    leakW: leaks.reduce((s, lk) => s + (lk.leakW || 0), 0),
     kWh: Math.round(kWh * 1000) / 1000,
     billed: Math.round(kWh * TARIFF_PER_KWH * 100) / 100,
     readings: readings.length,
   };
 
-  return { houses: HOUSES, events, readings, summary };
+  return { houses, events, readings, summary };
 }

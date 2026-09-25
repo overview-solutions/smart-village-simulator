@@ -1,0 +1,91 @@
+{
+  "type": "FeatureCollection",
+  "name": "subnetworks",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "island-1",
+      "properties": {
+        "id": "island-1",
+        "assetClass": "island",
+        "assetGroup": "subnetwork",
+        "label": "Island · solar plant",
+        "tier": "island",
+        "x": -340.61,
+        "z": -429.47,
+        "subnetworkId": "island-1",
+        "globalId": "2dad9dd4-2c40-5d60-10c5-3b90fc77c0d2"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -478.36,
+              -380.58
+            ],
+            [
+              -202.87,
+              -380.58
+            ],
+            [
+              -202.87,
+              -478.36
+            ],
+            [
+              -478.36,
+              -478.36
+            ],
+            [
+              -478.36,
+              -380.58
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "f-voundou",
+      "properties": {
+        "id": "f-voundou",
+        "assetClass": "feeder",
+        "assetGroup": "subnetwork",
+        "label": "Feeder Voundou LV",
+        "tier": "feeder",
+        "controllerId": "brk-1",
+        "x": 90.32,
+        "z": -176.66,
+        "subnetworkId": "f-voundou",
+        "globalId": "2d4b2d78-8c91-5af5-2d04-713fb8d48c2d"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -811.24,
+              616.45
+            ],
+            [
+              991.88,
+              616.45
+            ],
+            [
+              991.88,
+              -969.76
+            ],
+            [
+              -811.24,
+              -969.76
+            ],
+            [
+              -811.24,
+              616.45
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

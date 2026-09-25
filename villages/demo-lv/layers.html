@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>demo-lv · microgrid layers</title>
+<style>
+  :root { --bg:#0f1419; --panel:#1a222c; --text:#e7ecf1; --muted:#8b9aab; --line:#2a3542; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:14px/1.45 system-ui,sans-serif; background:var(--bg); color:var(--text); }
+  header { padding:1rem 1.25rem; border-bottom:1px solid var(--line); }
+  h1 { font-size:1.15rem; font-weight:600; margin:0 0 .25rem; }
+  .sub { color:var(--muted); font-size:12px; }
+  .layout { display:grid; grid-template-columns:220px 1fr; min-height:calc(100vh - 64px); }
+  aside { padding:1rem; border-right:1px solid var(--line); background:var(--panel); }
+  label.row { display:flex; gap:.5rem; align-items:center; margin:.35rem 0; cursor:pointer; }
+  select, button { width:100%; margin:.35rem 0 .75rem; padding:.4rem; background:#0f1419; color:var(--text); border:1px solid var(--line); border-radius:6px; }
+  main { padding:1rem; }
+  svg { width:100%; height:auto; background:#0b1015; border:1px solid var(--line); border-radius:8px; }
+  .legend span { display:inline-flex; align-items:center; gap:.35rem; margin-right:.75rem; font-size:12px; color:var(--muted); }
+  .sw { width:10px; height:10px; border-radius:2px; display:inline-block; }
+  #detail { margin-top:1rem; padding:1rem; background:var(--panel); border:1px solid var(--line); border-radius:8px; white-space:pre-wrap; font-family:ui-monospace,monospace; font-size:12px; }
+  @media (max-width:720px){ .layout{grid-template-columns:1fr;} aside{border-right:none;border-bottom:1px solid var(--line);} }
+</style>
+</head>
+<body>
+<header>
+  <h1>demo-lv · all Utility Network layers</h1>
+  <div class="sub">Hypothetical schematic · villages/demo-lv · not a geographic basemap</div>
+</header>
+<div class="layout">
+<aside>
+  <strong>Layers</strong>
+  <label class="row"><input type="checkbox" data-layer="subnetworks" checked> Subnetworks</label>
+  <label class="row"><input type="checkbox" data-layer="lines" checked> Electric lines</label>
+  <label class="row"><input type="checkbox" data-layer="structure" checked> Structure</label>
+  <label class="row"><input type="checkbox" data-layer="junctions" checked> Junctions</label>
+  <label class="row"><input type="checkbox" data-layer="devices" checked> Devices</label>
+  <label class="row"><input type="checkbox" data-layer="connectivity"> Connectivity</label>
+  <label class="row"><input type="checkbox" data-layer="feeds" checked> Feed dots</label>
+  <label>LOD</label>
+  <select id="lod">
+    <option value="0">0 · site pin</option>
+    <option value="1" selected>1 · trunks</option>
+    <option value="2">2 · feeder</option>
+    <option value="3">3 · meters</option>
+  </select>
+  <label>Feeder</label>
+  <select id="feeder">
+    <option value="all">all</option>
+    <option value="island-1">island-1</option>
+    <option value="f-west">f-west</option>
+    <option value="f-market">f-market</option>
+  </select>
+  <div class="legend" id="legend"></div>
+</aside>
+<main>
+  <svg id="map" viewBox="0 0 720 480" role="img" aria-label="Microgrid layer schematic"></svg>
+  <div id="detail">Click a device.</div>
+</main>
+</div>
+<script type="module">
+const PACK = {"village":{"id":"demo-lv","name":"Demo LV microgrid (hypothetical)","schemaVersion":"0.1.0","crs":"EPSG:4326","status":"hypothetical","origin":{"lon":11.53412,"lat":4.79209,"alt":0,"note":"Schematic ENU metres in feature properties x,z (+X east, −Z north). Geometry coords store same local metres for this demo pack."},"bbox":[-55,-20,25,55],"openami":{"spatialSchema":"OpenAMI-aligned GeoJSON (ISV)","notes":"Map Twin sample pack: every Essential layer filled; Nice-to-have layers (junctions, enclosure, disconnect, recloser, neutral, terminals, containment/attachment, feeds/registry) also sampled."}},"structure":[{"type":"Feature","id":"pole-w1","properties":{"id":"pole-w1","assetClass":"pole","assetGroup":"structure","x":-42,"z":8,"subnetworkId":"f-west","label":"pole","globalId":"e856d304-4038-5fa5-adff-4fddccbe0584"},"geometry":{"type":"Point","coordinates":[-42,8]}},{"type":"Feature","id":"pole-w2","properties":{"id":"pole-w2","assetClass":"pole","assetGroup":"structure","x":-40,"z":16,"subnetworkId":"f-west","label":"pole","globalId":"98df0b57-a235-55b8-a7de-08f0697f6077"},"geometry":{"type":"Point","coordinates":[-40,16]}},{"type":"Feature","id":"pole-w3","properties":{"id":"pole-w3","assetClass":"pole","assetGroup":"structure","x":-36,"z":24,"subnetworkId":"f-west","label":"pole","globalId":"c8a99bb1-b807-5341-b204-eb1b65cb40a6"},"geometry":{"type":"Point","coordinates":[-36,24]}},{"type":"Feature","id":"cab-w","properties":{"id":"cab-w","assetClass":"cabinet","assetGroup":"structure","x":-37.5,"z":19.5,"subnetworkId":"f-west","label":"EMS cabinet","globalId":"2bc4eb9c-6926-5063-a122-601111a7247c"},"geometry":{"type":"Point","coordinates":[-37.5,19.5]}},{"type":"Feature","id":"pole-m1","properties":{"id":"pole-m1","assetClass":"pole","assetGroup":"structure","x":-8,"z":6,"subnetworkId":"f-market","label":"pole","globalId":"a26a78af-8c69-56e4-9743-927de631eb14"},"geometry":{"type":"Point","coordinates":[-8,6]}},{"type":"Feature","id":"pole-m2","properties":{"id":"pole-m2","assetClass":"pole","assetGroup":"structure","x":-2,"z":10,"subnetworkId":"f-market","label":"pole","globalId":"ed10560c-e6e9-55d1-a917-108a0a0feb02"},"geometry":{"type":"Point","coordinates":[-2,10]}},{"type":"Feature","id":"cab-m","properties":{"id":"cab-m","assetClass":"cabinet","assetGroup":"structure","x":-3.5,"z":8.5,"subnetworkId":"f-market","label":"EMS cabinet","globalId":"442bc4ac-64b1-5ff7-bf38-3ecd644ba212"},"geometry":{"type":"Point","coordinates":[-3.5,8.5]}},{"type":"Feature","id":"pad-gen","properties":{"id":"pad-gen","assetClass":"pad","assetGroup":"structure","x":-26,"z":-11,"subnetworkId":"island-1","label":"gen pad","globalId":"efc566bf-37a7-57f0-a6f6-e2d4352a4405"},"geometry":{"type":"Point","coordinates":[-26,-11]}},{"type":"Feature","id":"encl-m","properties":{"id":"encl-m","assetClass":"enclosure","assetGroup":"structure","x":-1.5,"z":11.5,"subnetworkId":"f-market","label":"meter enclosure (sample)","globalId":"0332642f-2fc6-5744-8ca0-3c9a1774381a"},"geometry":{"type":"Point","coordinates":[-1.5,11.5]}}],"devices":[{"type":"Feature","id":"gen-1","properties":{"id":"gen-1","assetClass":"gen","assetGroup":"electric_device","x":-26,"z":-11,"subnetworkId":"island-1","label":"PV + genset","terminals":[{"name":"OUT","side":"ac"}],"globalId":"52c6900f-1f3b-501f-8fe5-1d723ccf60fe","phase":"ABC","nominalKv":0.4,"ratedA":250},"geometry":{"type":"Point","coordinates":[-26,-11]}},{"type":"Feature","id":"station-1","properties":{"id":"station-1","assetClass":"station","assetGroup":"electric_device","x":-18,"z":-6,"subnetworkId":"island-1","label":"Village station / main LV xfmr","terminals":[{"name":"H1","side":"primary"},{"name":"X1","side":"secondary"}],"globalId":"0b9ad2d0-1e16-52c3-b21c-d930124b465a","phase":"ABC","nominalKv":0.4,"ratedA":400},"geometry":{"type":"Point","coordinates":[-18,-6]}},{"type":"Feature","id":"bess-1","properties":{"id":"bess-1","assetClass":"bess","assetGroup":"electric_device","x":-22,"z":-9,"subnetworkId":"island-1","label":"BESS","globalId":"07249101-1d20-54ea-b207-599ff6cab4c1","phase":"ABC","nominalKv":0.4,"ratedA":200},"geometry":{"type":"Point","coordinates":[-22,-9]}},{"type":"Feature","id":"inv-1","properties":{"id":"inv-1","assetClass":"inverter","assetGroup":"electric_device","x":-24,"z":-10,"subnetworkId":"island-1","label":"Hybrid inverter","globalId":"e9b10469-dd86-5351-a4c4-cf2b9648e8f5","phase":"ABC","nominalKv":0.4,"ratedA":200},"geometry":{"type":"Point","coordinates":[-24,-10]}},{"type":"Feature","id":"xfmr-w","properties":{"id":"xfmr-w","assetClass":"xfmr","assetGroup":"electric_device","x":-38,"z":18,"subnetworkId":"f-west","label":"Pole xfmr west","terminals":[{"name":"H1","side":"primary"},{"name":"X1","side":"secondary"}],"globalId":"38f9def1-db38-5a3f-ba5c-3d57e62dd14c","phase":"ABC","nominalKv":0.4,"ratedA":100},"geometry":{"type":"Point","coordinates":[-38,18]}},{"type":"Feature","id":"ems-w","properties":{"id":"ems-w","assetClass":"ems","assetGroup":"electric_device","x":-37.5,"z":19.5,"subnetworkId":"f-west","label":"MeshEMS west","terminals":[{"name":"N","side":"northbound"},{"name":"S","side":"southbound"}],"globalId":"9438cc5a-4b70-56c9-8f3f-913d9a6b8b93","phase":"ABC"},"geometry":{"type":"Point","coordinates":[-37.5,19.5]}},{"type":"Feature","id":"dtm-w","properties":{"id":"dtm-w","assetClass":"dtm","assetGroup":"electric_device","x":-40,"z":16,"subnetworkId":"f-west","label":"DTM","globalId":"9eb459bd-52bb-5a2b-b053-55109da2fb08","phase":"ABC"},"geometry":{"type":"Point","coordinates":[-40,16]}},{"type":"Feature","id":"brk-w","properties":{"id":"brk-w","assetClass":"breaker","assetGroup":"electric_device","x":-39,"z":17,"subnetworkId":"f-west","label":"Feeder breaker","globalId":"f5490ed7-ed1a-5f90-aabd-aaf480c4b323","phase":"ABC","ratedA":200,"nominalKv":0.4},"geometry":{"type":"Point","coordinates":[-39,17]}},{"type":"Feature","id":"m-w1","properties":{"id":"m-w1","assetClass":"meter","assetGroup":"electric_device","x":-44,"z":28,"subnetworkId":"f-west","phase":"A","label":"meter Leila","globalId":"3c9a9f40-5a4f-53cb-b6a1-2127b0a05133"},"geometry":{"type":"Point","coordinates":[-44,28]}},{"type":"Feature","id":"m-w2","properties":{"id":"m-w2","assetClass":"meter","assetGroup":"electric_device","x":-34,"z":30,"subnetworkId":"f-west","phase":"B","label":"meter Musa","globalId":"0bcdd1a6-9b72-5c88-a11b-bed91a8cc6be"},"geometry":{"type":"Point","coordinates":[-34,30]}},{"type":"Feature","id":"m-w3","properties":{"id":"m-w3","assetClass":"meter","assetGroup":"electric_device","x":-30,"z":26,"subnetworkId":"f-west","phase":"A","label":"meter Hope","globalId":"559c5dbe-4738-58c9-9427-b8d874957389"},"geometry":{"type":"Point","coordinates":[-30,26]}},{"type":"Feature","id":"xfmr-m","properties":{"id":"xfmr-m","assetClass":"xfmr","assetGroup":"electric_device","x":-4,"z":9,"subnetworkId":"f-market","label":"Pole xfmr market","terminals":[{"name":"H1","side":"primary"},{"name":"X1","side":"secondary"}],"globalId":"bbef3195-fd98-587e-834c-f40dde1315ba","phase":"ABC","nominalKv":0.4,"ratedA":100},"geometry":{"type":"Point","coordinates":[-4,9]}},{"type":"Feature","id":"ems-m","properties":{"id":"ems-m","assetClass":"ems","assetGroup":"electric_device","x":-3.5,"z":8.5,"subnetworkId":"f-market","label":"MeshEMS market","globalId":"145dd93f-067b-5647-a654-43dc99148b44","phase":"ABC","terminals":[{"name":"N","side":"northbound"},{"name":"S","side":"southbound"}]},"geometry":{"type":"Point","coordinates":[-3.5,8.5]}},{"type":"Feature","id":"m-m1","properties":{"id":"m-m1","assetClass":"meter","assetGroup":"electric_device","x":2,"z":14,"subnetworkId":"f-market","phase":"A","label":"meter kiosk","globalId":"dfb0f0b8-1fdf-56c3-ba0d-82568816dd3f"},"geometry":{"type":"Point","coordinates":[2,14]}},{"type":"Feature","id":"m-m2","properties":{"id":"m-m2","assetClass":"meter","assetGroup":"electric_device","x":6,"z":8,"subnetworkId":"f-market","phase":"B","label":"meter shop","globalId":"4f4fde42-5397-5d71-850e-bf37b428117f"},"geometry":{"type":"Point","coordinates":[6,8]}},{"type":"Feature","id":"fuse-m","properties":{"id":"fuse-m","assetClass":"fuse","assetGroup":"electric_device","x":-5,"z":8,"subnetworkId":"f-market","label":"lateral fuse","globalId":"e569a5f1-b0b0-5a97-a47c-5c94e3e4c058","phase":"ABC","ratedA":63,"nominalKv":0.4},"geometry":{"type":"Point","coordinates":[-5,8]}},{"type":"Feature","id":"disc-w","properties":{"id":"disc-w","assetClass":"disconnect","assetGroup":"electric_device","x":-38.5,"z":17.5,"subnetworkId":"f-west","label":"disconnect (sample)","phase":"ABC","ratedA":200,"nominalKv":0.4,"globalId":"2acfe9ac-573a-58ab-93b6-6c7a023c0126"},"geometry":{"type":"Point","coordinates":[-38.5,17.5]}},{"type":"Feature","id":"recl-m","properties":{"id":"recl-m","assetClass":"recloser","assetGroup":"electric_device","x":-7.5,"z":5,"subnetworkId":"f-market","label":"recloser (sample)","phase":"ABC","ratedA":400,"nominalKv":0.4,"globalId":"2199db01-d89c-5b92-b204-344579494644"},"geometry":{"type":"Point","coordinates":[-7.5,5]}}],"junctions":[{"type":"Feature","id":"bus-island","properties":{"id":"bus-island","assetClass":"bus","assetGroup":"electric_junction","x":-18,"z":-4,"subnetworkId":"island-1","label":"station LV bus","globalId":"9727621d-f126-5485-ae47-ee410199704d"},"geometry":{"type":"Point","coordinates":[-18,-4]}},{"type":"Feature","id":"j-w-head","properties":{"id":"j-w-head","assetClass":"splice","assetGroup":"electric_junction","x":-40,"z":10,"subnetworkId":"f-west","label":"feeder head","globalId":"840f21bc-e25f-5a12-9450-bc25a558d948"},"geometry":{"type":"Point","coordinates":[-40,10]}},{"type":"Feature","id":"bus-w","properties":{"id":"bus-w","assetClass":"bus","assetGroup":"electric_junction","x":-38,"z":19.2,"subnetworkId":"f-west","label":"xfmr secondary bus","globalId":"30a6306d-e2de-508c-b9e7-679b718c228f"},"geometry":{"type":"Point","coordinates":[-38,19.2]}},{"type":"Feature","id":"tap-w1","properties":{"id":"tap-w1","assetClass":"tap","assetGroup":"electric_junction","x":-41,"z":24,"subnetworkId":"f-west","label":"tap","globalId":"68bd8b47-dead-55e6-b5e4-9e558335bbb4"},"geometry":{"type":"Point","coordinates":[-41,24]}},{"type":"Feature","id":"sp-w1","properties":{"id":"sp-w1","assetClass":"service_point","assetGroup":"electric_junction","x":-44,"z":28.5,"subnetworkId":"f-west","label":"SP Leila","globalId":"467d7a90-6e24-53f9-88ad-d90970e07440"},"geometry":{"type":"Point","coordinates":[-44,28.5]}},{"type":"Feature","id":"sp-w2","properties":{"id":"sp-w2","assetClass":"service_point","assetGroup":"electric_junction","x":-34,"z":30.5,"subnetworkId":"f-west","label":"SP Musa","globalId":"8e293a4a-4ecb-57b7-89d7-83cfa70e0fa0"},"geometry":{"type":"Point","coordinates":[-34,30.5]}},{"type":"Feature","id":"sp-w3","properties":{"id":"sp-w3","assetClass":"service_point","assetGroup":"electric_junction","x":-30,"z":26.5,"subnetworkId":"f-west","label":"SP Hope","globalId":"803a9355-4572-5f2d-bf6a-86197adb5f80"},"geometry":{"type":"Point","coordinates":[-30,26.5]}},{"type":"Feature","id":"j-m-head","properties":{"id":"j-m-head","assetClass":"splice","assetGroup":"electric_junction","x":-10,"z":4,"subnetworkId":"f-market","label":"feeder head","globalId":"ef6b1039-e0a8-5c6f-8333-cd8041abd123"},"geometry":{"type":"Point","coordinates":[-10,4]}},{"type":"Feature","id":"bus-m","properties":{"id":"bus-m","assetClass":"bus","assetGroup":"electric_junction","x":-4,"z":9.8,"subnetworkId":"f-market","label":"xfmr secondary bus","globalId":"e2199e2c-ff1f-575d-af3b-cb12953841bb"},"geometry":{"type":"Point","coordinates":[-4,9.8]}},{"type":"Feature","id":"sp-m1","properties":{"id":"sp-m1","assetClass":"service_point","assetGroup":"electric_junction","x":2,"z":14.5,"subnetworkId":"f-market","label":"SP kiosk","globalId":"71556cc9-2474-5eaa-8792-ce726a94282a"},"geometry":{"type":"Point","coordinates":[2,14.5]}},{"type":"Feature","id":"sp-m2","properties":{"id":"sp-m2","assetClass":"service_point","assetGroup":"electric_junction","x":6,"z":8.5,"subnetworkId":"f-market","label":"SP shop","globalId":"50f99537-0569-544b-8fe6-b62a3c2be5a8"},"geometry":{"type":"Point","coordinates":[6,8.5]}}],"lines":[{"type":"Feature","id":"ln-gen-station","properties":{"id":"ln-gen-station","assetClass":"trunk","assetGroup":"electric_line","subnetworkId":"island-1","label":"gen→station","globalId":"b2dc21f3-427d-56b3-bd3b-b987c2a20afa"},"geometry":{"type":"LineString","coordinates":[[-26,-11],[-22,-9],[-18,-6]]}},{"type":"Feature","id":"ln-bess","properties":{"id":"ln-bess","assetClass":"trunk","assetGroup":"electric_line","subnetworkId":"island-1","label":"bess link","globalId":"6ae0d156-ee00-557c-bbb4-8b9e03021e9b"},"geometry":{"type":"LineString","coordinates":[[-22,-9],[-24,-10]]}},{"type":"Feature","id":"ln-island-west","properties":{"id":"ln-island-west","assetClass":"trunk","assetGroup":"electric_line","subnetworkId":"island-1","label":"trunk→west","globalId":"4f7e6b75-97e8-5d99-bc5d-fe7ffbac04ca"},"geometry":{"type":"LineString","coordinates":[[-18,-6],[-28,0],[-40,10]]}},{"type":"Feature","id":"ln-island-mkt","properties":{"id":"ln-island-mkt","assetClass":"trunk","assetGroup":"electric_line","subnetworkId":"island-1","label":"trunk→market","globalId":"3596e54d-f7d2-5c81-bc29-cfaadee079d5"},"geometry":{"type":"LineString","coordinates":[[-18,-6],[-14,-2],[-10,4]]}},{"type":"Feature","id":"ln-w-pri","properties":{"id":"ln-w-pri","assetClass":"primary","assetGroup":"electric_line","subnetworkId":"f-west","label":"west primary","globalId":"9611bd38-93e5-505f-8697-274945c7f6a3"},"geometry":{"type":"LineString","coordinates":[[-40,10],[-42,8],[-40,16],[-39,17],[-38,18]]}},{"type":"Feature","id":"ln-w-sec","properties":{"id":"ln-w-sec","assetClass":"secondary","assetGroup":"electric_line","subnetworkId":"f-west","label":"west secondary","globalId":"287956d4-ee30-50cd-b384-c7097b8c25ef"},"geometry":{"type":"LineString","coordinates":[[-38,19.2],[-37.5,19.5],[-41,24]]}},{"type":"Feature","id":"ln-w-svc1","properties":{"id":"ln-w-svc1","assetClass":"service","assetGroup":"electric_line","subnetworkId":"f-west","label":"service Leila","globalId":"b6481f95-858d-5731-b9e7-4ccfa1bd5bb2"},"geometry":{"type":"LineString","coordinates":[[-41,24],[-44,28]]}},{"type":"Feature","id":"ln-w-svc2","properties":{"id":"ln-w-svc2","assetClass":"service","assetGroup":"electric_line","subnetworkId":"f-west","label":"service Musa","globalId":"8cfb67ad-dc4d-5371-8e33-bce37b4597d8"},"geometry":{"type":"LineString","coordinates":[[-41,24],[-34,30]]}},{"type":"Feature","id":"ln-w-svc3","properties":{"id":"ln-w-svc3","assetClass":"service","assetGroup":"electric_line","subnetworkId":"f-west","label":"service Hope","globalId":"902f4813-18e6-5d84-9efd-2a0ea6be8908"},"geometry":{"type":"LineString","coordinates":[[-41,24],[-30,26]]}},{"type":"Feature","id":"ln-m-pri","properties":{"id":"ln-m-pri","assetClass":"primary","assetGroup":"electric_line","subnetworkId":"f-market","label":"market primary","globalId":"352b21ff-bd77-5925-ac0f-168d0619c6aa"},"geometry":{"type":"LineString","coordinates":[[-10,4],[-8,6],[-5,8],[-4,9]]}},{"type":"Feature","id":"ln-m-sec","properties":{"id":"ln-m-sec","assetClass":"secondary","assetGroup":"electric_line","subnetworkId":"f-market","label":"market secondary","globalId":"26b52a1b-412e-54b1-bf69-7c0030f4a2e4"},"geometry":{"type":"LineString","coordinates":[[-4,9.8],[-3.5,8.5],[-2,10]]}},{"type":"Feature","id":"ln-m-svc1","properties":{"id":"ln-m-svc1","assetClass":"service","assetGroup":"electric_line","subnetworkId":"f-market","label":"service kiosk","globalId":"176c3f2b-fadb-5a4a-b0d4-ff4866cb501c"},"geometry":{"type":"LineString","coordinates":[[-2,10],[2,14]]}},{"type":"Feature","id":"ln-m-svc2","properties":{"id":"ln-m-svc2","assetClass":"service","assetGroup":"electric_line","subnetworkId":"f-market","label":"service shop","globalId":"afd08b91-5d97-540d-87a8-f8afbf015415"},"geometry":{"type":"LineString","coordinates":[[-2,10],[6,8]]}},{"type":"Feature","id":"ln-w-neut","properties":{"id":"ln-w-neut","assetClass":"neutral","assetGroup":"electric_line","subnetworkId":"f-west","label":"west neutral (sample)","phase":"N","globalId":"b212479c-51c3-5b74-ba44-4e17458d26bd"},"geometry":{"type":"LineString","coordinates":[[-38,19.2],[-37.5,19.5],[-41,24]]}}],"subnetworks":[{"type":"Feature","id":"island-1","properties":{"id":"island-1","assetClass":"island","assetGroup":"subnetwork","label":"Island · gen + station","tier":"island","x":-22,"z":-8,"subnetworkId":"island-1","globalId":"c1c29214-e1ea-5a08-b68a-559aabc7d118"},"geometry":{"type":"Polygon","coordinates":[[[-30,-16],[-14,-16],[-14,-2],[-30,-2],[-30,-16]]]}},{"type":"Feature","id":"f-west","properties":{"id":"f-west","assetClass":"feeder","assetGroup":"subnetwork","label":"Feeder west farms","tier":"feeder","controllerId":"brk-w","x":-38,"z":22,"subnetworkId":"f-west","globalId":"009e3d36-93e9-5800-9021-7c0e3912eb00"},"geometry":{"type":"Polygon","coordinates":[[[-50,6],[-26,6],[-26,36],[-50,36],[-50,6]]]}},{"type":"Feature","id":"f-market","properties":{"id":"f-market","assetClass":"feeder","assetGroup":"subnetwork","label":"Feeder market","tier":"feeder","controllerId":"fuse-m","x":0,"z":10,"subnetworkId":"f-market","globalId":"1ed7e72b-c697-5043-9068-a29b8a2ead08"},"geometry":{"type":"Polygon","coordinates":[[[-14,0],[12,0],[12,20],[-14,20],[-14,0]]]}}],"associations":{"schemaVersion":"0.1.0","connectivity":[{"fromId":"gen-1","toId":"inv-1","subnetworkId":"island-1","fromTerminal":"OUT"},{"fromId":"inv-1","toId":"station-1","subnetworkId":"island-1","toTerminal":"H1"},{"fromId":"bess-1","toId":"inv-1","subnetworkId":"island-1"},{"fromId":"station-1","toId":"bus-island","subnetworkId":"island-1","fromTerminal":"X1"},{"fromId":"bus-island","toId":"j-w-head","subnetworkId":"island-1"},{"fromId":"bus-island","toId":"j-m-head","subnetworkId":"island-1"},{"fromId":"j-w-head","toId":"brk-w","subnetworkId":"f-west"},{"fromId":"brk-w","toId":"disc-w","subnetworkId":"f-west"},{"fromId":"disc-w","toId":"xfmr-w","subnetworkId":"f-west","toTerminal":"H1"},{"fromId":"xfmr-w","toId":"bus-w","subnetworkId":"f-west","fromTerminal":"X1"},{"fromId":"bus-w","toId":"ems-w","subnetworkId":"f-west","toTerminal":"S"},{"fromId":"ems-w","toId":"tap-w1","subnetworkId":"f-west","fromTerminal":"S"},{"fromId":"tap-w1","toId":"m-w1","subnetworkId":"f-west"},{"fromId":"tap-w1","toId":"m-w2","subnetworkId":"f-west"},{"fromId":"tap-w1","toId":"m-w3","subnetworkId":"f-west"},{"fromId":"m-w1","toId":"sp-w1","subnetworkId":"f-west"},{"fromId":"m-w2","toId":"sp-w2","subnetworkId":"f-west"},{"fromId":"m-w3","toId":"sp-w3","subnetworkId":"f-west"},{"fromId":"j-m-head","toId":"recl-m","subnetworkId":"f-market"},{"fromId":"recl-m","toId":"fuse-m","subnetworkId":"f-market"},{"fromId":"fuse-m","toId":"xfmr-m","subnetworkId":"f-market","toTerminal":"H1"},{"fromId":"xfmr-m","toId":"bus-m","subnetworkId":"f-market","fromTerminal":"X1"},{"fromId":"bus-m","toId":"ems-m","subnetworkId":"f-market"},{"fromId":"ems-m","toId":"m-m1","subnetworkId":"f-market"},{"fromId":"ems-m","toId":"m-m2","subnetworkId":"f-market"},{"fromId":"m-m1","toId":"sp-m1","subnetworkId":"f-market"},{"fromId":"m-m2","toId":"sp-m2","subnetworkId":"f-market"}],"containment":[{"containerId":"cab-w","contentId":"ems-w"},{"containerId":"cab-m","contentId":"ems-m"},{"containerId":"encl-m","contentId":"m-m1"},{"containerId":"encl-m","contentId":"m-m2"}],"attachment":[{"structureId":"pole-w2","attachedId":"dtm-w"},{"structureId":"pole-w2","attachedId":"xfmr-w"},{"structureId":"pole-m2","attachedId":"xfmr-m"},{"structureId":"pad-gen","attachedId":"gen-1"},{"structureId":"pole-w3","attachedId":"disc-w"},{"structureId":"pole-m1","attachedId":"recl-m"}]},"feeds":{"schemaVersion":"0.1.0","bindings":[{"assetId":"ems-w","lod":2,"feeds":[{"kind":"mqtt_sunspec","brokerRef":"env:MQTT_URL","topic":"openami/demo/f-west/ems","model":"SunSpec"}]},{"assetId":"ems-m","lod":2,"feeds":[{"kind":"mqtt_sunspec","brokerRef":"env:MQTT_URL","topic":"openami/demo/f-market/ems","model":"SunSpec"}]},{"assetId":"dtm-w","lod":2,"feeds":[{"kind":"rest_json","urlTemplate":"https://example.invalid/dtm/{id}","pollSec":60,"authRef":"env:DTM_TOKEN"}]},{"assetId":"inv-1","lod":2,"feeds":[{"kind":"mqtt_sunspec","brokerRef":"env:MQTT_URL","topic":"openami/demo/island/inv","model":"701"}]},{"assetId":"bess-1","lod":2,"feeds":[{"kind":"mqtt_sunspec","brokerRef":"env:MQTT_URL","topic":"openami/demo/island/bess","model":"802"}]},{"assetId":"m-w1","lod":3,"feeds":[{"kind":"sim","scenarioId":"demo-prepaid","metrics":["kWh","credit","relay"]}]},{"assetId":"m-w2","lod":3,"feeds":[{"kind":"sim","scenarioId":"demo-prepaid","metrics":["kWh","credit","relay"]}]},{"assetId":"m-w3","lod":3,"feeds":[{"kind":"dlms","deviceRef":"dlms://demo/m-w3","obis":["1.8.0"],"authRef":"env:DLMS"}]},{"assetId":"m-m1","lod":3,"feeds":[{"kind":"groundbolt","siteRef":"demo","meterRef":"m-m1"}]},{"assetId":"m-m2","lod":3,"feeds":[{"kind":"openpaygo","deviceId":"m-m2","tokenApiRef":"env:OPENPAYGO"}]}]}};
+const COLORS = {
+  subnetworks:"#5b8def", lines:"#3dbf8f", structure:"#c4a35a",
+  junctions:"#9b7bde", devices:"#e07a5f", connectivity:"#7aa2b8", feeds:"#f2cc8f"
+};
+const islandPlant = new Set(["gen","station","bess","inverter"]);
+const on = Object.fromEntries([...document.querySelectorAll("[data-layer]")].map(el => [el.dataset.layer, el.checked]));
+const svg = document.getElementById("map");
+const detail = document.getElementById("detail");
+const points = new Map();
+for (const layer of ["structure","devices","junctions"]) {
+  for (const f of PACK[layer]) {
+    const x = f.properties.x ?? f.geometry.coordinates[0];
+    const z = f.properties.z ?? f.geometry.coordinates[1];
+    points.set(f.properties.id, {x,z, props:f.properties, layer});
+  }
+}
+const feedById = new Map(PACK.feeds.bindings.map(b => [b.assetId, b]));
+let minX=Infinity,maxX=-Infinity,minZ=Infinity,maxZ=-Infinity;
+for (const p of points.values()){ minX=Math.min(minX,p.x); maxX=Math.max(maxX,p.x); minZ=Math.min(minZ,p.z); maxZ=Math.max(maxZ,p.z); }
+for (const sn of PACK.subnetworks) for (const [x,z] of sn.geometry.coordinates[0]) {
+  minX=Math.min(minX,x); maxX=Math.max(maxX,x); minZ=Math.min(minZ,z); maxZ=Math.max(maxZ,z);
+}
+const pad=4; minX-=pad; maxX+=pad; minZ-=pad; maxZ+=pad;
+const W=720,H=480;
+const sx = x => ((x-minX)/(maxX-minX))*(W-24)+12;
+const sy = z => ((z-minZ)/(maxZ-minZ))*(H-24)+12;
+
+document.getElementById("legend").innerHTML = Object.entries(COLORS).map(([k,c]) =>
+  `<span><i class="sw" style="background:${c}"></i>${k}</span>`).join("");
+
+function snOk(sn, ac){
+  const feeder = document.getElementById("feeder").value;
+  if (feeder==="all") return true;
+  if (sn===feeder) return true;
+  if (sn==="island-1" && ac && islandPlant.has(ac)) return true;
+  return false;
+}
+
+function draw(){
+  const lod = document.getElementById("lod").value;
+  const feeder = document.getElementById("feeder").value;
+  const ns = "http://www.w3.org/2000/svg";
+  svg.innerHTML = "";
+  const add = (tag, attrs) => { const el=document.createElementNS(ns,tag); for (const [k,v] of Object.entries(attrs)) el.setAttribute(k,v); svg.appendChild(el); return el; };
+
+  if (on.subnetworks && +lod>=1) {
+    for (const sn of PACK.subnetworks) {
+      if (feeder!=="all" && sn.id!==feeder) continue;
+      const ring = sn.geometry.coordinates[0];
+      const d = ring.map((c,i)=>`${i?"L":"M"}${sx(c[0])},${sy(c[1])}`).join(" ")+" Z";
+      add("path", {d, fill:COLORS.subnetworks, "fill-opacity":"0.12", stroke:COLORS.subnetworks, "stroke-width":"1.5",
+        "stroke-dasharray": sn.properties.assetClass==="island"?"6 4":""});
+    }
+  }
+  if (on.lines && +lod>=1) {
+    for (const ln of PACK.lines) {
+      if (lod==="1" && ln.properties.assetClass!=="trunk") continue;
+      if (!snOk(ln.properties.subnetworkId)) continue;
+      const d = ln.geometry.coordinates.map((c,i)=>`${i?"L":"M"}${sx(c[0])},${sy(c[1])}`).join(" ");
+      const w = ({trunk:3,primary:2.2,secondary:1.6}[ln.properties.assetClass])||1.2;
+      add("path", {d, fill:"none", stroke:COLORS.lines, "stroke-width":String(w)});
+    }
+  }
+  if (on.connectivity && +lod>=2) {
+    for (const e of PACK.associations.connectivity) {
+      if (!snOk(e.subnetworkId)) continue;
+      const a=points.get(e.fromId), b=points.get(e.toId); if(!a||!b) continue;
+      add("line", {x1:sx(a.x), y1:sy(a.z), x2:sx(b.x), y2:sy(b.z), stroke:COLORS.connectivity, "stroke-width":"1", "stroke-dasharray":"3 3", opacity:"0.8"});
+    }
+  }
+  if (on.structure && +lod>=2) {
+    for (const f of PACK.structure) {
+      if (!snOk(f.properties.subnetworkId)) continue;
+      const x=sx(f.properties.x), z=sy(f.properties.z);
+      const r=add("rect", {x:x-5, y:z-5, width:10, height:10, fill:"none", stroke:COLORS.structure, "stroke-width":"1.5"});
+      r.setAttribute("transform", `rotate(45 ${x} ${z})`);
+    }
+  }
+  if (on.junctions && +lod>=2) {
+    for (const f of PACK.junctions) {
+      if (!snOk(f.properties.subnetworkId)) continue;
+      add("circle", {cx:sx(f.properties.x), cy:sy(f.properties.z), r:4, fill:"#0b1015", stroke:COLORS.junctions, "stroke-width":"1.5"});
+    }
+  }
+  if (on.devices && +lod>=1) {
+    for (const f of PACK.devices) {
+      const ac=f.properties.assetClass, sn=f.properties.subnetworkId;
+      if (lod==="1" && !islandPlant.has(ac)) continue;
+      if (lod==="2" && ac==="meter") continue;
+      if (!snOk(sn, ac)) continue;
+      const cx=sx(f.properties.x), cy=sy(f.properties.z);
+      let mark;
+      if (ac==="meter") mark=add("rect",{x:cx-6,y:cy-6,width:12,height:12,rx:2,fill:"#0b1015",stroke:COLORS.devices,"stroke-width":"1.5"});
+      else if (islandPlant.has(ac) && ac!=="station") mark=add("path",{d:`M ${cx} ${cy-8} L ${cx+8} ${cy} L ${cx} ${cy+8} L ${cx-8} ${cy} Z`,fill:"#0b1015",stroke:COLORS.devices,"stroke-width":"1.5"});
+      else mark=add("circle",{cx,cy,r:ac==="station"?8:6,fill:"#0b1015",stroke:COLORS.devices,"stroke-width":"1.5"});
+      const binding=feedById.get(f.properties.id);
+      if (on.feeds && binding && +lod >= (binding.lod||3)) add("circle",{cx:cx+7,cy:cy-7,r:3,fill:COLORS.feeds});
+      const hit=add("circle",{cx,cy,r:14,fill:"transparent", style:"cursor:pointer"});
+      hit.addEventListener("click", () => {
+        detail.textContent = JSON.stringify({asset:f.properties, feed:binding||null}, null, 2);
+      });
+    }
+  }
+  if (lod==="0") {
+    add("circle",{cx:sx(-22),cy:sy(-8),r:8,fill:COLORS.subnetworks});
+    const t=add("text",{x:sx(-22),y:sy(-8)-14,"text-anchor":"middle",fill:"#e7ecf1","font-size":"11"});
+    t.textContent="demo-lv";
+  }
+}
+for (const el of document.querySelectorAll("[data-layer]")) el.addEventListener("change", e => { on[e.target.dataset.layer]=e.target.checked; draw(); });
+document.getElementById("lod").addEventListener("change", draw);
+document.getElementById("feeder").addEventListener("change", draw);
+draw();
+</script>
+</body>
+</html>

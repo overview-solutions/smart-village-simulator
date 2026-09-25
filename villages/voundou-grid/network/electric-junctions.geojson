@@ -1,0 +1,750 @@
+{
+  "type": "FeatureCollection",
+  "name": "electric-junctions",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "hub",
+      "properties": {
+        "id": "hub",
+        "assetClass": "bus",
+        "assetGroup": "electric_junction",
+        "x": 0,
+        "z": 0,
+        "lon": 11.53412,
+        "lat": 4.79209,
+        "globalId": "133ccbfe-b911-56cb-0856-617b674eab9d",
+        "subnetworkId": "f-voundou",
+        "label": "Village hub",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "j_n_mid",
+      "properties": {
+        "id": "j_n_mid",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -142.17,
+        "z": -231.03,
+        "lon": 11.5328384,
+        "lat": 4.7941654,
+        "globalId": "650f91b1-72be-595b-1cbf-58a2f362f876",
+        "subnetworkId": "f-voundou",
+        "label": "North mid T",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -142.17,
+          -231.03
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "j_n_solar",
+      "properties": {
+        "id": "j_n_solar",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -242.87,
+        "z": -438.36,
+        "lon": 11.5319306,
+        "lat": 4.7960278,
+        "globalId": "ac0bb29a-0bf1-5834-fa5f-85377a1e22db",
+        "subnetworkId": "island-1",
+        "label": "Plant T · 380 V",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -242.87,
+          -438.36
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "solar",
+      "properties": {
+        "id": "solar",
+        "assetClass": "bus",
+        "assetGroup": "electric_junction",
+        "x": -438.36,
+        "z": -420.58,
+        "lon": 11.5301683,
+        "lat": 4.7958681,
+        "globalId": "82e690cb-35df-5311-2850-7a473521e592",
+        "subnetworkId": "island-1",
+        "label": "Solar plant bus",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -438.36,
+          -420.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n_end",
+      "properties": {
+        "id": "n_end",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -260.64,
+        "z": -924.1,
+        "lon": 11.5317704,
+        "lat": 4.8003913,
+        "globalId": "e32ab082-09f5-5558-2fc7-e6f94fd27d6e",
+        "subnetworkId": "f-voundou",
+        "label": "North terminus",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -260.64,
+          -924.1
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n_west",
+      "properties": {
+        "id": "n_west",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": -678.34,
+        "z": -939.76,
+        "lon": 11.528005,
+        "lat": 4.800532,
+        "globalId": "412c115c-ff0b-5010-bc64-0e69b22a102d",
+        "subnetworkId": "f-voundou",
+        "label": "NW 220 V end",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -678.34,
+          -939.76
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "j_s",
+      "properties": {
+        "id": "j_s",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -94.78,
+        "z": 242.87,
+        "lon": 11.5332656,
+        "lat": 4.7899083,
+        "globalId": "716c2fb9-be16-5444-574b-54663cc66b0f",
+        "subnetworkId": "f-voundou",
+        "label": "South Y",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.78,
+          242.87
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "s_end",
+      "properties": {
+        "id": "s_end",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": -112.55,
+        "z": 586.45,
+        "lon": 11.5331054,
+        "lat": 4.7868219,
+        "globalId": "9c56b89b-b06e-5b37-71be-2ee4f2443434",
+        "subnetworkId": "f-voundou",
+        "label": "South terminus",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -112.55,
+          586.45
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "j_e",
+      "properties": {
+        "id": "j_e",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": 450.2,
+        "z": -23.69,
+        "lon": 11.5381784,
+        "lat": 4.7923028,
+        "globalId": "9b940654-b8bf-5d0c-0506-64ff7b2f78e4",
+        "subnetworkId": "f-voundou",
+        "label": "East 380→220 T",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          450.2,
+          -23.69
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e_tee",
+      "properties": {
+        "id": "e_tee",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": 648.61,
+        "z": -49.8,
+        "lon": 11.539967,
+        "lat": 4.7925374,
+        "globalId": "ce2b34fb-7034-55be-c700-c4962369688a",
+        "subnetworkId": "f-voundou",
+        "label": "East black T",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          648.61,
+          -49.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e_end",
+      "properties": {
+        "id": "e_end",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": 961.88,
+        "z": -86.35,
+        "lon": 11.542791,
+        "lat": 4.7928657,
+        "globalId": "c961d45c-def1-50b1-3675-4603a6285a4e",
+        "subnetworkId": "f-voundou",
+        "label": "East terminus",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          961.88,
+          -86.35
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e_south",
+      "properties": {
+        "id": "e_south",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": 491.97,
+        "z": 200.82,
+        "lon": 11.5385549,
+        "lat": 4.790286,
+        "globalId": "a0a088c4-c5dc-5bad-0b06-ecb88b5dbf9e",
+        "subnetworkId": "f-voundou",
+        "label": "SE 220 V end",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          491.97,
+          200.82
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e_n1",
+      "properties": {
+        "id": "e_n1",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": 659.05,
+        "z": -310.86,
+        "lon": 11.5400611,
+        "lat": 4.7948825,
+        "globalId": "a53869ae-f13c-54a7-d347-db84426ca516",
+        "subnetworkId": "f-voundou",
+        "label": "NE 220 V mid",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          659.05,
+          -310.86
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e_n2",
+      "properties": {
+        "id": "e_n2",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": 622.5,
+        "z": -598.02,
+        "lon": 11.5397316,
+        "lat": 4.7974621,
+        "globalId": "056fd016-99b7-5250-e8de-b427a2bb6dd3",
+        "subnetworkId": "f-voundou",
+        "label": "NE 220 V end",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          622.5,
+          -598.02
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "j_w",
+      "properties": {
+        "id": "j_w",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -467.97,
+        "z": 17.77,
+        "lon": 11.5299014,
+        "lat": 4.7919304,
+        "globalId": "54733562-d629-5f51-506d-79e08238f6f6",
+        "subnetworkId": "f-voundou",
+        "label": "West 380→220 T",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -467.97,
+          17.77
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "w_bend",
+      "properties": {
+        "id": "w_bend",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": -603.72,
+        "z": -55.33,
+        "lon": 11.5286777,
+        "lat": 4.792587,
+        "globalId": "0f83fe9d-3b2f-5952-3bf5-d7a9aa9e3f71",
+        "subnetworkId": "f-voundou",
+        "label": "West bend",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -603.72,
+          -55.33
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "w_nw",
+      "properties": {
+        "id": "w_nw",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": -781.24,
+        "z": -123.2,
+        "lon": 11.5270774,
+        "lat": 4.7931967,
+        "globalId": "be777b35-2e28-5403-5f62-358278e1972a",
+        "subnetworkId": "f-voundou",
+        "label": "WNW 220 V end",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -781.24,
+          -123.2
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "w_sw",
+      "properties": {
+        "id": "w_sw",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": -676.82,
+        "z": 153.52,
+        "lon": 11.5280187,
+        "lat": 4.7907109,
+        "globalId": "622e3b2b-a889-57d2-6781-307492a2345d",
+        "subnetworkId": "f-voundou",
+        "label": "SW terminus",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -676.82,
+          153.52
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap_n",
+      "properties": {
+        "id": "tap_n",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -25.59,
+        "z": -41.58,
+        "lon": 11.5338893,
+        "lat": 4.7924635,
+        "globalId": "9370c872-11a8-55df-9821-e2c0906df76c",
+        "subnetworkId": "f-voundou",
+        "label": "Hub N lateral tap",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -25.59,
+          -41.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "b_n",
+      "properties": {
+        "id": "b_n",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": 54.4,
+        "z": -365.19,
+        "lon": 11.5346104,
+        "lat": 4.7953705,
+        "globalId": "3d4e1e1f-c1d8-5239-4db9-a0c6ac62e66e",
+        "subnetworkId": "f-voundou",
+        "label": "N 220 V end",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.4,
+          -365.19
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap_n2",
+      "properties": {
+        "id": "tap_n2",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -164.32,
+        "z": -276.64,
+        "lon": 11.5326387,
+        "lat": 4.7945751,
+        "globalId": "cf5ca19a-9d9b-56ab-ce9f-f15955cafac3",
+        "subnetworkId": "f-voundou",
+        "label": "N2 lateral tap",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -164.32,
+          -276.64
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "b_n2",
+      "properties": {
+        "id": "b_n2",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": 27.5,
+        "z": -471.39,
+        "lon": 11.5343679,
+        "lat": 4.7963245,
+        "globalId": "7efd3f71-5f95-52cc-e855-1f0fe9fc1ad0",
+        "subnetworkId": "f-voundou",
+        "label": "N2 220 V end",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.5,
+          -471.39
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap_s",
+      "properties": {
+        "id": "tap_s",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -20.85,
+        "z": 53.43,
+        "lon": 11.533932,
+        "lat": 4.79161,
+        "globalId": "a3bb2f93-371c-5781-b433-5ce9e794e083",
+        "subnetworkId": "f-voundou",
+        "label": "Hub S lateral tap",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -20.85,
+          53.43
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "b_s",
+      "properties": {
+        "id": "b_s",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": 70.62,
+        "z": 288.28,
+        "lon": 11.5347566,
+        "lat": 4.7895003,
+        "globalId": "1b2ffa1c-27de-53f1-2cfa-1725367e02a1",
+        "subnetworkId": "f-voundou",
+        "label": "S 220 V elbow",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          70.62,
+          288.28
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "b_s_stub",
+      "properties": {
+        "id": "b_s_stub",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": 148.94,
+        "z": 298.72,
+        "lon": 11.5354626,
+        "lat": 4.7894066,
+        "globalId": "6392ae85-81b6-56c7-ce5f-475bf95c1ef6",
+        "subnetworkId": "f-voundou",
+        "label": "S 220 V stub",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          148.94,
+          298.72
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap_se",
+      "properties": {
+        "id": "tap_se",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": 126.06,
+        "z": -6.63,
+        "lon": 11.5352564,
+        "lat": 4.7921496,
+        "globalId": "df99fa5e-536c-5aaa-5bb4-7cedf300ca4e",
+        "subnetworkId": "f-voundou",
+        "label": "SE lateral tap",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.06,
+          -6.63
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "b_se",
+      "properties": {
+        "id": "b_se",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": 218.58,
+        "z": 161.07,
+        "lon": 11.5360904,
+        "lat": 4.7906431,
+        "globalId": "37e53c86-54c6-53e9-f2b0-b7a9ad1e67ef",
+        "subnetworkId": "f-voundou",
+        "label": "SE 220 V end",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          218.58,
+          161.07
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap_sw",
+      "properties": {
+        "id": "tap_sw",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -36.02,
+        "z": 92.29,
+        "lon": 11.5337953,
+        "lat": 4.7912609,
+        "globalId": "1b89b8ee-04e8-5432-b4ba-13df9da74980",
+        "subnetworkId": "f-voundou",
+        "label": "SW lateral tap",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -36.02,
+          92.29
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "b_sw",
+      "properties": {
+        "id": "b_sw",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": -166.13,
+        "z": 198.91,
+        "lon": 11.5326224,
+        "lat": 4.7903032,
+        "globalId": "dd44c6ae-3d07-5206-050b-da323db59307",
+        "subnetworkId": "f-voundou",
+        "label": "SSW 220 V end",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -166.13,
+          198.91
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap_w_n",
+      "properties": {
+        "id": "tap_w_n",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -196.55,
+        "z": 7.46,
+        "lon": 11.5323482,
+        "lat": 4.792023,
+        "globalId": "6a44faea-55d6-5f35-34f3-b13b9bab7470",
+        "subnetworkId": "f-voundou",
+        "label": "WN lateral tap",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -196.55,
+          7.46
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "b_w_n",
+      "properties": {
+        "id": "b_w_n",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": -253.04,
+        "z": -176.63,
+        "lon": 11.5318389,
+        "lat": 4.7936767,
+        "globalId": "60c3ecab-2826-5b64-8b33-7c7c28dfee1e",
+        "subnetworkId": "f-voundou",
+        "label": "WN 220 V end",
+        "phase": "ABCN"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -253.04,
+          -176.63
+        ]
+      }
+    }
+  ]
+}

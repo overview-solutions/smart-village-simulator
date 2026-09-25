@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "0.1.0",
+  "description": "Esri Utility Network class → GeoJSON assetClass for village LV microgrids (Phase 1–2). Not transmission UN.",
+  "domain": "electric_distribution_lv",
+  "tiers": [
+    { "name": "island", "role": "subnetwork_controller", "examples": ["gen+bess+main_xfmr"] },
+    { "name": "feeder", "role": "subnetwork", "examples": ["f-west", "f-market"] },
+    { "name": "secondary", "role": "participating", "examples": ["service lateral to meter"] }
+  ],
+  "assetClasses": {
+    "structure": ["pole", "cabinet", "pad", "enclosure"],
+    "electric_device": [
+      "meter",
+      "breaker",
+      "fuse",
+      "disconnect",
+      "recloser",
+      "inverter",
+      "bess",
+      "ems",
+      "dtm",
+      "gen",
+      "xfmr",
+      "station"
+    ],
+    "electric_junction": ["bus", "splice", "service_point", "tap"],
+    "electric_line": ["trunk", "primary", "secondary", "service", "neutral"],
+    "subnetwork": ["island", "feeder"]
+  },
+  "featureProperties": {
+    "required": ["id", "assetClass", "assetGroup", "subnetworkId"],
+    "notes": "Map Twin minimum: every feature (including island/feeder polygons) carries subnetworkId — self id for subnetwork features. Sample of every Essential + Nice-to-have layer: villages/demo-lv/.",
+    "recommended": [
+      "globalId",
+      "terminals",
+      "phase",
+      "nominalKv",
+      "ratedA",
+      "label",
+      "status"
+    ],
+    "terminals": {
+      "description": "Named ports for devices with >1 connection (xfmr H/X, EMS north/south).",
+      "example": [{ "name": "H1", "side": "primary" }, { "name": "X1", "side": "secondary" }]
+    }
+  },
+  "legacyKindMap": {
+    "comment": "Bridge from current village-worldline-layout kinds → assetClass",
+    "gen": "gen",
+    "station": "station",
+    "house": "service_point",
+    "pole": "pole",
+    "xfmr": "xfmr",
+    "feeder": "feeder",
+    "ems": "ems",
+    "dtm": "dtm",
+    "trunk": "trunk",
+    "primary": "primary",
+    "secondary": "secondary"
+  }
+}

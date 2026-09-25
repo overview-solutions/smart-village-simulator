@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "0.1.0",
+  "sites": [
+    {
+      "id": "voundou",
+      "name": "Voundou (schematic day)",
+      "kind": "worldline",
+      "href": "/",
+      "origin": { "lon": 11.53412, "lat": 4.79209 },
+      "status": "hypothetical",
+      "blurb": "Default prepaid worldline sim — procedural homes on Voundou pin."
+    },
+    {
+      "id": "demo-lv",
+      "name": "Demo LV microgrid",
+      "kind": "pack",
+      "path": "demo-lv",
+      "status": "hypothetical",
+      "blurb": "OpenAMI Utility Network sample — every essential layer filled."
+    },
+    {
+      "id": "safari-park-casino",
+      "name": "Safari Park Casino",
+      "kind": "pack",
+      "path": "villages/safari-park-casino",
+      "origin": { "lon": 36.88377, "lat": -1.22448 },
+      "status": "hypothetical",
+      "blurb": "Nairobi workshop Map Twin — 13 OSM buildings + hypothetical MeshEMS feeders."
+    },
+    {
+      "id": "voundou-grid",
+      "name": "Voundou grid (traced)",
+      "kind": "pack",
+      "path": "villages/voundou-grid",
+      "origin": { "lon": 11.53412, "lat": 4.79209 },
+      "status": "hypothetical",
+      "blurb": "Operator overlay → UN pack. 380 V 4×70 mm² 2708 m + 220 V 4×25 mm² 3796 m. Traced, not GPS. No house services."
+    }
+  ]
+}

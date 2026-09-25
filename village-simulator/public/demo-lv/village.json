@@ -1,0 +1,23 @@
+{
+  "id": "demo-lv",
+  "name": "Demo LV microgrid (hypothetical)",
+  "schemaVersion": "0.1.0",
+  "crs": "EPSG:4326",
+  "status": "hypothetical",
+  "origin": {
+    "lon": 11.53412,
+    "lat": 4.79209,
+    "alt": 0,
+    "note": "Schematic ENU metres in feature properties x,z (+X east, \u2212Z north). Geometry coords store same local metres for this demo pack."
+  },
+  "bbox": [
+    -55,
+    -20,
+    25,
+    55
+  ],
+  "openami": {
+    "spatialSchema": "OpenAMI-aligned GeoJSON (ISV)",
+    "notes": "Map Twin sample pack: every Essential layer filled; Nice-to-have layers (junctions, enclosure, disconnect, recloser, neutral, terminals, containment/attachment, feeds/registry) also sampled."
+  }
+}

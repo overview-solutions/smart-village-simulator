@@ -1,0 +1,682 @@
+{
+  "type": "FeatureCollection",
+  "name": "electric-lines",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "ln-solar",
+      "properties": {
+        "id": "ln-solar",
+        "assetClass": "primary",
+        "assetGroup": "electric_line",
+        "lengthM": 196.3,
+        "globalId": "215cfcfc-1666-5e7d-2076-65ee707ce22f",
+        "subnetworkId": "island-1",
+        "conductor": "4x70mm2",
+        "nominalKv": 0.38,
+        "phase": "ABCN",
+        "schematicColor": "red",
+        "voltageNote": "380 V 3φ (L-L); 220 V L-N of same system",
+        "label": "ln-solar · 380 V 4×70 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -438.36,
+            -420.58
+          ],
+          [
+            -242.87,
+            -438.36
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-north-plant",
+      "properties": {
+        "id": "ln-north-plant",
+        "assetClass": "primary",
+        "assetGroup": "electric_line",
+        "lengthM": 486.1,
+        "globalId": "a1567eb4-1369-557a-28f4-84b54567b4e7",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x70mm2",
+        "nominalKv": 0.38,
+        "phase": "ABCN",
+        "schematicColor": "red",
+        "voltageNote": "380 V 3φ (L-L); 220 V L-N of same system",
+        "label": "ln-north-plant · 380 V 4×70 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -242.87,
+            -438.36
+          ],
+          [
+            -260.64,
+            -924.1
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-plant-mid",
+      "properties": {
+        "id": "ln-plant-mid",
+        "assetClass": "primary",
+        "assetGroup": "electric_line",
+        "lengthM": 230.5,
+        "globalId": "f843363e-0781-5adc-8656-a5599a5f2d75",
+        "subnetworkId": "island-1",
+        "conductor": "4x70mm2",
+        "nominalKv": 0.38,
+        "phase": "ABCN",
+        "schematicColor": "red",
+        "voltageNote": "380 V 3φ (L-L); 220 V L-N of same system",
+        "label": "ln-plant-mid · 380 V 4×70 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -242.87,
+            -438.36
+          ],
+          [
+            -142.17,
+            -231.03
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-mid-hub",
+      "properties": {
+        "id": "ln-mid-hub",
+        "assetClass": "primary",
+        "assetGroup": "electric_line",
+        "lengthM": 271.3,
+        "globalId": "eeae2c9d-fd18-56ae-f57c-b3a1718bbd5c",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x70mm2",
+        "nominalKv": 0.38,
+        "phase": "ABCN",
+        "schematicColor": "red",
+        "voltageNote": "380 V 3φ (L-L); 220 V L-N of same system",
+        "label": "ln-mid-hub · 380 V 4×70 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -142.17,
+            -231.03
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-hub-south",
+      "properties": {
+        "id": "ln-hub-south",
+        "assetClass": "primary",
+        "assetGroup": "electric_line",
+        "lengthM": 260.7,
+        "globalId": "6608b565-6f56-52bc-814c-d5b0bc043610",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x70mm2",
+        "nominalKv": 0.38,
+        "phase": "ABCN",
+        "schematicColor": "red",
+        "voltageNote": "380 V 3φ (L-L); 220 V L-N of same system",
+        "label": "ln-hub-south · 380 V 4×70 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0,
+            0
+          ],
+          [
+            -94.78,
+            242.87
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-south",
+      "properties": {
+        "id": "ln-south",
+        "assetClass": "primary",
+        "assetGroup": "electric_line",
+        "lengthM": 344,
+        "globalId": "1c0bd69f-8099-52c2-092a-d4b11e9e23d0",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x70mm2",
+        "nominalKv": 0.38,
+        "phase": "ABCN",
+        "schematicColor": "red",
+        "voltageNote": "380 V 3φ (L-L); 220 V L-N of same system",
+        "label": "ln-south · 380 V 4×70 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -94.78,
+            242.87
+          ],
+          [
+            -112.55,
+            586.45
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-hub-east",
+      "properties": {
+        "id": "ln-hub-east",
+        "assetClass": "primary",
+        "assetGroup": "electric_line",
+        "lengthM": 450.8,
+        "globalId": "8e07f527-068f-56f4-e30f-2c817d8177e0",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x70mm2",
+        "nominalKv": 0.38,
+        "phase": "ABCN",
+        "schematicColor": "red",
+        "voltageNote": "380 V 3φ (L-L); 220 V L-N of same system",
+        "label": "ln-hub-east · 380 V 4×70 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0,
+            0
+          ],
+          [
+            450.2,
+            -23.69
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-hub-west",
+      "properties": {
+        "id": "ln-hub-west",
+        "assetClass": "primary",
+        "assetGroup": "electric_line",
+        "lengthM": 468.3,
+        "globalId": "3e039fc7-d72a-58ac-0729-ea0ee4940d9d",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x70mm2",
+        "nominalKv": 0.38,
+        "phase": "ABCN",
+        "schematicColor": "red",
+        "voltageNote": "380 V 3φ (L-L); 220 V L-N of same system",
+        "label": "ln-hub-west · 380 V 4×70 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0,
+            0
+          ],
+          [
+            -467.97,
+            17.77
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-n-west",
+      "properties": {
+        "id": "ln-n-west",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "lengthM": 418,
+        "globalId": "dd24fcb2-5ca7-5a80-1658-aa10497bc1e8",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x25mm2",
+        "nominalKv": 0.22,
+        "phase": "ABCN",
+        "schematicColor": "black",
+        "voltageNote": "220 V laterals (4×25 mm²). No house services in this pack.",
+        "label": "ln-n-west · 220 V 4×25 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -260.64,
+            -924.1
+          ],
+          [
+            -678.34,
+            -939.76
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-e-main",
+      "properties": {
+        "id": "ln-e-main",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "lengthM": 515.5,
+        "globalId": "efd5c318-d2b7-5481-ae86-a718269b6c0c",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x25mm2",
+        "nominalKv": 0.22,
+        "phase": "ABCN",
+        "schematicColor": "black",
+        "voltageNote": "220 V laterals (4×25 mm²). No house services in this pack.",
+        "label": "ln-e-main · 220 V 4×25 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            450.2,
+            -23.69
+          ],
+          [
+            648.61,
+            -49.8
+          ],
+          [
+            961.88,
+            -86.35
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-e-south",
+      "properties": {
+        "id": "ln-e-south",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "lengthM": 228.4,
+        "globalId": "9ac4e6b7-4c7b-53da-f773-443016e21cf7",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x25mm2",
+        "nominalKv": 0.22,
+        "phase": "ABCN",
+        "schematicColor": "black",
+        "voltageNote": "220 V laterals (4×25 mm²). No house services in this pack.",
+        "label": "ln-e-south · 220 V 4×25 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            450.2,
+            -23.69
+          ],
+          [
+            491.97,
+            200.82
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-e-north",
+      "properties": {
+        "id": "ln-e-north",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "lengthM": 550.7,
+        "globalId": "3db2ff02-aeca-553b-f87d-278894afce25",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x25mm2",
+        "nominalKv": 0.22,
+        "phase": "ABCN",
+        "schematicColor": "black",
+        "voltageNote": "220 V laterals (4×25 mm²). No house services in this pack.",
+        "label": "ln-e-north · 220 V 4×25 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            648.61,
+            -49.8
+          ],
+          [
+            659.05,
+            -310.86
+          ],
+          [
+            622.5,
+            -598.02
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-w-nw",
+      "properties": {
+        "id": "ln-w-nw",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "lengthM": 344.2,
+        "globalId": "8a0f8204-eb0e-5adf-2c9d-76d3d8f0cfa1",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x25mm2",
+        "nominalKv": 0.22,
+        "phase": "ABCN",
+        "schematicColor": "black",
+        "voltageNote": "220 V laterals (4×25 mm²). No house services in this pack.",
+        "label": "ln-w-nw · 220 V 4×25 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -467.97,
+            17.77
+          ],
+          [
+            -603.72,
+            -55.33
+          ],
+          [
+            -781.24,
+            -123.2
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-w-sw",
+      "properties": {
+        "id": "ln-w-sw",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "lengthM": 249.1,
+        "globalId": "780b2fc6-1b18-5a46-d201-6780a416c22b",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x25mm2",
+        "nominalKv": 0.22,
+        "phase": "ABCN",
+        "schematicColor": "black",
+        "voltageNote": "220 V laterals (4×25 mm²). No house services in this pack.",
+        "label": "ln-w-sw · 220 V 4×25 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -467.97,
+            17.77
+          ],
+          [
+            -676.82,
+            153.52
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-lat-n",
+      "properties": {
+        "id": "ln-lat-n",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "lengthM": 333.3,
+        "globalId": "68a0c82c-526d-559f-24b2-cc25183d66a6",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x25mm2",
+        "nominalKv": 0.22,
+        "phase": "ABCN",
+        "schematicColor": "black",
+        "voltageNote": "220 V laterals (4×25 mm²). No house services in this pack.",
+        "label": "ln-lat-n · 220 V 4×25 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -25.59,
+            -41.58
+          ],
+          [
+            54.4,
+            -365.19
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-lat-n2",
+      "properties": {
+        "id": "ln-lat-n2",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "lengthM": 273.4,
+        "globalId": "f5f333ec-95b5-56a9-a52e-c7bb6cdf5015",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x25mm2",
+        "nominalKv": 0.22,
+        "phase": "ABCN",
+        "schematicColor": "black",
+        "voltageNote": "220 V laterals (4×25 mm²). No house services in this pack.",
+        "label": "ln-lat-n2 · 220 V 4×25 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -164.32,
+            -276.64
+          ],
+          [
+            27.5,
+            -471.39
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-lat-s",
+      "properties": {
+        "id": "ln-lat-s",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "lengthM": 331,
+        "globalId": "a5e10998-4112-5477-b367-1c644c3bd2f0",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x25mm2",
+        "nominalKv": 0.22,
+        "phase": "ABCN",
+        "schematicColor": "black",
+        "voltageNote": "220 V laterals (4×25 mm²). No house services in this pack.",
+        "label": "ln-lat-s · 220 V 4×25 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -20.85,
+            53.43
+          ],
+          [
+            70.62,
+            288.28
+          ],
+          [
+            148.94,
+            298.72
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-lat-se",
+      "properties": {
+        "id": "ln-lat-se",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "lengthM": 191.5,
+        "globalId": "4cd29cca-cbd6-5814-52f4-740ce97134b9",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x25mm2",
+        "nominalKv": 0.22,
+        "phase": "ABCN",
+        "schematicColor": "black",
+        "voltageNote": "220 V laterals (4×25 mm²). No house services in this pack.",
+        "label": "ln-lat-se · 220 V 4×25 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            126.06,
+            -6.63
+          ],
+          [
+            218.58,
+            161.07
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-lat-sw",
+      "properties": {
+        "id": "ln-lat-sw",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "lengthM": 168.2,
+        "globalId": "e1979e19-230b-5767-7391-30d923476d90",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x25mm2",
+        "nominalKv": 0.22,
+        "phase": "ABCN",
+        "schematicColor": "black",
+        "voltageNote": "220 V laterals (4×25 mm²). No house services in this pack.",
+        "label": "ln-lat-sw · 220 V 4×25 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -36.02,
+            92.29
+          ],
+          [
+            -166.13,
+            198.91
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-lat-wn",
+      "properties": {
+        "id": "ln-lat-wn",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "lengthM": 192.6,
+        "globalId": "0943dd65-5e2e-5d5e-f8f4-2f82da640cf4",
+        "subnetworkId": "f-voundou",
+        "conductor": "4x25mm2",
+        "nominalKv": 0.22,
+        "phase": "ABCN",
+        "schematicColor": "black",
+        "voltageNote": "220 V laterals (4×25 mm²). No house services in this pack.",
+        "label": "ln-lat-wn · 220 V 4×25 mm²"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -196.55,
+            7.46
+          ],
+          [
+            -253.04,
+            -176.63
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-gen-station",
+      "properties": {
+        "id": "ln-gen-station",
+        "assetClass": "trunk",
+        "assetGroup": "electric_line",
+        "lengthM": 51.7,
+        "globalId": "3e8e0fab-9870-5d1a-b9b6-24785332b7cd",
+        "subnetworkId": "island-1",
+        "label": "gen→station (on pad)",
+        "nominalKv": 0.38,
+        "conductor": "plant"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -438.36,
+            -420.58
+          ],
+          [
+            -430.36,
+            -416.58
+          ],
+          [
+            -422.36,
+            -422.58
+          ],
+          [
+            -416.36,
+            -414.58
+          ],
+          [
+            -438.36,
+            -420.58
+          ]
+        ]
+      }
+    }
+  ]
+}

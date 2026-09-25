@@ -1,0 +1,32 @@
+{
+  "id": "voundou-grid",
+  "name": "Voundou grid (traced schematic)",
+  "schemaVersion": "0.1.0",
+  "crs": "EPSG:4326",
+  "status": "hypothetical",
+  "origin": {
+    "lon": 11.53412,
+    "lat": 4.79209,
+    "alt": 0,
+    "note": "Same Voundou pin as worldline. Local ENU metres in properties x,z (+X east, −Z north). Geometry stores same local metres. Positions traced from operator overlay, then scaled to published conductor lengths — not surveyed GPS."
+  },
+  "bbox": [
+    -781.24,
+    -939.76,
+    961.88,
+    586.45
+  ],
+  "openami": {
+    "spatialSchema": "OpenAMI-aligned GeoJSON (ISV)",
+    "notes": "Traced radial LV. Red primary 380 V 4×70 mm² 2708 m (key 2708). Black secondary 220 V 4×25 mm² 3796 m (key 3796). No house services. 380 L-L / 220 L-N same 4-wire system — taps, not xfmrs, at colour change."
+  },
+  "source": {
+    "kind": "operator-schematic-overlay",
+    "lengths": {
+      "red_m": 2708,
+      "black_m": 3796,
+      "key_red_m": 2708,
+      "key_black_m": 3796
+    }
+  }
+}

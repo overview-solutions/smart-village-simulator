@@ -1,0 +1,362 @@
+{
+  "type": "FeatureCollection",
+  "name": "structure",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "pole-ems",
+      "properties": {
+        "id": "pole-ems",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -14.89,
+        "z": -17.64,
+        "subnetworkId": "island-1",
+        "label": "StreetPoleEMS",
+        "lon": 36.88376960769231,
+        "lat": -1.2244841923076923,
+        "globalId": "30a2ab91-a705-50c7-ade2-8be2241da2c8"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -14.89,
+          -17.64
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "cab-ems",
+      "properties": {
+        "id": "cab-ems",
+        "assetClass": "cabinet",
+        "assetGroup": "structure",
+        "x": -13.16,
+        "z": -18.64,
+        "subnetworkId": "island-1",
+        "label": "EMS cabinet",
+        "globalId": "aaf256d0-7c12-501c-9792-efc71315210b"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -13.16,
+          -18.64
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pad-m0",
+      "properties": {
+        "id": "pad-m0",
+        "assetClass": "pad",
+        "assetGroup": "structure",
+        "x": 12.13,
+        "z": 77.36,
+        "subnetworkId": "f-main",
+        "label": "Main hotel wing",
+        "osmWayId": 1076252097,
+        "lon": 36.8838786,
+        "lat": -1.225184,
+        "globalId": "49f90f7a-3108-5b16-9fd4-b1896eba8788"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.13,
+          77.36
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pad-m1",
+      "properties": {
+        "id": "pad-m1",
+        "assetClass": "pad",
+        "assetGroup": "structure",
+        "x": 29.34,
+        "z": 85.72,
+        "subnetworkId": "f-main",
+        "label": "East wing A",
+        "osmWayId": 1076252098,
+        "lon": 36.8840332,
+        "lat": -1.2252597,
+        "globalId": "5cedb3d1-226f-57d7-b4f9-98cc003feb2c"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.34,
+          85.72
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pad-m2",
+      "properties": {
+        "id": "pad-m2",
+        "assetClass": "pad",
+        "assetGroup": "structure",
+        "x": 21.27,
+        "z": 141.62,
+        "subnetworkId": "f-main",
+        "label": "Casino / pavilion cluster",
+        "osmWayId": 1076252099,
+        "lon": 36.8839607,
+        "lat": -1.2257654,
+        "globalId": "cadeb3d6-b084-53e1-945d-9559a247eb7e"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.27,
+          141.62
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pad-m3",
+      "properties": {
+        "id": "pad-m3",
+        "assetClass": "pad",
+        "assetGroup": "structure",
+        "x": 50.69,
+        "z": 87.13,
+        "subnetworkId": "f-main",
+        "label": "East wing B",
+        "osmWayId": 1076532873,
+        "lon": 36.884225,
+        "lat": -1.2252724,
+        "globalId": "fbbe5cc3-51e1-5f17-96f7-12a7be67e697"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          50.69,
+          87.13
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pad-m4",
+      "properties": {
+        "id": "pad-m4",
+        "assetClass": "pad",
+        "assetGroup": "structure",
+        "x": -100.32,
+        "z": 24.88,
+        "subnetworkId": "f-main",
+        "label": "West garden block",
+        "osmWayId": 1075695770,
+        "lon": 36.8828684,
+        "lat": -1.2247093,
+        "globalId": "44bd3d83-a851-54ba-aff8-b8252b138d81"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -100.32,
+          24.88
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pad-m5",
+      "properties": {
+        "id": "pad-m5",
+        "assetClass": "pad",
+        "assetGroup": "structure",
+        "x": 82.3,
+        "z": 42.97,
+        "subnetworkId": "f-main",
+        "label": "Northeast lodge",
+        "osmWayId": 1076252100,
+        "lon": 36.8845089,
+        "lat": -1.2248729,
+        "globalId": "e11ef83f-4602-5924-abb5-754faf40a10f"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          82.3,
+          42.97
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pad-m6",
+      "properties": {
+        "id": "pad-m6",
+        "assetClass": "pad",
+        "assetGroup": "structure",
+        "x": -3.73,
+        "z": -44.18,
+        "subnetworkId": "f-main",
+        "label": "North conference",
+        "osmWayId": 1075692827,
+        "lon": 36.8837361,
+        "lat": -1.2240845,
+        "globalId": "e6b7b781-afa7-54af-ae9d-a5fd34446598"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.73,
+          -44.18
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pad-m7",
+      "properties": {
+        "id": "pad-m7",
+        "assetClass": "pad",
+        "assetGroup": "structure",
+        "x": -89.87,
+        "z": -52.56,
+        "subnetworkId": "f-main",
+        "label": "Northwest lodge",
+        "osmWayId": 1075692830,
+        "lon": 36.8829623,
+        "lat": -1.2240087,
+        "globalId": "cdff9868-b9b9-59ec-89ae-2fd9a46026c1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -89.87,
+          -52.56
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pad-m8",
+      "properties": {
+        "id": "pad-m8",
+        "assetClass": "pad",
+        "assetGroup": "structure",
+        "x": 74.83,
+        "z": -28.24,
+        "subnetworkId": "f-main",
+        "label": "Northeast annex",
+        "osmWayId": 1076249806,
+        "lon": 36.8844418,
+        "lat": -1.2242287,
+        "globalId": "4409ebc7-7364-55db-8706-9066db8690d4"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          74.83,
+          -28.24
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pad-m9",
+      "properties": {
+        "id": "pad-m9",
+        "assetClass": "pad",
+        "assetGroup": "structure",
+        "x": -148.17,
+        "z": -21.58,
+        "subnetworkId": "f-main",
+        "label": "West service block",
+        "osmWayId": 1075692829,
+        "lon": 36.8824386,
+        "lat": -1.224289,
+        "globalId": "cdb3d5e5-f32c-572f-b1f0-637dfbc00cf1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -148.17,
+          -21.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pad-m10",
+      "properties": {
+        "id": "pad-m10",
+        "assetClass": "pad",
+        "assetGroup": "structure",
+        "x": 87.49,
+        "z": -77.2,
+        "subnetworkId": "f-main",
+        "label": "Far north lodge",
+        "osmWayId": 1076249804,
+        "lon": 36.8845555,
+        "lat": -1.2237858,
+        "globalId": "53ca05ca-1a20-52dd-a2fd-6ff0ee73d771"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          87.49,
+          -77.2
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pad-m11",
+      "properties": {
+        "id": "pad-m11",
+        "assetClass": "pad",
+        "assetGroup": "structure",
+        "x": 33.37,
+        "z": -108.89,
+        "subnetworkId": "f-main",
+        "label": "North campus A",
+        "osmWayId": 1076249805,
+        "lon": 36.8840694,
+        "lat": -1.2234991,
+        "globalId": "01856d9c-99cf-560b-8141-41777aa37dfa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33.37,
+          -108.89
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pad-m12",
+      "properties": {
+        "id": "pad-m12",
+        "assetClass": "pad",
+        "assetGroup": "structure",
+        "x": -49.34,
+        "z": -127.03,
+        "subnetworkId": "f-main",
+        "label": "North campus B",
+        "osmWayId": 1075692801,
+        "lon": 36.8833264,
+        "lat": -1.223335,
+        "globalId": "03850e53-501f-5316-94f4-9e34ad996c6e"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -49.34,
+          -127.03
+        ]
+      }
+    }
+  ]
+}

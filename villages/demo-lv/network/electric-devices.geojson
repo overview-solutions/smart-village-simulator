@@ -1,0 +1,478 @@
+{
+  "type": "FeatureCollection",
+  "name": "electric-devices",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "gen-1",
+      "properties": {
+        "id": "gen-1",
+        "assetClass": "gen",
+        "assetGroup": "electric_device",
+        "x": -26,
+        "z": -11,
+        "subnetworkId": "island-1",
+        "label": "PV + genset",
+        "terminals": [
+          {
+            "name": "OUT",
+            "side": "ac"
+          }
+        ],
+        "globalId": "52c6900f-1f3b-501f-8fe5-1d723ccf60fe",
+        "phase": "ABC",
+        "nominalKv": 0.4,
+        "ratedA": 250
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -26,
+          -11
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "station-1",
+      "properties": {
+        "id": "station-1",
+        "assetClass": "station",
+        "assetGroup": "electric_device",
+        "x": -18,
+        "z": -6,
+        "subnetworkId": "island-1",
+        "label": "Village station / main LV xfmr",
+        "terminals": [
+          {
+            "name": "H1",
+            "side": "primary"
+          },
+          {
+            "name": "X1",
+            "side": "secondary"
+          }
+        ],
+        "globalId": "0b9ad2d0-1e16-52c3-b21c-d930124b465a",
+        "phase": "ABC",
+        "nominalKv": 0.4,
+        "ratedA": 400
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -18,
+          -6
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bess-1",
+      "properties": {
+        "id": "bess-1",
+        "assetClass": "bess",
+        "assetGroup": "electric_device",
+        "x": -22,
+        "z": -9,
+        "subnetworkId": "island-1",
+        "label": "BESS",
+        "globalId": "07249101-1d20-54ea-b207-599ff6cab4c1",
+        "phase": "ABC",
+        "nominalKv": 0.4,
+        "ratedA": 200
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -22,
+          -9
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "inv-1",
+      "properties": {
+        "id": "inv-1",
+        "assetClass": "inverter",
+        "assetGroup": "electric_device",
+        "x": -24,
+        "z": -10,
+        "subnetworkId": "island-1",
+        "label": "Hybrid inverter",
+        "globalId": "e9b10469-dd86-5351-a4c4-cf2b9648e8f5",
+        "phase": "ABC",
+        "nominalKv": 0.4,
+        "ratedA": 200
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -24,
+          -10
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "xfmr-w",
+      "properties": {
+        "id": "xfmr-w",
+        "assetClass": "xfmr",
+        "assetGroup": "electric_device",
+        "x": -38,
+        "z": 18,
+        "subnetworkId": "f-west",
+        "label": "Pole xfmr west",
+        "terminals": [
+          {
+            "name": "H1",
+            "side": "primary"
+          },
+          {
+            "name": "X1",
+            "side": "secondary"
+          }
+        ],
+        "globalId": "38f9def1-db38-5a3f-ba5c-3d57e62dd14c",
+        "phase": "ABC",
+        "nominalKv": 0.4,
+        "ratedA": 100
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -38,
+          18
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ems-w",
+      "properties": {
+        "id": "ems-w",
+        "assetClass": "ems",
+        "assetGroup": "electric_device",
+        "x": -37.5,
+        "z": 19.5,
+        "subnetworkId": "f-west",
+        "label": "MeshEMS west",
+        "terminals": [
+          {
+            "name": "N",
+            "side": "northbound"
+          },
+          {
+            "name": "S",
+            "side": "southbound"
+          }
+        ],
+        "globalId": "9438cc5a-4b70-56c9-8f3f-913d9a6b8b93",
+        "phase": "ABC"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -37.5,
+          19.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dtm-w",
+      "properties": {
+        "id": "dtm-w",
+        "assetClass": "dtm",
+        "assetGroup": "electric_device",
+        "x": -40,
+        "z": 16,
+        "subnetworkId": "f-west",
+        "label": "DTM",
+        "globalId": "9eb459bd-52bb-5a2b-b053-55109da2fb08",
+        "phase": "ABC"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -40,
+          16
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "brk-w",
+      "properties": {
+        "id": "brk-w",
+        "assetClass": "breaker",
+        "assetGroup": "electric_device",
+        "x": -39,
+        "z": 17,
+        "subnetworkId": "f-west",
+        "label": "Feeder breaker",
+        "globalId": "f5490ed7-ed1a-5f90-aabd-aaf480c4b323",
+        "phase": "ABC",
+        "ratedA": 200,
+        "nominalKv": 0.4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -39,
+          17
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-w1",
+      "properties": {
+        "id": "m-w1",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": -44,
+        "z": 28,
+        "subnetworkId": "f-west",
+        "phase": "A",
+        "label": "meter Leila",
+        "globalId": "3c9a9f40-5a4f-53cb-b6a1-2127b0a05133"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -44,
+          28
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-w2",
+      "properties": {
+        "id": "m-w2",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": -34,
+        "z": 30,
+        "subnetworkId": "f-west",
+        "phase": "B",
+        "label": "meter Musa",
+        "globalId": "0bcdd1a6-9b72-5c88-a11b-bed91a8cc6be"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -34,
+          30
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-w3",
+      "properties": {
+        "id": "m-w3",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": -30,
+        "z": 26,
+        "subnetworkId": "f-west",
+        "phase": "A",
+        "label": "meter Hope",
+        "globalId": "559c5dbe-4738-58c9-9427-b8d874957389"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -30,
+          26
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "xfmr-m",
+      "properties": {
+        "id": "xfmr-m",
+        "assetClass": "xfmr",
+        "assetGroup": "electric_device",
+        "x": -4,
+        "z": 9,
+        "subnetworkId": "f-market",
+        "label": "Pole xfmr market",
+        "terminals": [
+          {
+            "name": "H1",
+            "side": "primary"
+          },
+          {
+            "name": "X1",
+            "side": "secondary"
+          }
+        ],
+        "globalId": "bbef3195-fd98-587e-834c-f40dde1315ba",
+        "phase": "ABC",
+        "nominalKv": 0.4,
+        "ratedA": 100
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4,
+          9
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ems-m",
+      "properties": {
+        "id": "ems-m",
+        "assetClass": "ems",
+        "assetGroup": "electric_device",
+        "x": -3.5,
+        "z": 8.5,
+        "subnetworkId": "f-market",
+        "label": "MeshEMS market",
+        "globalId": "145dd93f-067b-5647-a654-43dc99148b44",
+        "phase": "ABC",
+        "terminals": [
+          {
+            "name": "N",
+            "side": "northbound"
+          },
+          {
+            "name": "S",
+            "side": "southbound"
+          }
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.5,
+          8.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-m1",
+      "properties": {
+        "id": "m-m1",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": 2,
+        "z": 14,
+        "subnetworkId": "f-market",
+        "phase": "A",
+        "label": "meter kiosk",
+        "globalId": "dfb0f0b8-1fdf-56c3-ba0d-82568816dd3f"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2,
+          14
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-m2",
+      "properties": {
+        "id": "m-m2",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": 6,
+        "z": 8,
+        "subnetworkId": "f-market",
+        "phase": "B",
+        "label": "meter shop",
+        "globalId": "4f4fde42-5397-5d71-850e-bf37b428117f"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6,
+          8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "fuse-m",
+      "properties": {
+        "id": "fuse-m",
+        "assetClass": "fuse",
+        "assetGroup": "electric_device",
+        "x": -5,
+        "z": 8,
+        "subnetworkId": "f-market",
+        "label": "lateral fuse",
+        "globalId": "e569a5f1-b0b0-5a97-a47c-5c94e3e4c058",
+        "phase": "ABC",
+        "ratedA": 63,
+        "nominalKv": 0.4
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5,
+          8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "disc-w",
+      "properties": {
+        "id": "disc-w",
+        "assetClass": "disconnect",
+        "assetGroup": "electric_device",
+        "x": -38.5,
+        "z": 17.5,
+        "subnetworkId": "f-west",
+        "label": "disconnect (sample)",
+        "phase": "ABC",
+        "ratedA": 200,
+        "nominalKv": 0.4,
+        "globalId": "2acfe9ac-573a-58ab-93b6-6c7a023c0126"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -38.5,
+          17.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "recl-m",
+      "properties": {
+        "id": "recl-m",
+        "assetClass": "recloser",
+        "assetGroup": "electric_device",
+        "x": -7.5,
+        "z": 5,
+        "subnetworkId": "f-market",
+        "label": "recloser (sample)",
+        "phase": "ABC",
+        "ratedA": 400,
+        "nominalKv": 0.4,
+        "globalId": "2199db01-d89c-5b92-b204-344579494644"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -7.5,
+          5
+        ]
+      }
+    }
+  ]
+}

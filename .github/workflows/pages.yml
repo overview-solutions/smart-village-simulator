@@ -1,0 +1,48 @@
+name: pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Circaevum/locus
+          ref: 069a6a42c8bedc0ca0cdd82fa9b5198e3cdfb7a0
+          path: _locus
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Point Locus at the checked-out sibling
+        run: npm pkg set dependencies.@circaevum/locus="file:./_locus"
+      - run: npm install
+      - run: npm test
+      - run: npm run build
+      - run: touch dist/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

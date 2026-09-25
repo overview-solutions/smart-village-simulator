@@ -1,0 +1,23 @@
+{
+  "coverage": [
+    "Kenya",
+    "Zambia"
+  ],
+  "source_license": "CC0-1.0",
+  "counts": {
+    "Zambia": 1795,
+    "Kenya": 151
+  },
+  "zambia_exclusions": {
+    "urban": 311,
+    "non_minigrid_or_conflicting_classification": 284
+  },
+  "input_sha256": {
+    "ZM": "ccb1a7c5acf4a4fd3a04c102c06845fe1d34952ec69afc41a6a5caf560dd42ab",
+    "KE": "87dc566253be1eb67ff695231369f7f5d81cdab4e005ebf21cf412ce7671ddb3"
+  },
+  "sources": {
+    "ZM": "https://energydata.info/dataset/zambia-nep-base-case-mini-grid",
+    "KE": "https://energydata.info/dataset/kenya-potential-new-mini-grid-sites"
+  }
+}

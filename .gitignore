@@ -6,3 +6,5 @@ dist/
 *.swp
 .idea/
 .vscode/
+
+village-simulator/public/maps/

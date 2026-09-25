@@ -11,7 +11,10 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --test tests/*.test.js",
-    "geojson": "node scripts/write-village-geojson.js"
+    "geojson": "node scripts/write-village-geojson.js",
+    "villages:sync-demo": "node scripts/sync-demo-lv-pack.mjs",
+    "villages:sync": "node scripts/sync-villages.mjs",
+    "map:prepare": "node scripts/prepare-maps.mjs"
   },
   "dependencies": {
     "@circaevum/locus": "file:../../CIR/yang/locus",
@@ -23,5 +26,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/overview-solutions/smart-village-simulator"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-darwin-arm64": "^4.63.4"
   }
 }

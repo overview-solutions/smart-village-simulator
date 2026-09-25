@@ -1,0 +1,325 @@
+{
+  "schemaVersion": "0.1.0",
+  "connectivity": [
+    {
+      "fromId": "solar",
+      "toId": "j_n_solar",
+      "subnetworkId": "island-1",
+      "via": "ln-solar"
+    },
+    {
+      "fromId": "j_n_solar",
+      "toId": "n_end",
+      "subnetworkId": "f-voundou",
+      "via": "ln-north-plant"
+    },
+    {
+      "fromId": "j_n_solar",
+      "toId": "j_n_mid",
+      "subnetworkId": "island-1",
+      "via": "ln-plant-mid"
+    },
+    {
+      "fromId": "j_n_mid",
+      "toId": "hub",
+      "subnetworkId": "f-voundou",
+      "via": "ln-mid-hub"
+    },
+    {
+      "fromId": "hub",
+      "toId": "j_s",
+      "subnetworkId": "f-voundou",
+      "via": "ln-hub-south"
+    },
+    {
+      "fromId": "j_s",
+      "toId": "s_end",
+      "subnetworkId": "f-voundou",
+      "via": "ln-south"
+    },
+    {
+      "fromId": "hub",
+      "toId": "j_e",
+      "subnetworkId": "f-voundou",
+      "via": "ln-hub-east"
+    },
+    {
+      "fromId": "hub",
+      "toId": "j_w",
+      "subnetworkId": "f-voundou",
+      "via": "ln-hub-west"
+    },
+    {
+      "fromId": "n_end",
+      "toId": "n_west",
+      "subnetworkId": "f-voundou",
+      "via": "ln-n-west"
+    },
+    {
+      "fromId": "j_e",
+      "toId": "e_tee",
+      "subnetworkId": "f-voundou",
+      "via": "ln-e-main"
+    },
+    {
+      "fromId": "e_tee",
+      "toId": "e_end",
+      "subnetworkId": "f-voundou",
+      "via": "ln-e-main"
+    },
+    {
+      "fromId": "j_e",
+      "toId": "e_south",
+      "subnetworkId": "f-voundou",
+      "via": "ln-e-south"
+    },
+    {
+      "fromId": "e_tee",
+      "toId": "e_n1",
+      "subnetworkId": "f-voundou",
+      "via": "ln-e-north"
+    },
+    {
+      "fromId": "e_n1",
+      "toId": "e_n2",
+      "subnetworkId": "f-voundou",
+      "via": "ln-e-north"
+    },
+    {
+      "fromId": "j_w",
+      "toId": "w_bend",
+      "subnetworkId": "f-voundou",
+      "via": "ln-w-nw"
+    },
+    {
+      "fromId": "w_bend",
+      "toId": "w_nw",
+      "subnetworkId": "f-voundou",
+      "via": "ln-w-nw"
+    },
+    {
+      "fromId": "j_w",
+      "toId": "w_sw",
+      "subnetworkId": "f-voundou",
+      "via": "ln-w-sw"
+    },
+    {
+      "fromId": "tap_n",
+      "toId": "b_n",
+      "subnetworkId": "f-voundou",
+      "via": "ln-lat-n"
+    },
+    {
+      "fromId": "tap_n2",
+      "toId": "b_n2",
+      "subnetworkId": "f-voundou",
+      "via": "ln-lat-n2"
+    },
+    {
+      "fromId": "tap_s",
+      "toId": "b_s",
+      "subnetworkId": "f-voundou",
+      "via": "ln-lat-s"
+    },
+    {
+      "fromId": "b_s",
+      "toId": "b_s_stub",
+      "subnetworkId": "f-voundou",
+      "via": "ln-lat-s"
+    },
+    {
+      "fromId": "tap_se",
+      "toId": "b_se",
+      "subnetworkId": "f-voundou",
+      "via": "ln-lat-se"
+    },
+    {
+      "fromId": "tap_sw",
+      "toId": "b_sw",
+      "subnetworkId": "f-voundou",
+      "via": "ln-lat-sw"
+    },
+    {
+      "fromId": "tap_w_n",
+      "toId": "b_w_n",
+      "subnetworkId": "f-voundou",
+      "via": "ln-lat-wn"
+    },
+    {
+      "fromId": "gen-1",
+      "toId": "inv-1",
+      "subnetworkId": "island-1",
+      "fromTerminal": "OUT",
+      "via": "ln-gen-station"
+    },
+    {
+      "fromId": "inv-1",
+      "toId": "station-1",
+      "subnetworkId": "island-1",
+      "toTerminal": "H1",
+      "via": "ln-gen-station"
+    },
+    {
+      "fromId": "station-1",
+      "toId": "brk-1",
+      "subnetworkId": "island-1",
+      "fromTerminal": "X1",
+      "via": "ln-gen-station"
+    },
+    {
+      "fromId": "brk-1",
+      "toId": "solar",
+      "subnetworkId": "island-1",
+      "via": "ln-gen-station"
+    },
+    {
+      "fromId": "ems-1",
+      "toId": "station-1",
+      "subnetworkId": "island-1"
+    }
+  ],
+  "containment": [
+    {
+      "containerId": "cab-ems",
+      "contentId": "ems-1"
+    }
+  ],
+  "attachment": [
+    {
+      "structureId": "pole-hub",
+      "attachedId": "hub"
+    },
+    {
+      "structureId": "pole-j_n_mid",
+      "attachedId": "j_n_mid"
+    },
+    {
+      "structureId": "pole-j_n_solar",
+      "attachedId": "j_n_solar"
+    },
+    {
+      "structureId": "pole-solar",
+      "attachedId": "solar"
+    },
+    {
+      "structureId": "pole-n_end",
+      "attachedId": "n_end"
+    },
+    {
+      "structureId": "pole-n_west",
+      "attachedId": "n_west"
+    },
+    {
+      "structureId": "pole-j_s",
+      "attachedId": "j_s"
+    },
+    {
+      "structureId": "pole-s_end",
+      "attachedId": "s_end"
+    },
+    {
+      "structureId": "pole-j_e",
+      "attachedId": "j_e"
+    },
+    {
+      "structureId": "pole-e_tee",
+      "attachedId": "e_tee"
+    },
+    {
+      "structureId": "pole-e_end",
+      "attachedId": "e_end"
+    },
+    {
+      "structureId": "pole-e_south",
+      "attachedId": "e_south"
+    },
+    {
+      "structureId": "pole-e_n1",
+      "attachedId": "e_n1"
+    },
+    {
+      "structureId": "pole-e_n2",
+      "attachedId": "e_n2"
+    },
+    {
+      "structureId": "pole-j_w",
+      "attachedId": "j_w"
+    },
+    {
+      "structureId": "pole-w_bend",
+      "attachedId": "w_bend"
+    },
+    {
+      "structureId": "pole-w_nw",
+      "attachedId": "w_nw"
+    },
+    {
+      "structureId": "pole-w_sw",
+      "attachedId": "w_sw"
+    },
+    {
+      "structureId": "pole-tap_n",
+      "attachedId": "tap_n"
+    },
+    {
+      "structureId": "pole-b_n",
+      "attachedId": "b_n"
+    },
+    {
+      "structureId": "pole-tap_n2",
+      "attachedId": "tap_n2"
+    },
+    {
+      "structureId": "pole-b_n2",
+      "attachedId": "b_n2"
+    },
+    {
+      "structureId": "pole-tap_s",
+      "attachedId": "tap_s"
+    },
+    {
+      "structureId": "pole-b_s",
+      "attachedId": "b_s"
+    },
+    {
+      "structureId": "pole-b_s_stub",
+      "attachedId": "b_s_stub"
+    },
+    {
+      "structureId": "pole-tap_se",
+      "attachedId": "tap_se"
+    },
+    {
+      "structureId": "pole-b_se",
+      "attachedId": "b_se"
+    },
+    {
+      "structureId": "pole-tap_sw",
+      "attachedId": "tap_sw"
+    },
+    {
+      "structureId": "pole-b_sw",
+      "attachedId": "b_sw"
+    },
+    {
+      "structureId": "pole-tap_w_n",
+      "attachedId": "tap_w_n"
+    },
+    {
+      "structureId": "pole-b_w_n",
+      "attachedId": "b_w_n"
+    },
+    {
+      "structureId": "pad-plant",
+      "attachedId": "gen-1"
+    },
+    {
+      "structureId": "pad-plant",
+      "attachedId": "station-1"
+    },
+    {
+      "structureId": "cab-ems",
+      "attachedId": "ems-1"
+    }
+  ]
+}

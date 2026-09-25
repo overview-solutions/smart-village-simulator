@@ -1,0 +1,195 @@
+{
+  "type": "FeatureCollection",
+  "name": "structure",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "pole-w1",
+      "properties": {
+        "id": "pole-w1",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -42,
+        "z": 8,
+        "subnetworkId": "f-west",
+        "label": "pole",
+        "globalId": "e856d304-4038-5fa5-adff-4fddccbe0584"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -42,
+          8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-w2",
+      "properties": {
+        "id": "pole-w2",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -40,
+        "z": 16,
+        "subnetworkId": "f-west",
+        "label": "pole",
+        "globalId": "98df0b57-a235-55b8-a7de-08f0697f6077"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -40,
+          16
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-w3",
+      "properties": {
+        "id": "pole-w3",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -36,
+        "z": 24,
+        "subnetworkId": "f-west",
+        "label": "pole",
+        "globalId": "c8a99bb1-b807-5341-b204-eb1b65cb40a6"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -36,
+          24
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "cab-w",
+      "properties": {
+        "id": "cab-w",
+        "assetClass": "cabinet",
+        "assetGroup": "structure",
+        "x": -37.5,
+        "z": 19.5,
+        "subnetworkId": "f-west",
+        "label": "EMS cabinet",
+        "globalId": "2bc4eb9c-6926-5063-a122-601111a7247c"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -37.5,
+          19.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-m1",
+      "properties": {
+        "id": "pole-m1",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -8,
+        "z": 6,
+        "subnetworkId": "f-market",
+        "label": "pole",
+        "globalId": "a26a78af-8c69-56e4-9743-927de631eb14"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8,
+          6
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-m2",
+      "properties": {
+        "id": "pole-m2",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -2,
+        "z": 10,
+        "subnetworkId": "f-market",
+        "label": "pole",
+        "globalId": "ed10560c-e6e9-55d1-a917-108a0a0feb02"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2,
+          10
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "cab-m",
+      "properties": {
+        "id": "cab-m",
+        "assetClass": "cabinet",
+        "assetGroup": "structure",
+        "x": -3.5,
+        "z": 8.5,
+        "subnetworkId": "f-market",
+        "label": "EMS cabinet",
+        "globalId": "442bc4ac-64b1-5ff7-bf38-3ecd644ba212"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.5,
+          8.5
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pad-gen",
+      "properties": {
+        "id": "pad-gen",
+        "assetClass": "pad",
+        "assetGroup": "structure",
+        "x": -26,
+        "z": -11,
+        "subnetworkId": "island-1",
+        "label": "gen pad",
+        "globalId": "efc566bf-37a7-57f0-a6f6-e2d4352a4405"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -26,
+          -11
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "encl-m",
+      "properties": {
+        "id": "encl-m",
+        "assetClass": "enclosure",
+        "assetGroup": "structure",
+        "x": -1.5,
+        "z": 11.5,
+        "subnetworkId": "f-market",
+        "label": "meter enclosure (sample)",
+        "globalId": "0332642f-2fc6-5744-8ca0-3c9a1774381a"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.5,
+          11.5
+        ]
+      }
+    }
+  ]
+}
