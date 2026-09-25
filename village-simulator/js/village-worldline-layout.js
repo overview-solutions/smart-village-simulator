@@ -4,6 +4,8 @@
  * `?homes=N` or `window.WL_SIZE` override. All sites are procedural.
  */
 
+import { classifyCustomerUse } from "./customer-use.js";
+
 export const PEOPLE_PER_HOME = 5;
 
 function sizeFromPage() {
@@ -225,6 +227,7 @@ function buildHouses() {
     const p = PROFILES[i % PROFILES.length];
     const name = houseName(i);
     const rural = site[2] === "west" || site[2] === "south";
+    const traits = loadTraits(i, rural);
     const h = {
       id: `h${i}`,
       name,
@@ -236,10 +239,11 @@ function buildHouses() {
       boardIdx: site[4] ?? 0,
       startCredit: 0,
       ...p,
-      ...loadTraits(i, rural),
+      ...traits,
       loadLimitW: rural ? 180 : 240,
       payments: [{ min: 6 * 60 + 15 + (i % 22) * 8, amount: rural ? 400 : 640 }],
     };
+    h.useClass = classifyCustomerUse(h, i);
     return h;
   });
 }

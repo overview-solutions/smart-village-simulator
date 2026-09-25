@@ -1,5 +1,19 @@
 import { LocusMap } from '@circaevum/locus/map';
+import { Matrix4 } from 'three';
+import { M_PER_DEG_LAT } from '@circaevum/locus/geo';
 import { ORIGIN, GROUND_SCALE } from './geo.js';
+
+/** Same local-tangent matrix LocusMap uses. Keeps 3D meshes on the new pin. */
+export function rebindMapOrigin(viewer, origin = ORIGIN) {
+  if (!viewer) return;
+  viewer.origin = { ...viewer.origin, lon: origin.lon, lat: origin.lat, alt: origin.alt || 0 };
+  const r = origin.lat * Math.PI / 180;
+  const scale = 1 / (360 * M_PER_DEG_LAT * Math.cos(r));
+  const x = (origin.lon + 180) / 360;
+  const y = (1 - Math.log(Math.tan(Math.PI / 4 + r / 2)) / Math.PI) / 2;
+  viewer._matrix = new Matrix4().set(scale, 0, 0, x, 0, 0, scale, y, 0, scale, 0, 0, 0, 0, 0, 1);
+  viewer.map?.triggerRepaint?.();
+}
 
 /** Online satellite (Esri). Nature = local bright pack + lush green paints (offline-safe). */
 const satellite = {
@@ -121,10 +135,11 @@ export async function createVillageMap(container) {
       };
     }
     // Nature = local bright (or liberty) URL — greens applied on style.load
-    if (key === 'nature') return localStyleUrl('bright');
+    if (key === 'nature') return siteStyleUrl || localStyleUrl('bright');
     return localStyleUrl(key);
   };
 
+  let siteStyleUrl = null;
   let selected = new URLSearchParams(location.search).get('basemap') || 'nature';
   if (!(selected in paths) && !['satellite', 'nature', 'none'].includes(selected)) {
     selected = 'nature';
@@ -169,7 +184,8 @@ export async function createVillageMap(container) {
   };
 
   const copy = () => {
-    status.textContent = `Locus · Voundou · hypothetical infrastructure · ${labelFor(selected)}`;
+    const place = ORIGIN.name || 'Voundou';
+    status.textContent = `Locus · ${place} · ${labelFor(selected)}`;
   };
 
   const afterStyle = () => {
@@ -237,5 +253,31 @@ export async function createVillageMap(container) {
       z: options.z * GROUND_SCALE,
       zoom: options.zoom - Math.log2(GROUND_SCALE),
     });
+  viewer.useOnlineSatellite = async () => {
+    selected = 'satellite';
+    if (select) select.value = 'satellite';
+    viewer.offline = false;
+    await viewer.setBasemap(satellite);
+    afterStyle();
+  };
+  viewer.useLocalStyle = async (styleUrl, { adopt } = {}) => {
+    siteStyleUrl = styleUrl;
+    const wantNature = adopt === true || selected === 'nature' || select?.value === 'nature';
+    if (!wantNature) {
+      afterStyle();
+      return;
+    }
+    selected = 'nature';
+    if (select) select.value = 'nature';
+    viewer.offline = true;
+    await viewer.setBasemap(styleUrl);
+    applyNaturalColors(viewer.map);
+    requestAnimationFrame(() => applyNaturalColors(viewer.map));
+    afterStyle();
+  };
+  viewer.refreshStatus = copy;
+  viewer.clearSiteStyle = () => {
+    siteStyleUrl = null;
+  };
   return viewer;
 }

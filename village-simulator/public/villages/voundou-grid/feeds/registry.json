@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "0.1.0",
+  "bindings": [
+    {
+      "assetId": "ems-1",
+      "lod": 2,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "voundou-grid",
+          "metrics": [
+            "kW",
+            "A"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "gen-1",
+      "lod": 2,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "voundou-grid",
+          "metrics": [
+            "kW"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "station-1",
+      "lod": 2,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "voundou-grid",
+          "metrics": [
+            "kW",
+            "A"
+          ]
+        }
+      ]
+    }
+  ]
+}

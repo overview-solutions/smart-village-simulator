@@ -48,9 +48,9 @@ Never copy private contacts, prices, NDA text, or CIR `internal/` here.
 | `village-simulator/js/geo.js` | Village GeoJSON; conversion from Locus |
 | `scripts/write-village-geojson.js` | Writes `grid.geojson` (legacy one-blob export) |
 | `villages/` | Per-site UN-style GeoJSON packs + API bindings (LOD fetch) — see `villages/README.md` |
-| `villages/catalog.json` | Site switcher catalog (Voundou · demo-lv · safari-park-casino) |
-| `village-simulator/public/villages/` | Vite-served hub `/villages/index.html?site=` + pack copies (`npm run villages:sync`) |
-| `village-simulator/js/village-build.js` | Build palette + house/EMS map + feed config |
+| `villages/catalog.json` | Site switcher catalog (Voundou · demo-lv · safari-park-casino · voundou-grid) |
+| `village-simulator/public/villages/` | Pack copies (`npm run villages:sync`). 3D sim (`/`) draws them — hub redirects home. |
+| `village-simulator/js/village-build.js` | BUILD core (gen · station/switch · primary · secondary · xfmr) vs More; `nominalKv` on lines |
 | `village-simulator/js/village-candidates.js` | Africa KE/ZM candidate layer on zoom-out |
 | `tests/` | Geo round-trip + TimeContext playhead + minigrid candidates |
 

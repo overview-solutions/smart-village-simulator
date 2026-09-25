@@ -354,6 +354,8 @@ function fillSiteSelect(activeId) {
 }
 
 async function boot() {
+  location.replace("/");
+  return;
   const err = document.getElementById("bootErr");
   try {
     CATALOG = await loadCatalog();

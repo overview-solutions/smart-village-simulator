@@ -1,0 +1,2444 @@
+{
+  "type": "FeatureCollection",
+  "name": "structure",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "pole-hub",
+      "properties": {
+        "id": "pole-hub",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 0,
+        "z": 0,
+        "lon": 11.53412,
+        "lat": 4.79209,
+        "globalId": "ef8ed83c-a164-5104-710d-35323fb717c9",
+        "subnetworkId": "f-voundou",
+        "label": "Village hub"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-j_n_mid",
+      "properties": {
+        "id": "pole-j_n_mid",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -142.17,
+        "z": -231.03,
+        "lon": 11.5328384,
+        "lat": 4.7941654,
+        "globalId": "0b9d181f-84de-5c86-c152-80712aa60200",
+        "subnetworkId": "f-voundou",
+        "label": "North mid T"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -142.17,
+          -231.03
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-j_n_solar",
+      "properties": {
+        "id": "pole-j_n_solar",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -242.87,
+        "z": -438.36,
+        "lon": 11.5319306,
+        "lat": 4.7960278,
+        "globalId": "e4785aa9-b031-55e5-14b4-10d64b604155",
+        "subnetworkId": "island-1",
+        "label": "Plant T · 380 V"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -242.87,
+          -438.36
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-solar",
+      "properties": {
+        "id": "pole-solar",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -438.36,
+        "z": -420.58,
+        "lon": 11.5301683,
+        "lat": 4.7958681,
+        "globalId": "499f37e3-fdf1-5936-f05c-52a1d385737d",
+        "subnetworkId": "island-1",
+        "label": "Solar plant bus"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -438.36,
+          -420.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-n_end",
+      "properties": {
+        "id": "pole-n_end",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -260.64,
+        "z": -924.1,
+        "lon": 11.5317704,
+        "lat": 4.8003913,
+        "globalId": "c7c2ab65-e801-5d0e-1da7-f9c979a14d92",
+        "subnetworkId": "f-voundou",
+        "label": "North terminus"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -260.64,
+          -924.1
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-n_west",
+      "properties": {
+        "id": "pole-n_west",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -678.34,
+        "z": -939.76,
+        "lon": 11.528005,
+        "lat": 4.800532,
+        "globalId": "6446d91c-5f1b-5cac-a319-e6048a33d493",
+        "subnetworkId": "f-voundou",
+        "label": "NW 220 V end"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -678.34,
+          -939.76
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-j_s",
+      "properties": {
+        "id": "pole-j_s",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -94.78,
+        "z": 242.87,
+        "lon": 11.5332656,
+        "lat": 4.7899083,
+        "globalId": "43c7d5aa-c6ed-5d66-bdd2-4ab1cc17342b",
+        "subnetworkId": "f-voundou",
+        "label": "South Y"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -94.78,
+          242.87
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-s_end",
+      "properties": {
+        "id": "pole-s_end",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -112.55,
+        "z": 586.45,
+        "lon": 11.5331054,
+        "lat": 4.7868219,
+        "globalId": "cd61e53d-e2b0-5875-6e2f-2fd9219ae1e6",
+        "subnetworkId": "f-voundou",
+        "label": "South terminus"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -112.55,
+          586.45
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-j_e",
+      "properties": {
+        "id": "pole-j_e",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 450.2,
+        "z": -23.69,
+        "lon": 11.5381784,
+        "lat": 4.7923028,
+        "globalId": "0cdce156-d22c-58c1-2281-5958dbecfb60",
+        "subnetworkId": "f-voundou",
+        "label": "East 380→220 T"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          450.2,
+          -23.69
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-e_tee",
+      "properties": {
+        "id": "pole-e_tee",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 648.61,
+        "z": -49.8,
+        "lon": 11.539967,
+        "lat": 4.7925374,
+        "globalId": "9938c372-3d4a-5abd-4728-1fbe92d596c2",
+        "subnetworkId": "f-voundou",
+        "label": "East black T"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          648.61,
+          -49.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-e_end",
+      "properties": {
+        "id": "pole-e_end",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 961.88,
+        "z": -86.35,
+        "lon": 11.542791,
+        "lat": 4.7928657,
+        "globalId": "2bddc0e1-b4ad-555f-3579-d3c3215f1556",
+        "subnetworkId": "f-voundou",
+        "label": "East terminus"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          961.88,
+          -86.35
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-e_south",
+      "properties": {
+        "id": "pole-e_south",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 491.97,
+        "z": 200.82,
+        "lon": 11.5385549,
+        "lat": 4.790286,
+        "globalId": "63217baf-63e8-5492-b07c-a3ecf0ab51a6",
+        "subnetworkId": "f-voundou",
+        "label": "SE 220 V end"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          491.97,
+          200.82
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-e_n1",
+      "properties": {
+        "id": "pole-e_n1",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 659.05,
+        "z": -310.86,
+        "lon": 11.5400611,
+        "lat": 4.7948825,
+        "globalId": "e7ca784c-76ac-58f3-e46f-22ecd221ffe5",
+        "subnetworkId": "f-voundou",
+        "label": "NE 220 V mid"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          659.05,
+          -310.86
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-e_n2",
+      "properties": {
+        "id": "pole-e_n2",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 622.5,
+        "z": -598.02,
+        "lon": 11.5397316,
+        "lat": 4.7974621,
+        "globalId": "77ff9242-ce9f-58b9-5394-a2e19e7a1969",
+        "subnetworkId": "f-voundou",
+        "label": "NE 220 V end"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          622.5,
+          -598.02
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-j_w",
+      "properties": {
+        "id": "pole-j_w",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -467.97,
+        "z": 17.77,
+        "lon": 11.5299014,
+        "lat": 4.7919304,
+        "globalId": "ff79acf4-2a24-5b5d-50cf-41703132acc5",
+        "subnetworkId": "f-voundou",
+        "label": "West 380→220 T"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -467.97,
+          17.77
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-w_bend",
+      "properties": {
+        "id": "pole-w_bend",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -603.72,
+        "z": -55.33,
+        "lon": 11.5286777,
+        "lat": 4.792587,
+        "globalId": "86818c7f-cf26-5771-7ab2-b26b6b1af061",
+        "subnetworkId": "f-voundou",
+        "label": "West bend"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -603.72,
+          -55.33
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-w_nw",
+      "properties": {
+        "id": "pole-w_nw",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -781.24,
+        "z": -123.2,
+        "lon": 11.5270774,
+        "lat": 4.7931967,
+        "globalId": "3028dda3-5e8f-5db3-103a-a879ecc9c1e4",
+        "subnetworkId": "f-voundou",
+        "label": "WNW 220 V end"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -781.24,
+          -123.2
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-w_sw",
+      "properties": {
+        "id": "pole-w_sw",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -676.82,
+        "z": 153.52,
+        "lon": 11.5280187,
+        "lat": 4.7907109,
+        "globalId": "9047921f-972f-51b1-ad16-31be720d654d",
+        "subnetworkId": "f-voundou",
+        "label": "SW terminus"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -676.82,
+          153.52
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-tap_n",
+      "properties": {
+        "id": "pole-tap_n",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -25.59,
+        "z": -41.58,
+        "lon": 11.5338893,
+        "lat": 4.7924635,
+        "globalId": "cbb9a409-7a19-52ec-dd10-f34c80b964ce",
+        "subnetworkId": "f-voundou",
+        "label": "Hub N lateral tap"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -25.59,
+          -41.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-b_n",
+      "properties": {
+        "id": "pole-b_n",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 54.4,
+        "z": -365.19,
+        "lon": 11.5346104,
+        "lat": 4.7953705,
+        "globalId": "12cba508-3b2b-5e41-5f75-987f95c1ccfc",
+        "subnetworkId": "f-voundou",
+        "label": "N 220 V end"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          54.4,
+          -365.19
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-tap_n2",
+      "properties": {
+        "id": "pole-tap_n2",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -164.32,
+        "z": -276.64,
+        "lon": 11.5326387,
+        "lat": 4.7945751,
+        "globalId": "cde5525c-cb11-5df3-02f9-fdc875be0b9c",
+        "subnetworkId": "f-voundou",
+        "label": "N2 lateral tap"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -164.32,
+          -276.64
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-b_n2",
+      "properties": {
+        "id": "pole-b_n2",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 27.5,
+        "z": -471.39,
+        "lon": 11.5343679,
+        "lat": 4.7963245,
+        "globalId": "d9f324ca-6b62-51f1-8333-f21378c758df",
+        "subnetworkId": "f-voundou",
+        "label": "N2 220 V end"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.5,
+          -471.39
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-tap_s",
+      "properties": {
+        "id": "pole-tap_s",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -20.85,
+        "z": 53.43,
+        "lon": 11.533932,
+        "lat": 4.79161,
+        "globalId": "b72394e4-e132-5637-d7c7-832b7ec9e094",
+        "subnetworkId": "f-voundou",
+        "label": "Hub S lateral tap"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -20.85,
+          53.43
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-b_s",
+      "properties": {
+        "id": "pole-b_s",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 70.62,
+        "z": 288.28,
+        "lon": 11.5347566,
+        "lat": 4.7895003,
+        "globalId": "c989ef9c-5c50-553a-faba-79cca0400030",
+        "subnetworkId": "f-voundou",
+        "label": "S 220 V elbow"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          70.62,
+          288.28
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-b_s_stub",
+      "properties": {
+        "id": "pole-b_s_stub",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 148.94,
+        "z": 298.72,
+        "lon": 11.5354626,
+        "lat": 4.7894066,
+        "globalId": "4fe6b244-f832-5358-aaef-249c126e2338",
+        "subnetworkId": "f-voundou",
+        "label": "S 220 V stub"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          148.94,
+          298.72
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-tap_se",
+      "properties": {
+        "id": "pole-tap_se",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 126.06,
+        "z": -6.63,
+        "lon": 11.5352564,
+        "lat": 4.7921496,
+        "globalId": "3fe59306-4c9d-5cc5-70ce-d66f068adce5",
+        "subnetworkId": "f-voundou",
+        "label": "SE lateral tap"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.06,
+          -6.63
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-b_se",
+      "properties": {
+        "id": "pole-b_se",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 218.58,
+        "z": 161.07,
+        "lon": 11.5360904,
+        "lat": 4.7906431,
+        "globalId": "29feee81-7c5a-5b86-ee68-fc7bbec86541",
+        "subnetworkId": "f-voundou",
+        "label": "SE 220 V end"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          218.58,
+          161.07
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-tap_sw",
+      "properties": {
+        "id": "pole-tap_sw",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -36.02,
+        "z": 92.29,
+        "lon": 11.5337953,
+        "lat": 4.7912609,
+        "globalId": "7e397845-24ac-51d9-caf9-ae204d54ce26",
+        "subnetworkId": "f-voundou",
+        "label": "SW lateral tap"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -36.02,
+          92.29
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-b_sw",
+      "properties": {
+        "id": "pole-b_sw",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -166.13,
+        "z": 198.91,
+        "lon": 11.5326224,
+        "lat": 4.7903032,
+        "globalId": "21e175f8-78d0-5d73-d54c-662c92fd9b1d",
+        "subnetworkId": "f-voundou",
+        "label": "SSW 220 V end"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -166.13,
+          198.91
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-tap_w_n",
+      "properties": {
+        "id": "pole-tap_w_n",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -196.55,
+        "z": 7.46,
+        "lon": 11.5323482,
+        "lat": 4.792023,
+        "globalId": "984b8695-1030-575e-7308-5c7e717ae2d8",
+        "subnetworkId": "f-voundou",
+        "label": "WN lateral tap"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -196.55,
+          7.46
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-b_w_n",
+      "properties": {
+        "id": "pole-b_w_n",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -253.04,
+        "z": -176.63,
+        "lon": 11.5318389,
+        "lat": 4.7936767,
+        "globalId": "40e8d9e9-3f79-51e2-1d69-c2bc83d2f870",
+        "subnetworkId": "f-voundou",
+        "label": "WN 220 V end"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -253.04,
+          -176.63
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pad-plant",
+      "properties": {
+        "id": "pad-plant",
+        "assetClass": "pad",
+        "assetGroup": "structure",
+        "x": -438.36,
+        "z": -420.58,
+        "lon": 11.5301683,
+        "lat": 4.7958681,
+        "globalId": "eea9553a-c764-5ce0-28eb-c0e714644cb1",
+        "subnetworkId": "island-1",
+        "label": "Solar plant pad"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -438.36,
+          -420.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "cab-ems",
+      "properties": {
+        "id": "cab-ems",
+        "assetClass": "cabinet",
+        "assetGroup": "structure",
+        "x": -428.36,
+        "z": -430.58,
+        "lon": 11.5302585,
+        "lat": 4.7959579,
+        "globalId": "9d235be8-3033-5bfd-7207-26540f7d0a01",
+        "subnetworkId": "island-1",
+        "label": "EMS cabinet"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -428.36,
+          -430.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-1",
+      "properties": {
+        "id": "pole-span-1",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -373.19,
+        "z": -426.51,
+        "lon": 11.5307558,
+        "lat": 4.7959214,
+        "globalId": "3ddf4b4d-f3a3-54c3-a2cd-b5b57f87efef",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -373.19,
+          -426.51
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-2",
+      "properties": {
+        "id": "pole-span-2",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -308.03,
+        "z": -432.43,
+        "lon": 11.5313432,
+        "lat": 4.7959746,
+        "globalId": "555299ad-c91d-534f-592f-a3bc81654747",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -308.03,
+          -432.43
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-3",
+      "properties": {
+        "id": "pole-span-3",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -245.09,
+        "z": -499.07,
+        "lon": 11.5319106,
+        "lat": 4.7965732,
+        "globalId": "f43a4e79-e107-5dad-64b2-cc0b9d52d87c",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -245.09,
+          -499.07
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-4",
+      "properties": {
+        "id": "pole-span-4",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -247.32,
+        "z": -559.79,
+        "lon": 11.5318905,
+        "lat": 4.7971187,
+        "globalId": "eca4e85a-6c5e-5119-2bc6-463184c6dd63",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -247.32,
+          -559.79
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-5",
+      "properties": {
+        "id": "pole-span-5",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -249.54,
+        "z": -620.51,
+        "lon": 11.5318705,
+        "lat": 4.7976641,
+        "globalId": "487b2cc7-7f31-5193-390f-e8b248e4a552",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -249.54,
+          -620.51
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-6",
+      "properties": {
+        "id": "pole-span-6",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -251.76,
+        "z": -681.23,
+        "lon": 11.5318505,
+        "lat": 4.7982096,
+        "globalId": "172c0be6-5a3f-56d7-3b6d-28fbfb9c03ae",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -251.76,
+          -681.23
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-7",
+      "properties": {
+        "id": "pole-span-7",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -253.98,
+        "z": -741.95,
+        "lon": 11.5318305,
+        "lat": 4.798755,
+        "globalId": "1f4252ad-d53d-5171-da78-07c2d0d2f257",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -253.98,
+          -741.95
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-8",
+      "properties": {
+        "id": "pole-span-8",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -256.2,
+        "z": -802.66,
+        "lon": 11.5318105,
+        "lat": 4.7993004,
+        "globalId": "4ae418cf-b28d-50dc-3cdf-3243d9525854",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -256.2,
+          -802.66
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-9",
+      "properties": {
+        "id": "pole-span-9",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -258.42,
+        "z": -863.38,
+        "lon": 11.5317904,
+        "lat": 4.7998458,
+        "globalId": "2b809f13-7e8b-5519-413f-4fd7320b0838",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -258.42,
+          -863.38
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-10",
+      "properties": {
+        "id": "pole-span-10",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -209.3,
+        "z": -369.25,
+        "lon": 11.5322332,
+        "lat": 4.795407,
+        "globalId": "d97efa9a-3f7d-5f8d-89ec-101cdc1cfa70",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -209.3,
+          -369.25
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-11",
+      "properties": {
+        "id": "pole-span-11",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -175.74,
+        "z": -300.14,
+        "lon": 11.5325358,
+        "lat": 4.7947862,
+        "globalId": "f0bf030d-8d9b-58a9-7b7d-9de0c01b5eff",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -175.74,
+          -300.14
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-12",
+      "properties": {
+        "id": "pole-span-12",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -106.63,
+        "z": -173.27,
+        "lon": 11.5331588,
+        "lat": 4.7936465,
+        "globalId": "44693850-090b-5177-dbee-f36f58f61199",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -106.63,
+          -173.27
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-13",
+      "properties": {
+        "id": "pole-span-13",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -71.08,
+        "z": -115.51,
+        "lon": 11.5334792,
+        "lat": 4.7931276,
+        "globalId": "e0ae78d9-dcf1-5c7b-a521-b315ade0cef3",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.08,
+          -115.51
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-14",
+      "properties": {
+        "id": "pole-span-14",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -35.54,
+        "z": -57.76,
+        "lon": 11.5337996,
+        "lat": 4.7926089,
+        "globalId": "fe7f7b9d-af1a-559f-b35d-34c3aa018f06",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -35.54,
+          -57.76
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-15",
+      "properties": {
+        "id": "pole-span-15",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -23.69,
+        "z": 60.72,
+        "lon": 11.5339064,
+        "lat": 4.7915445,
+        "globalId": "95945c60-4017-5304-3146-088bc54be42f",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -23.69,
+          60.72
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-16",
+      "properties": {
+        "id": "pole-span-16",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -47.39,
+        "z": 121.44,
+        "lon": 11.5336928,
+        "lat": 4.7909991,
+        "globalId": "8656c772-abe9-5f82-5469-b8f81cfa046d",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -47.39,
+          121.44
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-17",
+      "properties": {
+        "id": "pole-span-17",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -71.08,
+        "z": 182.15,
+        "lon": 11.5334792,
+        "lat": 4.7904537,
+        "globalId": "5fd28ff4-8e8e-51d1-3946-e94c1e1603c2",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -71.08,
+          182.15
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-18",
+      "properties": {
+        "id": "pole-span-18",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -98.33,
+        "z": 311.59,
+        "lon": 11.5332336,
+        "lat": 4.789291,
+        "globalId": "15503a65-113d-5a58-d0e8-4f53f96b3849",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -98.33,
+          311.59
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-19",
+      "properties": {
+        "id": "pole-span-19",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -101.89,
+        "z": 380.3,
+        "lon": 11.5332015,
+        "lat": 4.7886737,
+        "globalId": "9a6f597e-adb5-5cdc-1f9b-6ef2f5c83817",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -101.89,
+          380.3
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-20",
+      "properties": {
+        "id": "pole-span-20",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -105.44,
+        "z": 449.02,
+        "lon": 11.5331695,
+        "lat": 4.7880564,
+        "globalId": "564734e6-3a4d-5959-c76f-70e53ce527ba",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -105.44,
+          449.02
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-21",
+      "properties": {
+        "id": "pole-span-21",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -109,
+        "z": 517.73,
+        "lon": 11.5331374,
+        "lat": 4.7874392,
+        "globalId": "aff648fc-c1ff-50e3-0d29-7c3183ee5204",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -109,
+          517.73
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-22",
+      "properties": {
+        "id": "pole-span-22",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 64.31,
+        "z": -3.38,
+        "lon": 11.5346997,
+        "lat": 4.7921204,
+        "globalId": "73352e07-ade0-59dc-856c-557f850c2d0d",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          64.31,
+          -3.38
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-23",
+      "properties": {
+        "id": "pole-span-23",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 128.63,
+        "z": -6.77,
+        "lon": 11.5352796,
+        "lat": 4.7921508,
+        "globalId": "bd5ac891-23e8-5ac4-c71e-c18ec86cb834",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.63,
+          -6.77
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-24",
+      "properties": {
+        "id": "pole-span-24",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 192.94,
+        "z": -10.15,
+        "lon": 11.5358593,
+        "lat": 4.7921812,
+        "globalId": "cb0e5097-f4b0-59be-ebb5-1635ee823d68",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          192.94,
+          -10.15
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-25",
+      "properties": {
+        "id": "pole-span-25",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 257.26,
+        "z": -13.54,
+        "lon": 11.5364391,
+        "lat": 4.7922116,
+        "globalId": "a13735c5-e779-55f1-2946-1bd52142ac5d",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          257.26,
+          -13.54
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-26",
+      "properties": {
+        "id": "pole-span-26",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 321.57,
+        "z": -16.92,
+        "lon": 11.5370188,
+        "lat": 4.792242,
+        "globalId": "0d6d7913-bd9a-5e75-b113-48dfec6df308",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          321.57,
+          -16.92
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-27",
+      "properties": {
+        "id": "pole-span-27",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 385.89,
+        "z": -20.31,
+        "lon": 11.5375987,
+        "lat": 4.7922724,
+        "globalId": "b381d375-c5f4-5337-6d2e-da4a98e644c8",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          385.89,
+          -20.31
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-28",
+      "properties": {
+        "id": "pole-span-28",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -66.85,
+        "z": 2.54,
+        "lon": 11.5335174,
+        "lat": 4.7920672,
+        "globalId": "f022348d-8471-5ea2-51f5-f625130210c0",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -66.85,
+          2.54
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-29",
+      "properties": {
+        "id": "pole-span-29",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -133.71,
+        "z": 5.08,
+        "lon": 11.5329147,
+        "lat": 4.7920444,
+        "globalId": "fcd99e0b-2953-565c-4003-eee03a1d82e2",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -133.71,
+          5.08
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-30",
+      "properties": {
+        "id": "pole-span-30",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -200.56,
+        "z": 7.62,
+        "lon": 11.532312,
+        "lat": 4.7920215,
+        "globalId": "1799ebed-4d87-5e9e-69cd-7733d137f9fa",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -200.56,
+          7.62
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-31",
+      "properties": {
+        "id": "pole-span-31",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -267.41,
+        "z": 10.15,
+        "lon": 11.5317094,
+        "lat": 4.7919988,
+        "globalId": "17e41122-c638-5320-7d27-695f60eb7a6d",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -267.41,
+          10.15
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-32",
+      "properties": {
+        "id": "pole-span-32",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -334.27,
+        "z": 12.69,
+        "lon": 11.5311067,
+        "lat": 4.791976,
+        "globalId": "524ad771-2064-5d31-f6a2-72273fefe78f",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -334.27,
+          12.69
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-33",
+      "properties": {
+        "id": "pole-span-33",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -401.12,
+        "z": 15.23,
+        "lon": 11.5305041,
+        "lat": 4.7919532,
+        "globalId": "10c3789a-f6c2-5a7b-8ac4-102a6aee1896",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -401.12,
+          15.23
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-34",
+      "properties": {
+        "id": "pole-span-34",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -330.26,
+        "z": -926.71,
+        "lon": 11.5311428,
+        "lat": 4.8004147,
+        "globalId": "170dbfb5-0b36-5978-9e45-c748cbdcc1e6",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -330.26,
+          -926.71
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-35",
+      "properties": {
+        "id": "pole-span-35",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -399.88,
+        "z": -929.32,
+        "lon": 11.5305152,
+        "lat": 4.8004382,
+        "globalId": "f4d87b8b-f1c5-52b4-96d4-d58a0fedbcac",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -399.88,
+          -929.32
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-36",
+      "properties": {
+        "id": "pole-span-36",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -469.49,
+        "z": -931.93,
+        "lon": 11.5298877,
+        "lat": 4.8004616,
+        "globalId": "c8cc9e69-180a-5516-78b4-bacca0e64764",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -469.49,
+          -931.93
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-37",
+      "properties": {
+        "id": "pole-span-37",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -539.11,
+        "z": -934.54,
+        "lon": 11.5292601,
+        "lat": 4.8004851,
+        "globalId": "ad68019a-a539-547c-9b80-8c7be89b49d1",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -539.11,
+          -934.54
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-38",
+      "properties": {
+        "id": "pole-span-38",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -608.72,
+        "z": -937.15,
+        "lon": 11.5286326,
+        "lat": 4.8005085,
+        "globalId": "5216844d-e875-577d-aa63-883712647f1c",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -608.72,
+          -937.15
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-39",
+      "properties": {
+        "id": "pole-span-39",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 516.34,
+        "z": -32.4,
+        "lon": 11.5387746,
+        "lat": 4.7923811,
+        "globalId": "5e51f7f7-292b-5fee-d362-6189c35f3a99",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          516.34,
+          -32.4
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-40",
+      "properties": {
+        "id": "pole-span-40",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 582.47,
+        "z": -41.1,
+        "lon": 11.5393707,
+        "lat": 4.7924592,
+        "globalId": "7a046c87-738f-529e-81c9-01ad8f4ddf6b",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          582.47,
+          -41.1
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-41",
+      "properties": {
+        "id": "pole-span-41",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 711.26,
+        "z": -57.11,
+        "lon": 11.5405317,
+        "lat": 4.792603,
+        "globalId": "22a4e4e3-d3ed-5a86-d244-692b93e73ad8",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          711.26,
+          -57.11
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-42",
+      "properties": {
+        "id": "pole-span-42",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 773.92,
+        "z": -64.42,
+        "lon": 11.5410966,
+        "lat": 4.7926687,
+        "globalId": "9b278052-1572-59c3-0ba9-1e8b7da3aabd",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          773.92,
+          -64.42
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-43",
+      "properties": {
+        "id": "pole-span-43",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 836.57,
+        "z": -71.73,
+        "lon": 11.5416614,
+        "lat": 4.7927344,
+        "globalId": "d9dcddbf-1460-5213-6c28-1ebc9bbe00ba",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          836.57,
+          -71.73
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-44",
+      "properties": {
+        "id": "pole-span-44",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 899.22,
+        "z": -79.04,
+        "lon": 11.5422261,
+        "lat": 4.7928,
+        "globalId": "5d68f20a-6450-5ed9-fb65-b89a1452478f",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          899.22,
+          -79.04
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-45",
+      "properties": {
+        "id": "pole-span-45",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 464.13,
+        "z": 51.14,
+        "lon": 11.538304,
+        "lat": 4.7916306,
+        "globalId": "f49b5b6d-603e-5db5-0e23-703f99ed6b10",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          464.13,
+          51.14
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-46",
+      "properties": {
+        "id": "pole-span-46",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 478.05,
+        "z": 125.98,
+        "lon": 11.5384294,
+        "lat": 4.7909583,
+        "globalId": "3af6a481-96c8-5b9c-5f9f-401e5cfe41e9",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          478.05,
+          125.98
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-47",
+      "properties": {
+        "id": "pole-span-47",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 651.22,
+        "z": -115.07,
+        "lon": 11.5399905,
+        "lat": 4.7931237,
+        "globalId": "70bc4962-54a2-5198-a9af-34f8e5b2317e",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          651.22,
+          -115.07
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-48",
+      "properties": {
+        "id": "pole-span-48",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 653.83,
+        "z": -180.33,
+        "lon": 11.540014,
+        "lat": 4.7937099,
+        "globalId": "f65e2971-6903-532e-7366-7f9473a5a0c9",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          653.83,
+          -180.33
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-49",
+      "properties": {
+        "id": "pole-span-49",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 656.44,
+        "z": -245.59,
+        "lon": 11.5400376,
+        "lat": 4.7942962,
+        "globalId": "55255f8a-1e79-5984-6019-f8b20d7a49b7",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          656.44,
+          -245.59
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-50",
+      "properties": {
+        "id": "pole-span-50",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 649.91,
+        "z": -382.65,
+        "lon": 11.5399787,
+        "lat": 4.7955274,
+        "globalId": "2526a30f-a809-52c3-858b-e94c959760fb",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          649.91,
+          -382.65
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-51",
+      "properties": {
+        "id": "pole-span-51",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 640.78,
+        "z": -454.44,
+        "lon": 11.5398964,
+        "lat": 4.7961723,
+        "globalId": "ed3fd097-5394-5117-053d-cbca21dd1506",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          640.78,
+          -454.44
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-52",
+      "properties": {
+        "id": "pole-span-52",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 631.64,
+        "z": -526.23,
+        "lon": 11.539814,
+        "lat": 4.7968172,
+        "globalId": "9ac323cb-c306-50ac-b44a-713611a80664",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          631.64,
+          -526.23
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-53",
+      "properties": {
+        "id": "pole-span-53",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -535.85,
+        "z": -18.78,
+        "lon": 11.5292895,
+        "lat": 4.7922587,
+        "globalId": "3b7d5b17-ffd2-56aa-2b0a-3f49b8bd5e2a",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -535.85,
+          -18.78
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-54",
+      "properties": {
+        "id": "pole-span-54",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -662.9,
+        "z": -77.95,
+        "lon": 11.5281442,
+        "lat": 4.7927902,
+        "globalId": "f952a6a1-cdda-508f-4b1c-928d5e9c4283",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -662.9,
+          -77.95
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-55",
+      "properties": {
+        "id": "pole-span-55",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -722.07,
+        "z": -100.58,
+        "lon": 11.5276108,
+        "lat": 4.7929935,
+        "globalId": "9345a40f-cb05-5710-5847-e94c070a11ee",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -722.07,
+          -100.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-56",
+      "properties": {
+        "id": "pole-span-56",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -520.19,
+        "z": 51.71,
+        "lon": 11.5294307,
+        "lat": 4.7916255,
+        "globalId": "2901f72c-e582-55a4-6ffc-78fdfec2fc56",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -520.19,
+          51.71
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-57",
+      "properties": {
+        "id": "pole-span-57",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -572.4,
+        "z": 85.65,
+        "lon": 11.52896,
+        "lat": 4.7913206,
+        "globalId": "24826c37-8539-5fde-18bc-03e17866e24d",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -572.4,
+          85.65
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-58",
+      "properties": {
+        "id": "pole-span-58",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -624.61,
+        "z": 119.58,
+        "lon": 11.5284894,
+        "lat": 4.7910158,
+        "globalId": "3cd3d6ef-aba9-518b-97da-378de7b5c336",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -624.61,
+          119.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-59",
+      "properties": {
+        "id": "pole-span-59",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -9.59,
+        "z": -106.31,
+        "lon": 11.5340335,
+        "lat": 4.793045,
+        "globalId": "213ed67b-ba0c-59b7-96da-a4406e8853fd",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -9.59,
+          -106.31
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-60",
+      "properties": {
+        "id": "pole-span-60",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 6.4,
+        "z": -171.03,
+        "lon": 11.5341777,
+        "lat": 4.7936264,
+        "globalId": "232ed360-8fae-5854-4195-f014ce69c159",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.4,
+          -171.03
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-61",
+      "properties": {
+        "id": "pole-span-61",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 22.4,
+        "z": -235.75,
+        "lon": 11.5343219,
+        "lat": 4.7942078,
+        "globalId": "f0b85f35-3749-5c2b-5137-0c8cba5b51f2",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          22.4,
+          -235.75
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-62",
+      "properties": {
+        "id": "pole-span-62",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 38.4,
+        "z": -300.47,
+        "lon": 11.5344662,
+        "lat": 4.7947892,
+        "globalId": "5dc8ecc3-dbf5-52e6-9b29-923ccc645212",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.4,
+          -300.47
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-63",
+      "properties": {
+        "id": "pole-span-63",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -116.37,
+        "z": -325.33,
+        "lon": 11.533071,
+        "lat": 4.7950125,
+        "globalId": "af0bb2bf-11f3-5c8a-4d00-cf1e9976a2d1",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -116.37,
+          -325.33
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-64",
+      "properties": {
+        "id": "pole-span-64",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -68.41,
+        "z": -374.01,
+        "lon": 11.5335033,
+        "lat": 4.7954498,
+        "globalId": "75ad594b-7f8b-54d5-6a9f-1cbf1d547c12",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -68.41,
+          -374.01
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-65",
+      "properties": {
+        "id": "pole-span-65",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -20.45,
+        "z": -422.7,
+        "lon": 11.5339357,
+        "lat": 4.7958872,
+        "globalId": "fa82dbe8-1549-5d37-13c5-c3d6c40ac1a3",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -20.45,
+          -422.7
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-66",
+      "properties": {
+        "id": "pole-span-66",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 2.02,
+        "z": 112.14,
+        "lon": 11.5341382,
+        "lat": 4.7910826,
+        "globalId": "63a41452-9d17-52cb-9d8e-899d4ad62740",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.02,
+          112.14
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-67",
+      "properties": {
+        "id": "pole-span-67",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 24.89,
+        "z": 170.86,
+        "lon": 11.5343444,
+        "lat": 4.7905551,
+        "globalId": "cdbf396e-fd8b-57f2-5d91-a3e3f99ed91d",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.89,
+          170.86
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-68",
+      "properties": {
+        "id": "pole-span-68",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 47.75,
+        "z": 229.57,
+        "lon": 11.5345504,
+        "lat": 4.7900277,
+        "globalId": "8ec44d45-680b-5840-2814-2a170b4c2c84",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          47.75,
+          229.57
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-69",
+      "properties": {
+        "id": "pole-span-69",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 156.9,
+        "z": 49.27,
+        "lon": 11.5355344,
+        "lat": 4.7916474,
+        "globalId": "f196eec0-4f13-541b-d570-0d2e1340ecc5",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          156.9,
+          49.27
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-70",
+      "properties": {
+        "id": "pole-span-70",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 187.74,
+        "z": 105.17,
+        "lon": 11.5358124,
+        "lat": 4.7911452,
+        "globalId": "12d8ca51-bfde-5f24-588a-a3bb214ef4dc",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          187.74,
+          105.17
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-71",
+      "properties": {
+        "id": "pole-span-71",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -101.07,
+        "z": 145.6,
+        "lon": 11.5332089,
+        "lat": 4.7907821,
+        "globalId": "e1c44f7d-0d0c-51d5-1338-44cb3f9665f4",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -101.07,
+          145.6
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-72",
+      "properties": {
+        "id": "pole-span-72",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -215.38,
+        "z": -53.9,
+        "lon": 11.5321784,
+        "lat": 4.7925742,
+        "globalId": "fcb401e3-df07-5f63-d6f1-528335faefac",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -215.38,
+          -53.9
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-span-73",
+      "properties": {
+        "id": "pole-span-73",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -234.21,
+        "z": -115.27,
+        "lon": 11.5320087,
+        "lat": 4.7931255,
+        "globalId": "13c6dc20-faa8-5893-f597-b21bc2c561b8",
+        "subnetworkId": "f-voundou",
+        "label": "Span pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -234.21,
+          -115.27
+        ]
+      }
+    }
+  ]
+}

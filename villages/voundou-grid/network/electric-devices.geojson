@@ -1,0 +1,166 @@
+{
+  "type": "FeatureCollection",
+  "name": "electric-devices",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "gen-1",
+      "properties": {
+        "id": "gen-1",
+        "assetClass": "gen",
+        "assetGroup": "electric_device",
+        "x": -438.36,
+        "z": -420.58,
+        "lon": 11.5301683,
+        "lat": 4.7958681,
+        "globalId": "23c2678c-8a45-5ec2-9917-74aea0568aab",
+        "subnetworkId": "island-1",
+        "label": "PV array",
+        "terminals": [
+          {
+            "name": "OUT",
+            "side": "ac"
+          }
+        ],
+        "phase": "ABC",
+        "nominalKv": 0.38,
+        "ratedA": 400
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -438.36,
+          -420.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "inv-1",
+      "properties": {
+        "id": "inv-1",
+        "assetClass": "inverter",
+        "assetGroup": "electric_device",
+        "x": -430.36,
+        "z": -416.58,
+        "lon": 11.5302405,
+        "lat": 4.7958322,
+        "globalId": "147829b3-b7c2-5df3-1cfa-edfdddc39edf",
+        "subnetworkId": "island-1",
+        "label": "Plant inverter",
+        "terminals": [
+          {
+            "name": "AC",
+            "side": "ac"
+          }
+        ],
+        "phase": "ABC",
+        "nominalKv": 0.38,
+        "ratedA": 400
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -430.36,
+          -416.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "station-1",
+      "properties": {
+        "id": "station-1",
+        "assetClass": "station",
+        "assetGroup": "electric_device",
+        "x": -422.36,
+        "z": -422.58,
+        "lon": 11.5303126,
+        "lat": 4.7958861,
+        "globalId": "1552ec01-2c1a-5ec3-1e21-18fc3a7093fb",
+        "subnetworkId": "island-1",
+        "label": "Solar station",
+        "terminals": [
+          {
+            "name": "H1",
+            "side": "ac"
+          },
+          {
+            "name": "X1",
+            "side": "feeder"
+          }
+        ],
+        "phase": "ABC",
+        "nominalKv": 0.38,
+        "ratedA": 400
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -422.36,
+          -422.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "brk-1",
+      "properties": {
+        "id": "brk-1",
+        "assetClass": "breaker",
+        "assetGroup": "electric_device",
+        "x": -416.36,
+        "z": -414.58,
+        "lon": 11.5303667,
+        "lat": 4.7958142,
+        "globalId": "2d46d22b-785a-5b70-7801-8029a23bb85c",
+        "subnetworkId": "island-1",
+        "label": "Plant breaker",
+        "phase": "ABC",
+        "nominalKv": 0.38,
+        "ratedA": 400
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -416.36,
+          -414.58
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ems-1",
+      "properties": {
+        "id": "ems-1",
+        "assetClass": "ems",
+        "assetGroup": "electric_device",
+        "x": -428.36,
+        "z": -430.58,
+        "lon": 11.5302585,
+        "lat": 4.7959579,
+        "globalId": "df8ae3a4-4570-525a-0d84-fe627f681980",
+        "subnetworkId": "island-1",
+        "label": "Plant EMS",
+        "terminals": [
+          {
+            "name": "N",
+            "side": "northbound"
+          },
+          {
+            "name": "S",
+            "side": "southbound"
+          }
+        ],
+        "phase": "ABC"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -428.36,
+          -430.58
+        ]
+      }
+    }
+  ]
+}

@@ -6,7 +6,8 @@ export function buildVillageWater(scene, labelSprite) {
   const edge = Math.max(...HOUSES.map(h=>h.x), 55) + 7;
   const north = Math.min(...HOUSES.map(h=>h.z), -24) - 8;
   const south = Math.max(...HOUSES.map(h=>h.z), 68) + 8;
-  const group = new THREE.Group(); scene.add(group);
+  const group = new THREE.Group();
+  group.name = "village-water";
   const water = 0x389dbb, sewer = 0xa48466, reuse = 0x6ca76e;
   function box(x,y,z,w,h,d,color) {
     const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), new THREE.MeshLambertMaterial({color}));
@@ -54,7 +55,5 @@ export function buildVillageWater(scene, labelSprite) {
   box(waste[0],.08,waste[1]+2.5,3,.12,1.5,reuse);
   pipe([waste,[waste[0],waste[1]+2.5],[waste[0]-5,waste[1]+2.5]],reuse);
   label('Wastewater → wetland → reuse',waste[0]-1,waste[1]+4);
-  const panel=document.createElement('details');
-  panel.innerHTML='<summary>Water and wastewater</summary><p>Blue: river intake → treatment → elevated storage → village standpipes. Brown: wastewater collection → treatment. Green: constructed wetland → reuse area.</p><p>River and infrastructure are hypothetical planning overlays, not surveyed features. No potable-water quality, hydraulic capacity, treatment performance or river discharge is inferred. Irrigation volumes remain in the productive-use panel.</p>';
-  document.getElementById('wl-productive').after(panel);
+  return group;
 }

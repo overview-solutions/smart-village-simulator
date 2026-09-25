@@ -36,6 +36,21 @@ export const ORIGIN = {
   note: "Schematic ISV village. Local metres from here; +X east, −Z north.",
 };
 
+const VOUNDOU_PIN = { lon: 11.53412, lat: 4.79209 };
+
+/** Move the village ENU pin. LocusMap._matrix must be rebuilt by the caller. */
+export function setVillageOrigin(lon, lat, name) {
+  ORIGIN.lon = +lon;
+  ORIGIN.lat = +lat;
+  if (name) ORIGIN.name = name;
+}
+
+export function resetVillageOrigin() {
+  ORIGIN.lon = VOUNDOU_PIN.lon;
+  ORIGIN.lat = VOUNDOU_PIN.lat;
+  ORIGIN.name = "Voundou, Cameroon (hypothetical layout)";
+}
+
 /** Schematic equipment elevations, shared by the renderer and GeoJSON export. */
 export const HANG = {
   ground: 0,

@@ -167,6 +167,16 @@ export function createCandidateOverlay(map) {
     return loadPromise;
   }
 
+  let homeOn = true;
+
+  function paintHome() {
+    if (!ready) return;
+    const v = visible && homeOn ? "visible" : "none";
+    for (const id of [LY_HOME, LY_HOME_CORE]) {
+      if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", v);
+    }
+  }
+
   function setVisible(on) {
     visible = !!on;
     if (!ready) {
@@ -174,9 +184,23 @@ export function createCandidateOverlay(map) {
       return;
     }
     const v = visible ? "visible" : "none";
-    for (const id of [LY_CIRCLE, LY_HOME, LY_HOME_CORE]) {
-      if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", v);
-    }
+    if (map.getLayer(LY_CIRCLE)) map.setLayoutProperty(LY_CIRCLE, "visibility", v);
+    paintHome();
+  }
+
+  function setHomeVisible(on) {
+    homeOn = !!on;
+    paintHome();
+  }
+
+  function setHomePoint(lon, lat, name) {
+    const src = map.getSource(SRC_HOME);
+    if (!src) return;
+    src.setData({
+      type: "Feature",
+      properties: { name: name || "Active site" },
+      geometry: { type: "Point", coordinates: [lon, lat] },
+    });
   }
 
   function isVisible() {
@@ -227,6 +251,8 @@ export function createCandidateOverlay(map) {
   return {
     load,
     setVisible,
+    setHomeVisible,
+    setHomePoint,
     isVisible,
     flyToRegion,
     popupHtml,

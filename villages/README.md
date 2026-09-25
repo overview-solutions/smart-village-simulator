@@ -85,15 +85,16 @@ npm run villages:sync-demo
 
 ## Switch sites in the simulator
 
-Catalog: [`catalog.json`](catalog.json). Hub UI: `/villages/index.html?site=<id>` (Vite).
+Catalog: [`catalog.json`](catalog.json). Packs are data. 3D sim (`/`) is the only viewer — `/villages/` redirects there.
 
 | id | Kind |
 |----|------|
-| `voundou` | Worldline prepaid day (`/`) |
-| `demo-lv` | Map Twin pack (`/demo-lv/` or hub) |
-| `safari-park-casino` | Map Twin pack — Nairobi workshop |
+| `voundou` | Worldline prepaid day (`/`) — only viewer |
+| `demo-lv` | Pack data (not a separate page) |
+| `safari-park-casino` | Pack data — Nairobi workshop |
+| `voundou-grid` | Drawn in 3D sim — traced 380/220 overlay (no house services) |
 
-Main sim toolbar **Site:** dropdown jumps to the hub for pack sites. After editing a pack:
+After editing a pack:
 
 ```sh
 npm run villages:sync

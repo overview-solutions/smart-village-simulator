@@ -1,20 +1,20 @@
 /**
- * App modes: operations · build · maintenance.
+ * App modes: operations · build · maintenance · productive · energy.
  * Each mode shows a slim control strip + matching legend defaults.
  */
 
-export const MODES = ["build", "operations", "maintenance"];
+export const MODES = ["build", "operations", "productive", "energy", "maintenance"];
 
 /** Default layer visibility (state.hide keys) per mode. true = hidden. */
 export const MODE_HIDE = {
   operations: {
     reading: true,
-    pay: false,
+    pay: true,
     disconnect: false,
     sms: true,
     sync: true,
     mesh: true,
-    worldline: true,
+    worldline: false,
     rf: true,
     phase_xfer: true,
     leak: false,
@@ -33,6 +33,30 @@ export const MODE_HIDE = {
     outage: true,
     lastbreath: true,
     repair: true,
+  },
+  productive: {
+    reading: true,
+    pay: true,
+    disconnect: true,
+    sms: true,
+    sync: true,
+    mesh: true,
+    worldline: true,
+    rf: true,
+    phase_xfer: true,
+    leak: true,
+  },
+  energy: {
+    reading: true,
+    pay: true,
+    disconnect: true,
+    sms: true,
+    sync: true,
+    mesh: true,
+    worldline: true,
+    rf: true,
+    phase_xfer: true,
+    leak: true,
   },
   maintenance: {
     reading: true,
@@ -60,6 +84,22 @@ export const MODE_META = {
   build: {
     label: "Build",
     hint: "Place assets · red grid = unmapped · green = API configured. No worldlines / playhead.",
+    role: "ops",
+    scheme: "asset",
+    lineGrad: "capacity",
+    anomalyOnly: false,
+  },
+  productive: {
+    label: "Loads",
+    hint: "Critical vs non-critical loads — All critical / All non-critical, or pick one class.",
+    role: "ops",
+    scheme: "useclass",
+    lineGrad: "capacity",
+    anomalyOnly: false,
+  },
+  energy: {
+    label: "Energy Assets",
+    hint: "Generation + storage — diesel, solar, wind, battery. Click a class to soft-focus.",
     role: "ops",
     scheme: "asset",
     lineGrad: "capacity",
@@ -114,8 +154,11 @@ export function bindModeSwitcher(opts) {
     if (!btn) return;
     const m = btn.getAttribute("data-mode-btn");
     if (!MODES.includes(m) || m === opts.getMode()) return;
-    opts.setMode(m);
-    paint();
+    try {
+      opts.setMode(m);
+    } finally {
+      paint();
+    }
   });
 
   paint();

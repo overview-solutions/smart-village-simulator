@@ -1,4 +1,5 @@
 import { defineConfig } from "vite";
+import { sitePackMiddleware } from "./scripts/site-pack-middleware.mjs";
 
 /** Serve public/villages/index.html for /villages and /villages/ (MPA has no SPA fallback). */
 function villagesIndex() {
@@ -23,7 +24,7 @@ export default defineConfig({
   root: "village-simulator",
   base: "./",
   appType: "mpa",
-  plugins: [villagesIndex()],
+  plugins: [villagesIndex(), sitePackMiddleware()],
   server: {
     port: 5176,
     strictPort: true,

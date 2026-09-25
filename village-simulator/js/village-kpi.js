@@ -2,6 +2,9 @@
  * Fake day KPIs for the village simulator — Target vs Actual demo only.
  * All labels, units, and numbers are invented for Voundou schematic play.
  * Do not mirror any real operator report, site name, currency, or ledger tool.
+ *
+ * Row/group `modes` tags which appMode(s) show the metric:
+ *   operations · productive (Loads) · energy (Energy Assets)
  */
 
 /** @typedef {'higher'|'lower'} KpiBetter */
@@ -16,6 +19,7 @@
  *   actual: number,
  *   focus?: string,
  *   digits?: number,
+ *   modes?: string[],
  * }} KpiRow
  */
 
@@ -23,6 +27,7 @@
  * @typedef {{
  *   id: string,
  *   label: string,
+ *   modes?: string[],
  *   rows: KpiRow[],
  * }} KpiGroup
  */
@@ -95,6 +100,7 @@ export function buildKpiReport(day, opts = {}) {
     {
       id: "energy",
       label: "Energy made",
+      modes: ["energy"],
       rows: [
         row("made", "Energy made today", "kWh", "higher", madeKWh * 0.8, madeKWh, "production"),
         row("pv", "From solar array", "kWh", "higher", pvKWh * 0.88, pvKWh, "production"),
@@ -106,6 +112,7 @@ export function buildKpiReport(day, opts = {}) {
     {
       id: "customers",
       label: "Customers (fake)",
+      modes: ["productive"],
       rows: [
         row("used", "Energy used by meters", "kWh", "higher", loadKWh * 0.86, loadKWh, "customer"),
         row("sales", "Prepaid sales (abstract $)", "$", "higher", revenue * 0.9, revenue, "customer", 2),
@@ -119,6 +126,7 @@ export function buildKpiReport(day, opts = {}) {
     {
       id: "losses",
       label: "Losses (fake)",
+      modes: ["operations"],
       rows: [
         row("loss", "Unaccounted energy share", "%", "lower", 12, clamp(Math.abs(lossPct), 0, 35), "losses", 1),
       ],
@@ -126,6 +134,7 @@ export function buildKpiReport(day, opts = {}) {
     {
       id: "storage",
       label: "Storage (fake)",
+      modes: ["energy"],
       rows: [
         row("store_kwh", "Storage round-trip loss", "kWh", "lower", storeLossKWh * 0.75, storeLossKWh, "battery", 1),
         row("store_pct", "Storage round-trip loss", "%", "lower", 6, clamp(storeLossPct, 0, 20), "battery", 1),
@@ -134,6 +143,7 @@ export function buildKpiReport(day, opts = {}) {
     {
       id: "diesel",
       label: "Diesel set (fake)",
+      modes: ["energy"],
       rows: [
         row("eff", "Fake fuel yield", "kWh/L", "higher", 3.4, 3.1, "generator", 1),
         row("litres", "Diesel burned", "L", "lower", Math.max(dieselL * 0.7, 0.5), dieselL, "generator", 1),
@@ -143,6 +153,7 @@ export function buildKpiReport(day, opts = {}) {
     {
       id: "reliability",
       label: "Reliability (fake)",
+      modes: ["operations"],
       rows: [
         row("dark_h", "Avg dark hours / meter", "h", "lower", 2, darkHours, "outages", 2),
         row("dark_n", "Avg dark events / meter", "#", "lower", 1, darkEvents, "outages", 2),
@@ -153,6 +164,7 @@ export function buildKpiReport(day, opts = {}) {
     {
       id: "money",
       label: "Money sandbox",
+      modes: ["operations"],
       rows: [
         row("profit", "Day profit (toy)", "$", "higher", 50, dayProfit, "operations", 2),
         row("books", "Toy ledger revenue", "$", "higher", booksRev * 0.95, booksRev, "operations", 2),
@@ -181,6 +193,43 @@ export function buildKpiReport(day, opts = {}) {
     hitN,
     missN,
   };
+}
+
+/**
+ * Groups (and rows) visible for an appMode. Untagged → operations.
+ * @param {KpiGroup[]} groups
+ * @param {string} mode
+ * @returns {KpiGroup[]}
+ */
+export function kpiGroupsForMode(groups, mode) {
+  const m = mode || "operations";
+  const out = [];
+  for (const g of groups || []) {
+    const gModes = g.modes?.length ? g.modes : ["operations"];
+    const rows = (g.rows || []).filter((r) => {
+      const rm = r.modes?.length ? r.modes : gModes;
+      return rm.includes(m);
+    });
+    if (!rows.length) continue;
+    out.push({ ...g, rows });
+  }
+  return out;
+}
+
+/**
+ * Hit / miss counts for a filtered group list.
+ * @param {KpiGroup[]} groups
+ */
+export function kpiScore(groups) {
+  let hitN = 0;
+  let missN = 0;
+  for (const g of groups || []) {
+    for (const r of g.rows || []) {
+      if (kpiHit(r)) hitN += 1;
+      else missN += 1;
+    }
+  }
+  return { hitN, missN };
 }
 
 /**
