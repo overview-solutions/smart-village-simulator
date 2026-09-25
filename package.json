@@ -6,6 +6,8 @@
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
+    "preinstall": "node scripts/prefer-local-locus.mjs",
+    "postinstall": "node scripts/prefer-local-locus.mjs",
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
@@ -16,8 +18,11 @@
     "villages:sync": "node scripts/sync-villages.mjs",
     "map:prepare": "node scripts/prepare-maps.mjs"
   },
+  "engines": {
+    "node": ">=18.18.0"
+  },
   "dependencies": {
-    "@circaevum/locus": "file:../../CIR/yang/locus",
+    "@circaevum/locus": "github:Circaevum/locus",
     "three": "^0.170.0"
   },
   "devDependencies": {
@@ -26,8 +31,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/overview-solutions/smart-village-simulator"
-  },
-  "optionalDependencies": {
-    "@rollup/rollup-darwin-arm64": "^4.63.4"
   }
 }
