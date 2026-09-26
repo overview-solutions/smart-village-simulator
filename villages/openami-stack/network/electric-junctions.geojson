@@ -1,0 +1,577 @@
+{
+  "type": "FeatureCollection",
+  "name": "electric-junctions",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "bus-island",
+      "properties": {
+        "id": "bus-island",
+        "assetClass": "bus",
+        "assetGroup": "electric_junction",
+        "x": 0,
+        "z": 6,
+        "lon": 11.53412,
+        "lat": 4.7920361,
+        "globalId": "e9da7707-542f-56f6-624d-01a484a776b5",
+        "subnetworkId": "island-1",
+        "label": "Station LV bus"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0,
+          6
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "j-w-head",
+      "properties": {
+        "id": "j-w-head",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": -56,
+        "z": -22,
+        "lon": 11.5336152,
+        "lat": 4.7922876,
+        "globalId": "2db181aa-aeca-5b8b-7418-ccb54014c7cc",
+        "subnetworkId": "f-west",
+        "label": "West feeder head"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -56,
+          -22
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bus-w",
+      "properties": {
+        "id": "bus-w",
+        "assetClass": "bus",
+        "assetGroup": "electric_junction",
+        "x": -118,
+        "z": -38,
+        "lon": 11.5330563,
+        "lat": 4.7924314,
+        "globalId": "fb23163c-901b-55ed-8817-5c839e4cd857",
+        "subnetworkId": "f-west",
+        "label": "West xfmr bus"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -118,
+          -38
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-w1",
+      "properties": {
+        "id": "tap-w1",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -118,
+        "z": -42,
+        "lon": 11.5330563,
+        "lat": 4.7924673,
+        "globalId": "623215f6-6847-5fbe-4ebb-18111d987994",
+        "subnetworkId": "f-west",
+        "label": "West EMS tap"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -118,
+          -42
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-w2",
+      "properties": {
+        "id": "tap-w2",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": -176,
+        "z": -36,
+        "lon": 11.5325334,
+        "lat": 4.7924134,
+        "globalId": "7d9d5bfb-720f-59a9-ed74-21e80c8d2429",
+        "subnetworkId": "f-west",
+        "label": "West farm tap"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -176,
+          -36
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "j-m-head",
+      "properties": {
+        "id": "j-m-head",
+        "assetClass": "splice",
+        "assetGroup": "electric_junction",
+        "x": 52,
+        "z": -28,
+        "lon": 11.5345888,
+        "lat": 4.7923415,
+        "globalId": "02edb48a-2253-55aa-6030-3126858bbafd",
+        "subnetworkId": "f-market",
+        "label": "Market feeder head"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52,
+          -28
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bus-m",
+      "properties": {
+        "id": "bus-m",
+        "assetClass": "bus",
+        "assetGroup": "electric_junction",
+        "x": 104,
+        "z": -52,
+        "lon": 11.5350575,
+        "lat": 4.7925571,
+        "globalId": "a6d723fd-9980-5e30-f180-b99c8ebb08e0",
+        "subnetworkId": "f-market",
+        "label": "Market xfmr bus"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104,
+          -52
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-m1",
+      "properties": {
+        "id": "tap-m1",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": 104,
+        "z": -56,
+        "lon": 11.5350575,
+        "lat": 4.7925931,
+        "globalId": "f7565269-87ae-5883-c7af-205f05d34204",
+        "subnetworkId": "f-market",
+        "label": "Market EMS tap"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104,
+          -56
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "tap-m2",
+      "properties": {
+        "id": "tap-m2",
+        "assetClass": "tap",
+        "assetGroup": "electric_junction",
+        "x": 148,
+        "z": -70,
+        "lon": 11.5354542,
+        "lat": 4.7927188,
+        "globalId": "c451c642-72ce-5a7a-e7ed-4fd36cf659d9",
+        "subnetworkId": "f-market",
+        "label": "Market civic tap"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          148,
+          -70
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-1",
+      "properties": {
+        "id": "sp-1",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -128,
+        "z": -54,
+        "lon": 11.5329661,
+        "lat": 4.7925751,
+        "globalId": "7375932c-21b6-520b-00c5-47b0b8d3510e",
+        "subnetworkId": "f-west",
+        "label": "SP residential 1",
+        "useClass": "residential",
+        "lineId": "ln-w-sec-1",
+        "nominalKv": 0.22
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -128,
+          -54
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-2",
+      "properties": {
+        "id": "sp-2",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -106,
+        "z": -52,
+        "lon": 11.5331644,
+        "lat": 4.7925571,
+        "globalId": "06a3632e-d884-5e83-c0a3-7dcfab924516",
+        "subnetworkId": "f-west",
+        "label": "SP residential 2",
+        "useClass": "residential",
+        "lineId": "ln-w-sec-1",
+        "nominalKv": 0.22
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -106,
+          -52
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-3",
+      "properties": {
+        "id": "sp-3",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -132,
+        "z": -34,
+        "lon": 11.5329301,
+        "lat": 4.7923954,
+        "globalId": "2c37028e-ed88-5220-ddf5-76783706b584",
+        "subnetworkId": "f-west",
+        "label": "SP agricultural 3",
+        "useClass": "agricultural",
+        "lineId": "ln-w-sec-1",
+        "nominalKv": 0.22
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -132,
+          -34
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-4",
+      "properties": {
+        "id": "sp-4",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -188,
+        "z": -46,
+        "lon": 11.5324253,
+        "lat": 4.7925032,
+        "globalId": "33ddedfd-53d6-5ab2-b008-d2c82c59b987",
+        "subnetworkId": "f-west",
+        "label": "SP water 4",
+        "useClass": "water",
+        "lineId": "ln-w-sec-2",
+        "nominalKv": 0.22
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -188,
+          -46
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-5",
+      "properties": {
+        "id": "sp-5",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -166,
+        "z": -48,
+        "lon": 11.5326236,
+        "lat": 4.7925212,
+        "globalId": "7fc805ec-f93e-52f8-c99e-2a6c490775c2",
+        "subnetworkId": "f-west",
+        "label": "SP residential 5",
+        "useClass": "residential",
+        "lineId": "ln-w-sec-2",
+        "nominalKv": 0.22
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -166,
+          -48
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-6",
+      "properties": {
+        "id": "sp-6",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -184,
+        "z": -25,
+        "lon": 11.5324613,
+        "lat": 4.7923146,
+        "globalId": "6cd7ea41-818b-5743-8901-c0e52617106a",
+        "subnetworkId": "f-west",
+        "label": "SP agricultural 6",
+        "useClass": "agricultural",
+        "lineId": "ln-w-sec-2",
+        "nominalKv": 0.22
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -184,
+          -25
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-7",
+      "properties": {
+        "id": "sp-7",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -162,
+        "z": -30,
+        "lon": 11.5326596,
+        "lat": 4.7923595,
+        "globalId": "c2627a1f-c3b0-53be-5508-5e978aafb266",
+        "subnetworkId": "f-west",
+        "label": "SP streetlight 7",
+        "useClass": "streetlight",
+        "lineId": "ln-w-sec-2",
+        "nominalKv": 0.22
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -162,
+          -30
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-8",
+      "properties": {
+        "id": "sp-8",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": -110,
+        "z": -28,
+        "lon": 11.5331284,
+        "lat": 4.7923415,
+        "globalId": "99da2a97-22a5-554f-653f-66ac4f681d22",
+        "subnetworkId": "f-west",
+        "label": "SP residential 8",
+        "useClass": "residential",
+        "lineId": "ln-w-sec-1",
+        "nominalKv": 0.22
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -110,
+          -28
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-9",
+      "properties": {
+        "id": "sp-9",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 114,
+        "z": -66,
+        "lon": 11.5351477,
+        "lat": 4.7926829,
+        "globalId": "049aee57-ffd7-5468-b2b3-61348bc50c2b",
+        "subnetworkId": "f-market",
+        "label": "SP market 9",
+        "useClass": "market",
+        "lineId": "ln-m-sec-1",
+        "nominalKv": 0.22
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          114,
+          -66
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-10",
+      "properties": {
+        "id": "sp-10",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 93,
+        "z": -64,
+        "lon": 11.5349584,
+        "lat": 4.7926649,
+        "globalId": "9fb50652-c4ad-5c89-df6c-ac2cd5fd4ba0",
+        "subnetworkId": "f-market",
+        "label": "SP commercial 10",
+        "useClass": "commercial",
+        "lineId": "ln-m-sec-1",
+        "nominalKv": 0.22
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93,
+          -64
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-11",
+      "properties": {
+        "id": "sp-11",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 112,
+        "z": -44,
+        "lon": 11.5351296,
+        "lat": 4.7924853,
+        "globalId": "6f213b00-aea9-5e9f-01c6-38eea325325d",
+        "subnetworkId": "f-market",
+        "label": "SP school 11",
+        "useClass": "school",
+        "lineId": "ln-m-sec-1",
+        "nominalKv": 0.22
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          112,
+          -44
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-12",
+      "properties": {
+        "id": "sp-12",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 158,
+        "z": -78,
+        "lon": 11.5355443,
+        "lat": 4.7927907,
+        "globalId": "4f289387-5ad3-5b84-5644-b8869cede500",
+        "subnetworkId": "f-market",
+        "label": "SP medical 12",
+        "useClass": "medical",
+        "lineId": "ln-m-sec-2",
+        "nominalKv": 0.22
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          158,
+          -78
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-13",
+      "properties": {
+        "id": "sp-13",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 138,
+        "z": -80,
+        "lon": 11.535364,
+        "lat": 4.7928086,
+        "globalId": "ff3f3cd9-7f36-5a3f-b287-e7c22da6faf5",
+        "subnetworkId": "f-market",
+        "label": "SP worship 13",
+        "useClass": "worship",
+        "lineId": "ln-m-sec-2",
+        "nominalKv": 0.22
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138,
+          -80
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sp-14",
+      "properties": {
+        "id": "sp-14",
+        "assetClass": "service_point",
+        "assetGroup": "electric_junction",
+        "x": 154,
+        "z": -59,
+        "lon": 11.5355083,
+        "lat": 4.79262,
+        "globalId": "f2b657b7-170c-5695-d57d-ddfd9576f2af",
+        "subnetworkId": "f-market",
+        "label": "SP residential 14",
+        "useClass": "residential",
+        "lineId": "ln-m-sec-2",
+        "nominalKv": 0.22
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          154,
+          -59
+        ]
+      }
+    }
+  ]
+}

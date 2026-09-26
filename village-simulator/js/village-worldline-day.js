@@ -16,11 +16,20 @@ import {
   readJsonFile,
   normalizeImport,
   placedToGeoJSON,
+  packToBuildSnapshot,
   slugName,
 } from "./village-project.js";
 import { createCandidateOverlay } from "./village-candidates.js";
 import { buildKpiReport, kpiGroupsForMode, kpiScore, kpiHit, fmtKpi } from "./village-kpi.js";
-import { MODE_HIDE, MODE_META, bindModeSwitcher } from "./village-modes.js";
+import {
+  MODE_HIDE,
+  MODE_META,
+  bindModeSwitcher,
+  opsHasLiveHouses,
+  opsWorldlinesBlocked,
+  opsSetAllCustomers,
+  opsCustomerStackMode,
+} from "./village-modes.js";
 import {
   USE_CLASSES,
   CRITICAL_ORDER,
@@ -135,7 +144,7 @@ const ASSET = {
 };
 
 const WINDOW_MIN = 120;
-const Y_PER_HOUR = 18;
+const Y_PER_HOUR = 54;
 const SCRUNCH_H = 9;
 const yAt = (min) => (min / 60) * Y_PER_HOUR;
 const PAST_TOP = yAt(WINDOW_MIN) + SCRUNCH_H;
@@ -199,7 +208,7 @@ function houseSize(i) {
 const Y_ROAD = 0.08;
 const Y_NOW = 0.28;
 const Y_RF = 0.22;
-/** Ground corridor around selected feeder traces — between polar grid and RF. */
+/** Ground corridor around selected feeder traces — sits under RF mesh. */
 const Y_FEEDER = 0.19;
 const HOP_DY = 0.16;
 const KNOB_STEP = 5;
@@ -229,13 +238,13 @@ function camHome(v2) {
   const s = COMPASS.r / 86;
   if (v2) {
     return {
-      pos: [COMPASS.x + 91 * s, Math.max(18, 38 * s), COMPASS.z + 103 * s],
+      pos: [COMPASS.x + 91 * s, Math.max(28, 52 * s), COMPASS.z + 103 * s],
       look: [COMPASS.x, PAST_TOP * 0.28, COMPASS.z],
     };
   }
   return {
-    pos: [COMPASS.x + 116 * s, Math.max(36, 90 * s), COMPASS.z + 158 * s],
-    look: [COMPASS.x, Math.max(6, boundH * 0.35), COMPASS.z],
+    pos: [COMPASS.x + 116 * s, Math.max(48, 120 * s), COMPASS.z + 158 * s],
+    look: [COMPASS.x, Math.max(8, boundH * 0.35), COMPASS.z],
   };
 }
 const PV_COL = 0x1a2740;
@@ -753,17 +762,41 @@ function clearTimeMeshes() {
   for (const line of keep) spineMeshes.push(line);
 }
 
+function syncAnomalyUi() {
+  const on = !!state.anomalyOnly;
+  const allOn = !!state.showAllCustomers;
+  const anomBtn = document.getElementById("wl-anomaly");
+  const anomMaint = document.getElementById("wl-anomaly-maint");
+  const allBtn = document.getElementById("wl-all-customers");
+  anomBtn?.classList.toggle("on", on);
+  anomMaint?.classList.toggle("on", on);
+  allBtn?.classList.toggle("on", allOn);
+  if (anomBtn) anomBtn.textContent = "Anomalies";
+  if (allBtn) allBtn.textContent = "All customers";
+  document.querySelectorAll("[data-hide]").forEach((btn) => {
+    const k = btn.getAttribute("data-hide");
+    if (!k) return;
+    btn.classList.toggle("off", !!state.hide[k]);
+  });
+  if (layersPanelOpen()) paintLayersPanel();
+}
+
 function applyModeAnomalyFilter() {
   state.anomalyOnly = !!MODE_META[appMode]?.anomalyOnly;
-  document.getElementById("wl-anomaly")?.classList.toggle("on", state.anomalyOnly);
-  document.getElementById("wl-anomaly-maint")?.classList.toggle("on", state.anomalyOnly);
+  state.showAllCustomers = false;
+  syncAnomalyUi();
+}
+
+function clearLeakMeshes() {
+  for (const m of leakMeshes) disposeObject3D(m);
+  leakMeshes = [];
 }
 
 function rebuildLiveTimeMeshes() {
   if (!scene) return;
-  applyModeAnomalyFilter();
   clearTimeMeshes();
-  if (!liveHouses.length || (emptyCanvas && liveHouses === HOUSES)) {
+  clearLeakMeshes();
+  if (!opsHasLiveHouses(emptyCanvas, liveHouses, HOUSES)) {
     placePlayheadRing();
     applyVisibility();
     return;
@@ -775,6 +808,7 @@ function rebuildLiveTimeMeshes() {
   buildMeshFloor();
   buildMeshPackets();
   buildLastBreaths();
+  buildLeaks();
   placePlayheadRing();
   applySchemeColors();
   applyVisibility();
@@ -896,6 +930,8 @@ const state = {
   /** Ops: highlight every home/line touched by any outage in the sim day. */
   dayOutages: false,
   anomalyOnly: true,
+  /** Separate from Anomalies. ON = every seeded meter stack. */
+  showAllCustomers: false,
   houseQ: "",
   houseCluster: "all",
   viz: "v2",
@@ -961,6 +997,8 @@ let breakerMesh;
 let stationMeshes = [];
 let leakMeshes = [];
 let timeGroup;
+/** Live worldlines / readings / knobs — never parented under demoVillageRoot. */
+let timeStackRoot;
 let nowPlane;
 let winBand;
 let pastBand;
@@ -997,6 +1035,8 @@ let sunBead;
 const compassSprites = [];
 const compassMeshes = [];
 let emptyCanvas = false;
+/** BUILD snapshot came from a seedLive UN pack (hide demo, run Operations). */
+let packSeeded = false;
 /** Demo Voundou schematic — hidden on New project. */
 let demoVillageRoot = null;
 let pvMat;
@@ -1035,6 +1075,7 @@ const timeUniforms = {
   uMode: { value: 1 },
   uDay: { value: DAY_MIN },
   uAnomalyOnly: { value: 1 },
+  uShowStacks: { value: 1 },
   uFocusHid: { value: -1 },
 };
 
@@ -1052,6 +1093,12 @@ float yWorld(float t) {
 }
 `;
 
+function attachTimeStack(obj) {
+  if (!obj) return obj;
+  (timeStackRoot || scene).add(obj);
+  return obj;
+}
+
 function stackSpine(x, z, color, dashed, role = "landmark") {
   const line = new THREE.Line(
     new THREE.BufferGeometry().setFromPoints([
@@ -1064,7 +1111,7 @@ function stackSpine(x, z, color, dashed, role = "landmark") {
   );
   if (dashed) line.computeLineDistances();
   line.userData.spine = role;
-  scene.add(line);
+  attachTimeStack(line);
   spineMeshes.push(line);
   return line;
 }
@@ -1091,12 +1138,13 @@ function makeWorldlineMat() {
       uniform float uMode;
       uniform float uDay;
       uniform float uAnomalyOnly;
+      uniform float uShowStacks;
       uniform float uFocusHid;
       ${Y_WORLD_GLSL}
       void main() {
         vColor = color;
         float focused = uFocusHid >= 0.0 && abs(hid - uFocusHid) < 0.5 ? 1.0 : 0.0;
-        vShow = (uAnomalyOnly < 0.5 || anom > 0.5 || focused > 0.5) ? 1.0 : 0.0;
+        vShow = (uShowStacks < 0.5) ? 0.0 : (uAnomalyOnly < 0.5 || anom > 0.5 || focused > 0.5) ? 1.0 : 0.0;
         vDim = uFocusHid < 0.0 || focused > 0.5 ? 1.0 : 0.22;
         vec3 p = vec3(position.x, yWorld(tMin), position.z);
         gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
@@ -1136,12 +1184,13 @@ function makeReadingMat() {
       uniform float uMode;
       uniform float uDay;
       uniform float uAnomalyOnly;
+      uniform float uShowStacks;
       uniform float uFocusHid;
       ${Y_WORLD_GLSL}
       void main() {
         vColor = instanceColor;
         float focused = uFocusHid >= 0.0 && abs(hid - uFocusHid) < 0.5 ? 1.0 : 0.0;
-        vShow = (uAnomalyOnly < 0.5 || anom > 0.5 || focused > 0.5) ? 1.0 : 0.0;
+        vShow = (uShowStacks < 0.5) ? 0.0 : (uAnomalyOnly < 0.5 || anom > 0.5 || focused > 0.5) ? 1.0 : 0.0;
         vDim = uFocusHid < 0.0 || focused > 0.5 ? 1.0 : 0.22;
         vec3 origin = vec3(instanceMatrix[3][0], instanceMatrix[3][1], instanceMatrix[3][2]);
         vec3 scaled = (instanceMatrix * vec4(position, 0.0)).xyz;
@@ -1231,7 +1280,7 @@ async function boot() {
   scene.background = null;
   scene.fog = null;
 
-  camera = new THREE.PerspectiveCamera(42, 1, 0.4, 1200);
+  camera = new THREE.PerspectiveCamera(42, 1, 0.4, 4000);
   {
     const home = camHome(true);
     camera.position.set(...home.pos);
@@ -1299,6 +1348,10 @@ async function boot() {
   timeGroup.scale.y = -1;
   timeGroup.frustumCulled = false;
   scene.add(timeGroup);
+  timeStackRoot = new THREE.Group();
+  timeStackRoot.name = "time-stack";
+  timeStackRoot.frustumCulled = false;
+  scene.add(timeStackRoot);
 
   demoVillageRoot = new THREE.Group();
   demoVillageRoot.name = "demo-village";
@@ -1310,7 +1363,7 @@ async function boot() {
   if (waterGroup) scene.add(waterGroup);
   gatherDemoVillage();
   groundMesh.visible = false;
-  locusMap.camera.fitBounds({minX:Math.min(...liveHouses.map(h=>h.x))-12, maxX:Math.max(...liveHouses.map(h=>h.x))+18, minZ:Math.min(...liveHouses.map(h=>h.z))-12, maxZ:Math.max(...liveHouses.map(h=>h.z))+18}, {padding:45, duration:0, maxZoom:20});
+  locusMap.camera.fitBounds({minX:Math.min(...liveHouses.map(h=>h.x))-12, maxX:Math.max(...liveHouses.map(h=>h.x))+18, minZ:Math.min(...liveHouses.map(h=>h.z))-12, maxZ:Math.max(...liveHouses.map(h=>h.z))+18}, {padding:70, duration:0, maxZoom:20});
   buildWorldlines();
   buildReadings();
   buildDisconnectKnobs();
@@ -1410,6 +1463,37 @@ function fillSiteSelect(activeId) {
   if ([...sel.options].some((o) => o.value === want)) sel.value = want;
 }
 
+function placedBounds(placed) {
+  const xs = [];
+  const zs = [];
+  for (const p of placed || []) {
+    if (Number.isFinite(p.x)) xs.push(p.x);
+    if (Number.isFinite(p.z)) zs.push(p.z);
+    if (p.kind === "line") {
+      if (Number.isFinite(p.bx)) xs.push(p.bx);
+      if (Number.isFinite(p.bz)) zs.push(p.bz);
+    }
+  }
+  if (!xs.length) return { minX: -20, maxX: 20, minZ: -20, maxZ: 20 };
+  return { minX: Math.min(...xs), maxX: Math.max(...xs), minZ: Math.min(...zs), maxZ: Math.max(...zs) };
+}
+
+function enterPackSeed() {
+  packSeeded = true;
+  emptyCanvas = true;
+  if (demoVillageRoot) demoVillageRoot.visible = false;
+  hideSchematicMeshes();
+  setPinBar(false);
+  setPinStatus("");
+  applyVisibility();
+}
+
+function clearPackSeed() {
+  if (!packSeeded) return;
+  packSeeded = false;
+  buildMode?.clearAll?.();
+}
+
 async function mountPackForSite(siteId) {
   const cat = siteCatalog || (await loadSiteCatalog().catch(() => null));
   const site = cat?.sites?.find((s) => s.id === siteId) || cat?.sites?.find((s) => s.id === "voundou");
@@ -1417,6 +1501,20 @@ async function mountPackForSite(siteId) {
     disposePackLayer(packLayer);
     packLayer = null;
     const pack = await fetchVillagePack(packPathForSite(site));
+    const seedLive = !!pack.village?.openami?.seedLive;
+    if (seedLive) {
+      const snap = packToBuildSnapshot(pack, { groundScale: GROUND_SCALE });
+      buildMode?.loadSnapshot(snap);
+      enterPackSeed();
+      syncLiveFromBuild();
+      const b = placedBounds(snap.placed);
+      locusMap.camera.fitBounds(
+        { minX: b.minX - 8, maxX: b.maxX + 8, minZ: b.minZ - 8, maxZ: b.maxZ + 8 },
+        { padding: 70, duration: 0, maxZoom: 18 },
+      );
+      applyLayers();
+      return;
+    }
     packLayer = buildPackLayer(pack);
     scene.add(packLayer.root);
     const b = packLayer.bounds;
@@ -1429,7 +1527,7 @@ async function mountPackForSite(siteId) {
         minZ: Math.min(...hz, b.minZ) - 16,
         maxZ: Math.max(...hz, b.maxZ) + 16,
       },
-      { padding: 45, duration: 0, maxZoom: 18 },
+      { padding: 70, duration: 0, maxZoom: 18 },
     );
     applyLayers();
   } catch (err) {
@@ -1448,6 +1546,7 @@ async function bootSiteSelect() {
   const sel = document.getElementById("wl-site");
   sel?.addEventListener("change", () => {
     const id = sel.value || "voundou";
+    clearPackSeed();
     if (emptyCanvas) leaveEmptyCanvas();
     writeQuery({ site: id === "voundou" ? "" : id });
     mountPackForSite(id);
@@ -1886,36 +1985,6 @@ function buildPvAndStorage() {
   scene.add(homeBatt);
 }
 
-function polarGridGeometry() {
-  const { x: cx, z: cz, r } = COMPASS;
-  const pts = [];
-  const rings = 6;
-  const segs = 72;
-  const spokes = 12;
-  for (let k = 1; k <= rings; k++) {
-    const rr = (r * k) / rings;
-    for (let i = 0; i < segs; i++) {
-      const a0 = (i / segs) * Math.PI * 2;
-      const a1 = ((i + 1) / segs) * Math.PI * 2;
-      pts.push(
-        cx + Math.cos(a0) * rr,
-        0,
-        cz + Math.sin(a0) * rr,
-        cx + Math.cos(a1) * rr,
-        0,
-        cz + Math.sin(a1) * rr,
-      );
-    }
-  }
-  for (let s = 0; s < spokes; s++) {
-    const a = (s / spokes) * Math.PI * 2;
-    pts.push(cx, 0, cz, cx + Math.cos(a) * r, 0, cz + Math.sin(a) * r);
-  }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute("position", new THREE.Float32BufferAttribute(pts, 3));
-  return geo;
-}
-
 function bakeGroundTexture() {
   const { x: cx, z: cz, r } = COMPASS;
   const W = 1024;
@@ -1944,25 +2013,6 @@ function bakeGroundTexture() {
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 4;
   return tex;
-}
-
-function addPolarGrid(y, opacity, intoTime, min) {
-  const g = new THREE.LineSegments(
-    polarGridGeometry(),
-    new THREE.LineBasicMaterial({
-      color: 0x2c2c32,
-      transparent: true,
-      opacity,
-      polygonOffset: true,
-      polygonOffsetFactor: -1,
-      polygonOffsetUnits: -2,
-    }),
-  );
-  g.position.y = y;
-  if (intoTime) {
-    g.userData.min = min;
-    addTime(g);
-  } else scene.add(g);
 }
 
 function buildVillage() {
@@ -2106,7 +2156,6 @@ function buildVillage() {
     const y = yAt(min);
     const hh = Math.floor(min / 60);
     const mm = min % 60;
-    if (mm === 0 && hh % 2 === 0 && min > 0) addPolarGrid(y, 0.22, true, min);
     const hour = mm === 0;
     const half = mm === 30;
     const label = `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
@@ -2223,7 +2272,7 @@ function buildWorldlines() {
   geo.setAttribute("hid", new THREE.Float32BufferAttribute(hid, 1));
   worldlineMesh = new THREE.LineSegments(geo, makeWorldlineMat());
   worldlineMesh.frustumCulled = false;
-  scene.add(worldlineMesh);
+  attachTimeStack(worldlineMesh);
 
   const ops = opsXZ();
   const kiosk = kioskXZ();
@@ -2268,7 +2317,7 @@ function buildReadings() {
   readingMesh.instanceColor.needsUpdate = true;
   readingMesh.userData.kind = "reading";
   readingMesh.frustumCulled = false;
-  scene.add(readingMesh);
+  attachTimeStack(readingMesh);
 }
 
 function buildDisconnectKnobs() {
@@ -2310,7 +2359,7 @@ function buildDisconnectKnobs() {
   knobMesh.geometry.setAttribute("hid", new THREE.InstancedBufferAttribute(hArr, 1));
   knobMesh.instanceColor.needsUpdate = true;
   knobMesh.userData.kind = "knob";
-  scene.add(knobMesh);
+  attachTimeStack(knobMesh);
 }
 
 function curve(a, b, lift, color, dashed) {
@@ -2572,7 +2621,7 @@ function addLastBreathPacket(ids, min, color, kind, houseId, dashed, opacity = 1
   if (dashed) line.computeLineDistances();
   line.userData = { kind, min, houseId };
   line.frustumCulled = false;
-  scene.add(line);
+  attachTimeStack(line);
   eventMeshes.push(line);
   stackEvents.push({ mesh: line, min, hops: ids.length, line: true });
   ids.forEach((id, i) => {
@@ -2694,7 +2743,7 @@ function buildMeshFloor() {
       new THREE.LineDashedMaterial({ color: COL.meter, dashSize: 0.45, gapSize: 0.22, transparent: true, opacity: 0.45 }),
     );
     line.computeLineDistances();
-    scene.add(line);
+    attachTimeStack(line);
     rfFloorMeshes.push(line);
   }
   if (choke.length) {
@@ -2703,7 +2752,7 @@ function buildMeshFloor() {
       new THREE.LineDashedMaterial({ color: COL.shed, dashSize: 0.55, gapSize: 0.18, transparent: true, opacity: 0.9 }),
     );
     line.computeLineDistances();
-    scene.add(line);
+    attachTimeStack(line);
     rfFloorMeshes.push(line);
   }
 }
@@ -2751,7 +2800,7 @@ function buildLastBreaths() {
       );
       m.position.set(h.x, lastBreathY(r.min, 0), h.z);
       m.userData = { kind: "lastbreath", min: r.min, houseId: r.houseId };
-      scene.add(m);
+      attachTimeStack(m);
       eventMeshes.push(m);
       stackEvents.push({ mesh: m, min: r.min, hopI: 0, line: false });
     }
@@ -3963,15 +4012,17 @@ function setNow(min) {
   fillHouses();
 }
 
-function applyVisibility() {
-  if (emptyCanvas) hideSchematicMeshes();
-  const hasLive = liveHouses.length > 0 && !(emptyCanvas && liveHouses === HOUSES);
-  const noWorldlines = appMode === "build" || appMode === "maintenance" || appMode === "productive" || appMode === "energy";
+function applyTimeStackVisibility() {
+  const hasLive = opsHasLiveHouses(emptyCanvas, liveHouses, HOUSES);
+  const noWorldlines = opsWorldlinesBlocked(appMode);
   const hideStack = noWorldlines || state.hide.worldline || !hasLive;
+  const stackMode = opsCustomerStackMode(state.anomalyOnly, state.showAllCustomers);
+  const showStacks = stackMode !== "hidden";
 
-  if (worldlineMesh) worldlineMesh.visible = hasLive && !noWorldlines && !state.hide.worldline;
-  if (readingMesh) readingMesh.visible = hasLive && !noWorldlines && !state.hide.reading;
+  if (worldlineMesh) worldlineMesh.visible = hasLive && !noWorldlines && !state.hide.worldline && showStacks;
+  if (readingMesh) readingMesh.visible = hasLive && !noWorldlines && !state.hide.reading && showStacks;
   if (timeGroup) timeGroup.visible = !hideStack;
+  if (timeStackRoot) timeStackRoot.visible = !hideStack;
   if (nowPlane) nowPlane.visible = hasLive && !noWorldlines;
   if (winBand) winBand.visible = hasLive && !noWorldlines && isV2();
   if (pastBand) pastBand.visible = hasLive && !noWorldlines && isV2();
@@ -3981,13 +4032,14 @@ function applyVisibility() {
   if (sprFut) sprFut.visible = hasLive && !noWorldlines && isV2();
   for (const line of spineMeshes) if (line) line.visible = !hideStack;
 
-  if (knobMesh) knobMesh.visible = hasLive && appMode !== "build" && !state.hide.disconnect;
+  if (knobMesh) knobMesh.visible = hasLive && appMode !== "build" && !state.hide.disconnect && showStacks;
   for (const m of rfFloorMeshes) m.visible = hasLive && appMode !== "build" && !state.hide.rf;
-  timeUniforms.uAnomalyOnly.value = appMode === "build" ? 0 : state.anomalyOnly ? 1 : 0;
+  timeUniforms.uShowStacks.value = showStacks && appMode !== "build" ? 1 : 0;
+  timeUniforms.uAnomalyOnly.value = appMode === "build" || stackMode === "all" ? 0 : 1;
   timeUniforms.uFocusHid.value = state.focus == null ? -1 : houseIndex[state.focus];
 
   for (const m of eventMeshes) {
-    if (!hasLive || (noWorldlines && appMode === "build")) {
+    if (!hasLive || (noWorldlines && appMode === "build") || !showStacks) {
       m.visible = false;
       continue;
     }
@@ -4016,7 +4068,7 @@ function applyVisibility() {
       (kind === "shed" && state.hide.disconnect) ||
       (kind === "restore" && state.hide.disconnect) ||
       (kind === "knob" && state.hide.disconnect);
-    const hideRoutine = state.anomalyOnly && !OPS_CRITICAL_KIND.has(kind);
+    const hideRoutine = stackMode === "critical" && !OPS_CRITICAL_KIND.has(kind);
     const dim = state.focus && m.userData.houseId && m.userData.houseId !== state.focus;
     m.visible = !hideType && !hideRoutine;
     if (m.material && "opacity" in m.material) {
@@ -4025,9 +4077,17 @@ function applyVisibility() {
       m.material.opacity = dim ? 0.18 : base;
     }
   }
+}
+
+function applyVisibility() {
+  if (emptyCanvas) hideSchematicMeshes();
+  applyTimeStackVisibility();
   updateLeakViz();
   updateFeederHighlight();
   applyLayers();
+  // Layers / solo highlight must not bury seeded stacks on empty canvas.
+  applyTimeStackVisibility();
+  updateLeakViz();
 }
 
 /** Last basemap style before Layers → Basemap was unchecked. */
@@ -4282,7 +4342,8 @@ function applyLayerHighlight() {
     else setMeshHighlight(meshes, "soft");
   }
 
-  setOpsClutterVisible(false);
+  // Empty-canvas Operations: keep seeded stacks. UN/BUILD solo must not bury them.
+  if (!(emptyCanvas && appMode === "operations")) setOpsClutterVisible(false);
 
   if (highlightingUn) {
     buildMode?.setOverlayVisible?.(true);
@@ -4344,6 +4405,7 @@ function gatherDemoVillage() {
     sunMesh,
     sky,
     timeGroup,
+    timeStackRoot,
     sprWin,
     sprPast,
     sprFut,
@@ -5649,6 +5711,7 @@ function adoptMapOrigin(lon, lat, name) {
 
 function enterEmptyCanvas(origin) {
   const already = emptyCanvas;
+  packSeeded = false;
   emptyCanvas = true;
   disposePackLayer(packLayer);
   packLayer = null;
@@ -6374,13 +6437,20 @@ function bindUi() {
   const anomMaint = document.getElementById("wl-anomaly-maint");
   function toggleAnomaly() {
     state.anomalyOnly = !state.anomalyOnly;
-    anomBtn?.classList.toggle("on", state.anomalyOnly);
-    anomMaint?.classList.toggle("on", state.anomalyOnly);
+    syncAnomalyUi();
+    applyVisibility();
+    fillHouses(true);
+  }
+  function toggleAllCustomers() {
+    state.showAllCustomers = !state.showAllCustomers;
+    if (appMode === "operations") opsSetAllCustomers(state.hide, state.showAllCustomers);
+    syncAnomalyUi();
     applyVisibility();
     fillHouses(true);
   }
   anomBtn?.addEventListener("click", toggleAnomaly);
   anomMaint?.addEventListener("click", toggleAnomaly);
+  document.getElementById("wl-all-customers")?.addEventListener("click", toggleAllCustomers);
   const dayOutBtn = document.getElementById("wl-day-outages");
   dayOutBtn?.addEventListener("click", () => {
     state.dayOutages = !state.dayOutages;
@@ -6677,12 +6747,14 @@ function focusKpiRow(focusKey, kpiId) {
   const key = focusKey || "";
   if (key === "production") {
     state.anomalyOnly = false;
+    state.showAllCustomers = false;
     state.scheme = "capacity";
     state.hide.leak = true;
     state.hide.disconnect = true;
     setScope({ kind: "village" }, { cam: true, from: "kpi" });
   } else if (key === "customer") {
     state.anomalyOnly = false;
+    state.showAllCustomers = true;
     state.scheme = "messages";
     if (!activeFeederId() && liveFeeders[0]) {
       setScope({ kind: "feeder", id: liveFeeders[0].id }, { cam: true, from: "kpi" });
@@ -6691,20 +6763,24 @@ function focusKpiRow(focusKey, kpiId) {
     }
   } else if (key === "losses") {
     state.anomalyOnly = true;
+    state.showAllCustomers = false;
     state.hide.leak = false;
     state.hide.disconnect = true;
     const lk = liveLeaks[0];
     if (lk) setScope({ kind: "feeder", id: lk.feederId, boardId: lk.fromBoardId }, { cam: true, from: "kpi" });
   } else if (key === "battery") {
     state.anomalyOnly = false;
+    state.showAllCustomers = false;
     state.scheme = "asset";
     setScope({ kind: "village" }, { cam: true, from: "kpi" });
   } else if (key === "generator") {
     state.anomalyOnly = false;
+    state.showAllCustomers = false;
     state.scheme = "capacity";
     setScope({ kind: "village" }, { cam: true, from: "kpi" });
   } else if (key === "outages" || key === "uptime") {
     state.anomalyOnly = true;
+    state.showAllCustomers = false;
     state.hide.disconnect = false;
     state.hide.leak = true;
     const o = (day.summary.outages || [])[0];
@@ -6712,16 +6788,12 @@ function focusKpiRow(focusKey, kpiId) {
     else setScope({ kind: "village" }, { cam: true, from: "kpi" });
   } else if (key === "operations") {
     state.anomalyOnly = false;
+    state.showAllCustomers = true;
     state.scheme = "messages";
     document.getElementById("wl-kpi-board")?.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }
-  document.getElementById("wl-anomaly")?.classList.toggle("on", state.anomalyOnly);
-  document.getElementById("wl-anomaly-maint")?.classList.toggle("on", state.anomalyOnly);
-  document.querySelectorAll("[data-hide]").forEach((btn) => {
-    const k = btn.getAttribute("data-hide");
-    if (!k) return;
-    btn.classList.toggle("off", !!state.hide[k]);
-  });
+  if (appMode === "operations") opsSetAllCustomers(state.hide, !!state.showAllCustomers);
+  syncAnomalyUi();
   applySchemeColors();
   applyVisibility();
   fillKpi();
@@ -7023,7 +7095,7 @@ function captureProjectDoc() {
       homes: TARGET_HOMES,
     });
   }
-  projectDoc.siteId = emptyCanvas ? "blank" : currentSiteId();
+  projectDoc.siteId = emptyCanvas && !packSeeded ? "blank" : currentSiteId();
   projectDoc.homes = TARGET_HOMES;
   projectDoc.emptyScene = emptyCanvas;
   projectDoc.origin = emptyCanvas
@@ -7260,7 +7332,7 @@ async function projectImportFiles(fileList) {
   for (const file of files) {
     const data = await readJsonFile(file);
     lastDoc = normalizeImport(data, {
-      siteId: emptyCanvas ? "blank" : currentSiteId(),
+      siteId: emptyCanvas && !packSeeded ? "blank" : currentSiteId(),
       homes: TARGET_HOMES,
       fileName: file.name,
       origin: emptyCanvas && projectDoc?.origin ? projectDoc.origin : null,
@@ -8300,7 +8372,8 @@ function listedHouses() {
   });
   ranked.sort((a, b) => a.rank - b.rank || a.h.name.localeCompare(b.h.name));
   const needing = ranked.reduce((n, x) => n + (x.rank < 5 ? 1 : 0), 0);
-  let filtered = state.anomalyOnly ? ranked.filter((x) => x.rank < 5) : ranked;
+  const stackMode = opsCustomerStackMode(state.anomalyOnly, state.showAllCustomers);
+  let filtered = stackMode === "critical" ? ranked.filter((x) => x.rank < 5) : ranked;
 
   if (state.focus) {
     const fi = filtered.findIndex((x) => x.h.id === state.focus);

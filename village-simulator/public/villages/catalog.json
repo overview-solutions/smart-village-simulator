@@ -35,6 +35,15 @@
       "origin": { "lon": 11.53412, "lat": 4.79209 },
       "status": "hypothetical",
       "blurb": "Operator overlay → UN pack. 380 V 4×70 mm² 2708 m + 220 V 4×25 mm² 3796 m. Traced, not GPS. No house services."
+    },
+    {
+      "id": "openami-stack",
+      "name": "OpenAMI stack",
+      "kind": "pack",
+      "path": "villages/openami-stack",
+      "origin": { "lon": 11.53412, "lat": 4.79209 },
+      "status": "hypothetical",
+      "blurb": "Street EMS + MeshEMS → MPM Manager → EnAccess MPM. GroundBolt prepaid later. Not SparkNet / OpenEMS / DLMS."
     }
   ]
 }

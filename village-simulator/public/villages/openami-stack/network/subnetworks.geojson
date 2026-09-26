@@ -1,0 +1,134 @@
+{
+  "type": "FeatureCollection",
+  "name": "subnetworks",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "island-1",
+      "properties": {
+        "id": "island-1",
+        "assetClass": "island",
+        "assetGroup": "subnetwork",
+        "label": "Island · gen + station + MPM Manager",
+        "tier": "island",
+        "x": -35,
+        "z": -26,
+        "subnetworkId": "island-1",
+        "globalId": "5b3810c3-d0c6-5456-a1d1-3fdacccd4d7c"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -100,
+              24
+            ],
+            [
+              30,
+              24
+            ],
+            [
+              30,
+              -76
+            ],
+            [
+              -100,
+              -76
+            ],
+            [
+              -100,
+              24
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "f-west",
+      "properties": {
+        "id": "f-west",
+        "assetClass": "feeder",
+        "assetGroup": "subnetwork",
+        "label": "Feeder west farms",
+        "tier": "feeder",
+        "controllerId": "brk-w",
+        "x": -116,
+        "z": -29,
+        "subnetworkId": "f-west",
+        "globalId": "c51a9dbf-da7e-5749-80f7-1b625ae69479"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -204,
+              6
+            ],
+            [
+              -28,
+              6
+            ],
+            [
+              -28,
+              -64
+            ],
+            [
+              -204,
+              -64
+            ],
+            [
+              -204,
+              6
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "f-market",
+      "properties": {
+        "id": "f-market",
+        "assetClass": "feeder",
+        "assetGroup": "subnetwork",
+        "label": "Feeder market / civic",
+        "tier": "feeder",
+        "controllerId": "fuse-m",
+        "x": 100,
+        "z": -49,
+        "subnetworkId": "f-market",
+        "globalId": "f5f51edc-1cf1-5e4e-6ec0-7c296363acc3"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              28,
+              -4
+            ],
+            [
+              172,
+              -4
+            ],
+            [
+              172,
+              -94
+            ],
+            [
+              28,
+              -94
+            ],
+            [
+              28,
+              -4
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

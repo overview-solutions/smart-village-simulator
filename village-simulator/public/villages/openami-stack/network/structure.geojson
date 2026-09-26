@@ -1,0 +1,265 @@
+{
+  "type": "FeatureCollection",
+  "name": "structure",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "pad-gen",
+      "properties": {
+        "id": "pad-gen",
+        "assetClass": "pad",
+        "assetGroup": "structure",
+        "x": -80,
+        "z": -52,
+        "lon": 11.5333988,
+        "lat": 4.7925571,
+        "globalId": "c8c0de76-df33-508c-4cb7-c3dd59d3a6e5",
+        "subnetworkId": "island-1",
+        "label": "PV pad"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -80,
+          -52
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-hub",
+      "properties": {
+        "id": "pole-hub",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 0,
+        "z": 0,
+        "lon": 11.53412,
+        "lat": 4.79209,
+        "globalId": "924d302c-c5b0-5cfc-2f7e-d44022cdfc0d",
+        "subnetworkId": "island-1",
+        "label": "Station pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "cab-mpm",
+      "properties": {
+        "id": "cab-mpm",
+        "assetClass": "cabinet",
+        "assetGroup": "structure",
+        "x": 10,
+        "z": 4,
+        "lon": 11.5342101,
+        "lat": 4.7920541,
+        "globalId": "1dc92feb-087f-567b-0868-a5fb57fce3b3",
+        "subnetworkId": "island-1",
+        "label": "MPM Manager (aggregation)",
+        "stackLayer": "aggregation",
+        "stackComponent": "MPM Manager"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10,
+          4
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-w1",
+      "properties": {
+        "id": "pole-w1",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -56,
+        "z": -22,
+        "lon": 11.5336152,
+        "lat": 4.7922876,
+        "globalId": "eb3ff7c0-67f9-51c1-2a58-96ba5512e644",
+        "subnetworkId": "f-west",
+        "label": "West takeoff"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -56,
+          -22
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-w2",
+      "properties": {
+        "id": "pole-w2",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -118,
+        "z": -34,
+        "lon": 11.5330563,
+        "lat": 4.7923954,
+        "globalId": "d34c7758-a792-5226-0d1c-b5c0a06170ac",
+        "subnetworkId": "f-west",
+        "label": "West EMS pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -118,
+          -34
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-w3",
+      "properties": {
+        "id": "pole-w3",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": -176,
+        "z": -28,
+        "lon": 11.5325334,
+        "lat": 4.7923415,
+        "globalId": "994d884f-dd28-5c7d-5c7f-9ee34b9e5573",
+        "subnetworkId": "f-west",
+        "label": "West farm pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -176,
+          -28
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "cab-w",
+      "properties": {
+        "id": "cab-w",
+        "assetClass": "cabinet",
+        "assetGroup": "structure",
+        "x": -116,
+        "z": -37,
+        "lon": 11.5330743,
+        "lat": 4.7924224,
+        "globalId": "ae6cd02d-59c9-5227-eacd-14f8e82cd6b9",
+        "subnetworkId": "f-west",
+        "label": "Street EMS cabinet (NESL)",
+        "stackLayer": "firstKm",
+        "stackComponent": "Street EMS"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -116,
+          -37
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-m1",
+      "properties": {
+        "id": "pole-m1",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 52,
+        "z": -28,
+        "lon": 11.5345888,
+        "lat": 4.7923415,
+        "globalId": "0ef04a8a-a46d-51e3-c001-8b4356e5c580",
+        "subnetworkId": "f-market",
+        "label": "Market takeoff"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          52,
+          -28
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-m2",
+      "properties": {
+        "id": "pole-m2",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 104,
+        "z": -48,
+        "lon": 11.5350575,
+        "lat": 4.7925212,
+        "globalId": "d295dd9f-bcff-5912-0a2a-fdfebce59bbd",
+        "subnetworkId": "f-market",
+        "label": "Market EMS pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104,
+          -48
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pole-m3",
+      "properties": {
+        "id": "pole-m3",
+        "assetClass": "pole",
+        "assetGroup": "structure",
+        "x": 148,
+        "z": -62,
+        "lon": 11.5354542,
+        "lat": 4.792647,
+        "globalId": "174646e6-60e2-56b8-0268-1243c0d5f922",
+        "subnetworkId": "f-market",
+        "label": "Market civic pole"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          148,
+          -62
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "cab-m",
+      "properties": {
+        "id": "cab-m",
+        "assetClass": "cabinet",
+        "assetGroup": "structure",
+        "x": 106,
+        "z": -51,
+        "lon": 11.5350756,
+        "lat": 4.7925481,
+        "globalId": "a824d2a7-5ffa-5393-4427-9ab5a359067e",
+        "subnetworkId": "f-market",
+        "label": "Street EMS cabinet (NESL)",
+        "stackLayer": "firstKm",
+        "stackComponent": "Street EMS"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106,
+          -51
+        ]
+      }
+    }
+  ]
+}

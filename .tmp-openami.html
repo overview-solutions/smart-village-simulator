@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenAMI · ISV Tech Comm</title>
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="stylesheet" href="css/isv-theme.css?v=20260629">
+<link rel="stylesheet" href="css/meter-focus.css">
+<script src="js/isv-theme.js"></script>
+<script src="js/meter-embed.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); font-size: 15px; color: var(--text); background: var(--bg); line-height: 1.55; }
+a { color: var(--green); }
+.wrap { max-width: 960px; margin: 0 auto; padding: 1.5rem 1.25rem 2rem; }
+.back { font-size: 12px; color: var(--text-2); margin-bottom: 0.75rem; }
+.back a { text-decoration: none; }
+h1 { font-size: 22px; font-weight: 500; margin-bottom: 0.25rem; }
+.sub { font-size: 13px; color: var(--text-2); margin-bottom: 0.85rem; }
+.lead { font-size: 14px; margin-bottom: 0.85rem; max-width: 48rem; line-height: 1.5; }
+h2 { font-size: 14px; font-weight: 500; margin: 1.25rem 0 0.5rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border); }
+.body-text { font-size: 13px; color: var(--text-2); margin-bottom: 0.65rem; line-height: 1.5; max-width: 48rem; }
+.body-text strong { color: var(--text); font-weight: 500; }
+.callout { border-left: 3px solid var(--teal); background: var(--teal-50); padding: 0.65rem 0.85rem; border-radius: 0 8px 8px 0; margin-bottom: 0.85rem; font-size: 13px; line-height: 1.45; }
+.callout > strong:first-child { color: var(--teal); display: block; margin-bottom: 0.2rem; }
+.callout-amber { border-left-color: var(--amber); background: var(--amber-50); }
+.callout-amber > strong:first-child { color: var(--amber); }
+.tbl-wrap { overflow-x: auto; margin-bottom: 0.85rem; border: 1px solid var(--border); border-radius: 10px; }
+.stack-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 640px; }
+.stack-table th, .stack-table td { border-bottom: 1px solid var(--border); padding: 0.45rem 0.55rem; text-align: left; vertical-align: top; line-height: 1.4; }
+.stack-table th { background: var(--bg-2); font-size: 10px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.02em; }
+.stack-table td:first-child { font-weight: 500; }
+.stack-table .muted { color: var(--text-3); }
+.ibb-note { font-size: 12px; color: var(--text-2); margin-bottom: 0.65rem; max-width: 48rem; line-height: 1.45; }
+.ibb-peers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin: 0 0 0.85rem; }
+.ibb-peer { border: 1px solid var(--border-2); border-radius: 10px; background: var(--bg-2); padding: 0.6rem 0.7rem; font-size: 12px; line-height: 1.4; }
+.ibb-peer strong { display: block; font-size: 13px; font-weight: 500; margin-bottom: 0.2rem; }
+.ibb-peer span { color: var(--text-2); }
+.ibb-flow { display: flex; align-items: stretch; gap: 0.35rem; overflow-x: auto; margin: 0 0 0.85rem; padding-bottom: 0.25rem; }
+.ibb-step { flex: 1 1 0; min-width: 8.4rem; border: 1px solid var(--border); border-radius: 10px; background: var(--bg-2); padding: 0.55rem 0.5rem 0.65rem; }
+.ibb-step h3 { font-size: 11px; font-weight: 600; color: var(--teal); text-transform: uppercase; letter-spacing: 0.03em; margin: 0 0 0.45rem; }
+.ibb-opt { border: 1px solid var(--border-2); border-radius: 7px; background: var(--bg); padding: 0.4rem 0.45rem; margin-top: 0.35rem; font-size: 12px; line-height: 1.35; }
+.ibb-opt strong { display: block; font-weight: 500; }
+.ibb-opt .hint { color: var(--text-2); font-size: 11px; }
+.ibb-opt.empty { border-style: dashed; color: var(--text-3); font-style: italic; }
+.ibb-arrow { flex: 0 0 auto; align-self: center; color: var(--text-3); font-size: 18px; line-height: 1; }
+.link-list { font-size: 13px; line-height: 1.6; margin-bottom: 1rem; }
+.link-list li { margin-bottom: 0.35rem; }
+html.embed .back { display: none; }
+html.embed .wrap { padding-top: 0.75rem; }
+html.embed h1 { font-size: 18px; }
+@media (max-width: 720px) {
+  .ibb-peers { grid-template-columns: 1fr; }
+  .ibb-flow { flex-direction: column; }
+  .ibb-arrow { transform: rotate(90deg); align-self: center; }
+  .ibb-step { min-width: 0; }
+}
+</style>
+</head>
+<body>
+<script>
+if (new URLSearchParams(location.search).get('embed') === '1') {
+  document.documentElement.classList.add('embed');
+}
+</script>
+<div class="isv-topbar">
+  <a class="isv-topbar-brand" href="index.html"><span class="isv-topbar-mark">ISV</span> IEEE Smart Village</a>
+  <button type="button" class="theme-toggle theme-toggle--icon" data-isv-theme-toggle aria-label="Switch to dark mode">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/></svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</div>
+<div class="wrap">
+  <div class="back"><a href="index.html#village-metering/openami">← Village IOT Metering</a></div>
+
+  <h1>OpenAMI</h1>
+  <p class="sub">Thread within ISV Village IOT Metering · EnAccess · E-IOT · NESL</p>
+  <p class="lead"><strong>OpenAMI is driving actionable energy telemetry</strong> — per-customer reads, credit, tamper, and disconnect semantics operators can bill and act on, not utility-scale archive data alone. <strong>Leakage visibility at every part of the system</strong> — feeder, branch, and customer — so operators can locate loss and theft, not just see aggregate feeder imbalance. Affordable open stack for mini-grids: vendor-agnostic gateways, MQTT northbound interop, Utility Network asset topology, and operator backends.</p>
+
+  <div class="callout">
+    <strong>Community · Discord</strong>
+    <p>OpenAMI discussions live on the <strong>OSEA</strong> (Open Source Energy Access) Discord server managed by EnAccess. Join: <a href="https://discord.osea-community.org/" target="_blank" rel="noopener">discord.osea-community.org</a> · <a href="https://enaccess.org/support/community-support/" target="_blank" rel="noopener">how to join ↗</a>. <em>ISV Tech Comm goal: participate more actively</em> — introduce work, answer integration questions, share wiki artifacts.</p>
+  </div>
+
+  <p class="body-text">Program overview: <a href="https://enaccess.org/openami/" target="_blank" rel="noopener">enaccess.org/openami</a>. <a href="index.html#village-metering/meshems">MeshEMS</a> is software supported by E-IOT for learning that stack in the field — multi-tenant edge IOT Metering at the upstream/downstream boundary, documented openly for community operators. <strong>Street EMS</strong> is the hardware supported by NESL.</p>
+
+  <h2>Backends at the aggregation point</h2>
+  <p class="body-text"><strong>MPM Manager</strong>, <strong>OpenEMS</strong>, and <strong>SparkNet Hub</strong> sit at the <strong>same point</strong> in the aggregation hierarchy — siblings, not a stack. Do not draw one on top of another.</p>
+  <p class="body-text"><strong>MPM Manager</strong> and <strong>OpenEMS</strong> are <strong>alternative backends</strong>: pick one. They are not a combined pair.</p>
+  <p class="body-text"><strong>OpenEMS</strong> is an under-development backend for lightweight village use. Linux end-to-end. Less than 60 days ago (as of Sep&nbsp;2026) <strong>Arila</strong> started iterating OpenEMS so a Raspberry Pi meter can be swapped for a <strong>first-km fan-in of MeshEMS</strong>.</p>
+
+  <div class="callout callout-amber">
+    <strong>OpenEMS — no support yet</strong>
+    <p>The OpenEMS backend has <strong>no support yet</strong> for <strong>SparkNet aggregation</strong>, <strong>DLMS/COSEM</strong>, or <strong>STS</strong>. That is a gap, not a working interop matrix. Do not read the chooser below as “any first-km + any hub + OpenEMS.”</p>
+  </div>
+
+  <h2 id="ibb-variants">IBB architecture variants</h2>
+  <p class="ibb-note">Chooser order — pick first km, then aggregation hub, then billing, then OAM (operations, administration, and maintenance), then backend. <strong>Not</strong> an any-to-any supported solution matrix. Empty dashed boxes mean “operator pick,” not a catalog of certified products. Sikulu / IBB is not named elsewhere on this wiki; this title is the working name for the variant paths.</p>
+
+  <p class="ibb-note"><strong>Same aggregation-hierarchy point</strong> (siblings, not stacked):</p>
+  <div class="ibb-peers" role="list">
+    <div class="ibb-peer" role="listitem"><strong>MPM Manager</strong><span>Backend option — pick this <em>or</em> OpenEMS</span></div>
+    <div class="ibb-peer" role="listitem"><strong>OpenEMS</strong><span>Backend option — under development; village / Linux</span></div>
+    <div class="ibb-peer" role="listitem"><strong>SparkNet Hub</strong><span>Aggregation hub at the same height — not a layer above the backends</span></div>
+  </div>
+
+  <div class="ibb-flow" role="img" aria-label="IBB architecture variants: sequential chooser from first kilometre through backend. Not a supported interconnect matrix.">
+    <section class="ibb-step">
+      <h3>1 · First km</h3>
+      <div class="ibb-opt"><strong>MeshEMS fan-in</strong><span class="hint">Software · E-IOT · first-km fan-in</span></div>
+      <div class="ibb-opt"><strong>Raspberry Pi meter</strong><span class="hint">What the OpenEMS iteration is swapping away from</span></div>
+      <div class="ibb-opt"><strong>Street EMS</strong><span class="hint">Hardware · NESL · pole / last-mile</span></div>
+    </section>
+    <div class="ibb-arrow" aria-hidden="true">→</div>
+    <section class="ibb-step">
+      <h3>2 · Aggregation hub</h3>
+      <div class="ibb-opt"><strong>SparkNet Hub</strong><span class="hint">Named hub at this pick — sibling of the backends, not stacked on them</span></div>
+      <div class="ibb-opt empty">Other hub — operator pick; not listed as supported here</div>
+    </section>
+    <div class="ibb-arrow" aria-hidden="true">→</div>
+    <section class="ibb-step">
+      <h3>3 · Billing</h3>
+      <div class="ibb-opt empty">Pick billing — no product named on this page as a certified combo</div>
+    </section>
+    <div class="ibb-arrow" aria-hidden="true">→</div>
+    <section class="ibb-step">
+      <h3>4 · OAM</h3>
+      <div class="ibb-opt empty">Pick OAM — operations, administration, maintenance. No product named as a certified combo</div>
+    </section>
+    <div class="ibb-arrow" aria-hidden="true">→</div>
+    <section class="ibb-step">
+      <h3>5 · Backend</h3>
+      <div class="ibb-opt"><strong>MPM Manager</strong><span class="hint">Pick one backend</span></div>
+      <div class="ibb-opt"><strong>OpenEMS</strong><span class="hint">Pick one backend · no SparkNet / DLMS / STS yet</span></div>
+    </section>
+  </div>
+
+  <h2>Stack layers (working definitions)</h2>
+  <div class="tbl-wrap">
+  <table class="stack-table">
+    <thead>
+      <tr>
+        <th>Component</th>
+        <th>Role</th>
+        <th>Supported By</th>
+        <th>GitHub</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>OpenEMS</strong></td>
+        <td>Backend</td>
+        <td class="muted">—</td>
+        <td class="muted">—</td>
+        <td>Under-development backend for lightweight village use. Linux end-to-end. Alternative to MPM Manager (pick one). No support yet for SparkNet aggregation, DLMS/COSEM, or STS.</td>
+      </tr>
+      <tr>
+        <td><strong>MPM Manager</strong></td>
+        <td>Backend</td>
+        <td>EnAccess</td>
+        <td><a href="https://github.com/enaccess/micropowermanager" target="_blank" rel="noopener">micropowermanager</a></td>
+        <td>Village backend option. Alternative to OpenEMS (pick one). Same aggregation-hierarchy point as OpenEMS and SparkNet Hub.</td>
+      </tr>
+      <tr>
+        <td><strong>SparkNet Hub</strong></td>
+        <td>Aggregation hub</td>
+        <td class="muted">—</td>
+        <td><a href="https://github.com/EarthSpark/sparknet-http" target="_blank" rel="noopener">sparknet-http</a></td>
+        <td>Sits at the same aggregation point as MPM Manager and OpenEMS — sibling, not a layer above them. Wiki already documents SparkNet-HTTP on the <a href="index.html#village-metering/tc20-review">TC2.0 review</a>. OpenEMS does not handle SparkNet aggregation yet.</td>
+      </tr>
+      <tr>
+        <td><strong>Street EMS</strong> (Hardware)</td>
+        <td>Pole / last-mile hardware</td>
+        <td>NESL</td>
+        <td><a href="https://github.com/nesl-admin/STREET-EMS" target="_blank" rel="noopener">STREET-EMS</a></td>
+        <td>Hardware supported by NESL · DCU mesh backhaul</td>
+      </tr>
+      <tr>
+        <td><strong>MeshEMS</strong> (Software)</td>
+        <td>First-km fan-in · Street Pole gateway</td>
+        <td>E-IOT</td>
+        <td><a href="https://github.com/energy-iot/meshems-openami-metering" target="_blank" rel="noopener">meshEMS</a></td>
+        <td>Software supported by E-IOT · OpenAMI firmware. Target first-km fan-in in the OpenEMS Raspberry Pi swap.</td>
+      </tr>
+      <tr>
+        <td><strong>OpenAMI / MQTT</strong></td>
+        <td>Actionable telemetry</td>
+        <td class="muted">—</td>
+        <td class="muted">—</td>
+        <td>Northbound contract — normalize OEM/DLMS to registers operators can bill, vend, and disconnect on; <strong>leakage visible at every layer</strong>. Score IOT Metering at the meter / DCU / cloud row that actually speaks the protocol — not at the backend by default.</td>
+      </tr>
+      <tr>
+        <td><strong>EarthSpark ThunderCloud</strong></td>
+        <td>Operator backend (open)</td>
+        <td class="muted">—</td>
+        <td><a href="https://github.com/EarthSpark/thundercloud" target="_blank" rel="noopener">thundercloud</a></td>
+        <td>ThunderCloud / GroundBolt — <a href="index.html#village-metering/roadmap">development roadmap</a> · developer preview. Not drawn as a certified combo with OpenEMS.</td>
+      </tr>
+      <tr>
+        <td><strong>Utility Network</strong></td>
+        <td>Asset topology</td>
+        <td class="muted">—</td>
+        <td><a href="https://github.com/overview-solutions/smart-village-simulator/tree/main/villages" target="_blank" rel="noopener">villages pack</a></td>
+        <td>Open GeoJSON pack borrowing Esri Utility Network semantics (not ArcGIS lock-in): structure, devices, junctions, lines, subnetworks, associations. Meters are devices; laterals are lines; poles are structure. Connectivity associations keep a moved pole on its line (node-edge). Detail: <a href="index.html#village-metering/village-geojson-un">Village GeoJSON · open Utility Network</a>.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>ISV wiki threads</h2>
+  <ul class="link-list">
+    <li><a href="index.html#village-metering/roadmap">Development roadmap</a></li>
+    <li><a href="index.html#village-metering/overview">Village IOT Metering · Overview</a> · <a href="index.html#village-metering/overview">Problems</a></li>
+    <li><a href="index.html#village-metering/meshems">MeshEMS</a> — software supported by E-IOT</li>
+    <li><a href="index.html#village-metering/village-geojson-un">Village GeoJSON · open Utility Network</a></li>
+    <li><a href="tech-comm-2026-06-25-ai-wiki-orientation.html#meshems-distribution">25 Jun 2026 notes · MeshEMS board distribution</a></li>
+    <li><a href="tech-comm-2026-06-25-ai-wiki-orientation.html#meshems-power">25 Jun 2026 notes · MeshEMS power rails</a></li>
+    <li><a href="power-africa-openami-presentation-2025.html">Power Africa OpenAMI deck (Sep 2025)</a></li>
+    <li><a href="index.html#tech-reports/emg-trd-005-openami-trd">EMG-TRD-005 · OpenAMI TRD</a></li>
+  </ul>
+
+  <h2>External links</h2>
+  <ul class="link-list">
+    <li><a href="https://enaccess.org/openami/" target="_blank" rel="noopener">EnAccess · OpenAMI</a></li>
+    <li><a href="https://discord.osea-community.org/" target="_blank" rel="noopener">OSEA Discord</a></li>
+    <li><a href="https://github.com/enaccess/micropowermanager" target="_blank" rel="noopener">MicroPowerManager</a></li>
+    <li><a href="https://github.com/EarthSpark/thundercloud" target="_blank" rel="noopener">EarthSpark · ThunderCloud</a> (developer preview)</li>
+    <li><a href="https://github.com/rahulbhargavain/openami-smart-village" target="_blank" rel="noopener">openami-smart-village</a> (Dev Labs reports)</li>
+  </ul>
+</div>
+</body>
+</html>

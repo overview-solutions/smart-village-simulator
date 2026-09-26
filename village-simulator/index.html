@@ -1750,7 +1750,8 @@ html.embed .wl-app-main { padding: 0 0.7rem; }
       <option value="">Feeder: village</option>
     </select>
     <button type="button" id="wl-ems-open" title="Pole MeshEMS cabinet">EMS</button>
-    <button type="button" id="wl-anomaly" class="on" title="Outage, last-breath, cutoff, overload, leak">Anomalies</button>
+    <button type="button" id="wl-anomaly" class="on" title="On: outage / leak / last-breath / cutoff stacks only. Off: hide those customer worldlines. Grid stays.">Anomalies</button>
+    <button type="button" id="wl-all-customers" title="Every seeded meter stack + pay / reading / SMS. Separate from Anomalies.">All customers</button>
     <button type="button" id="wl-day-outages" title="Highlight every home and line hit by any outage today">Day outages</button>
     <button type="button" data-hide="leak" title="ΔP leak span between boards">Leakage</button>
     <button type="button" data-hide="pay" class="off" title="Prepaid payments">Pay</button>
@@ -1897,7 +1898,7 @@ html.embed .wl-app-main { padding: 0 0.7rem; }
         </div>
         <label class="wl-win" id="wl-win" title="Height of stretch / scrunch boundary" data-modes="operations">
           <span id="wl-win-hi">past</span>
-          <input id="wl-window" type="range" min="8" max="42" step="1" value="36" aria-label="Stretch / scrunch boundary height" />
+          <input id="wl-window" type="range" min="24" max="126" step="1" value="108" aria-label="Stretch / scrunch boundary height" />
           <span id="wl-win-val">−2h</span>
         </label>
         <div id="wl-build-xsect" hidden aria-hidden="true" aria-label="Feeder line cross-section">

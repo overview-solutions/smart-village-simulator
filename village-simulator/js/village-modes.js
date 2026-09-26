@@ -72,6 +72,41 @@ export const MODE_HIDE = {
   },
 };
 
+/** Seeded empty-canvas pack vs leftover demo HOUSES reference. */
+export function opsHasLiveHouses(emptyCanvas, liveHouses, demoHouses) {
+  return !!(liveHouses?.length) && !(emptyCanvas && liveHouses === demoHouses);
+}
+
+/** BUILD / Loads / Energy / Maintenance: no playhead stack. */
+export function opsWorldlinesBlocked(appMode) {
+  return appMode === "build" || appMode === "maintenance" || appMode === "productive" || appMode === "energy";
+}
+
+/**
+ * Separate All-customers control — not Anomalies OFF.
+ * ON unhides pay / SMS / reading crumbs. OFF puts them back.
+ * Leak / cutoff / worldline stay on their own toggles.
+ */
+export function opsSetAllCustomers(hide, allOn) {
+  const next = hide || {};
+  next.reading = !allOn;
+  next.pay = !allOn;
+  next.sms = !allOn;
+  return next;
+}
+
+/**
+ * Customer time-stacks over the grid.
+ * Anomalies ON + All customers OFF → critical only.
+ * Anomalies OFF + All customers OFF → hide stacks (grid / assets stay).
+ * All customers ON → every seeded meter (Anomalies may stay ON).
+ */
+export function opsCustomerStackMode(anomalyOnly, showAllCustomers) {
+  if (showAllCustomers) return "all";
+  if (anomalyOnly) return "critical";
+  return "hidden";
+}
+
 export const MODE_META = {
   operations: {
     label: "Operations",

@@ -317,3 +317,120 @@ export function normalizeImport(data, ctx = {}) {
 
   throw new Error("Unrecognized file — use project JSON or GeoJSON FeatureCollection");
 }
+
+const PACK_GROUP = {
+  structure: "structure",
+  electric_device: "device",
+  electric_junction: "junction",
+  electric_line: "line",
+  subnetwork: "subnetwork",
+};
+
+function feederRunId(subnetworkId) {
+  if (!subnetworkId || subnetworkId === "island-1") return undefined;
+  return String(subnetworkId).replace(/^f-/, "");
+}
+
+function packPointXZ(f, groundScale) {
+  const p = f.properties || {};
+  if (Number.isFinite(p.x) && Number.isFinite(p.z)) {
+    return { x: p.x / groundScale, z: p.z / groundScale };
+  }
+  if (f.geometry?.type === "Point" && Array.isArray(f.geometry.coordinates)) {
+    return { x: f.geometry.coordinates[0] / groundScale, z: f.geometry.coordinates[1] / groundScale };
+  }
+  return null;
+}
+
+/**
+ * UN pack → BUILD snapshot (scene units). service_point → customer so Operations/Loads can seed.
+ * @param {{ village?: object, structure?: object, devices?: object, junctions?: object, lines?: object, subnetworks?: object, feeds?: object }} pack
+ * @param {{ groundScale?: number }} [opts]
+ */
+export function packToBuildSnapshot(pack, { groundScale = 8 } = {}) {
+  const s = Number(groundScale) || 8;
+  const placed = [];
+  const configs = {};
+  let seq = 0;
+
+  const addPoint = (f, extra = {}) => {
+    const p = f.properties || {};
+    const assetClass = extra.assetClass || p.assetClass;
+    if (!assetClass) return;
+    const xy = packPointXZ(f, s);
+    if (!xy) return;
+    seq += 1;
+    const area = assetClass === "island" || assetClass === "feeder";
+    placed.push({
+      id: String(f.id ?? p.id ?? `${assetClass}-${seq}`),
+      assetClass,
+      assetGroup: extra.assetGroup || PACK_GROUP[p.assetGroup] || (area ? "subnetwork" : "structure"),
+      kind: extra.kind || (area ? "area" : "point"),
+      x: xy.x,
+      z: xy.z,
+      uid: p.globalId || "",
+      globalId: p.globalId,
+      useClass: p.useClass,
+      lineId: p.lineId,
+      nominalKv: p.nominalKv != null ? Number(p.nominalKv) : undefined,
+      runId: p.runId || feederRunId(p.subnetworkId),
+      label: p.label,
+    });
+  };
+
+  for (const f of pack.structure?.features || []) addPoint(f);
+  for (const f of pack.devices?.features || []) addPoint(f);
+  for (const f of pack.junctions?.features || []) addPoint(f);
+  for (const f of pack.subnetworks?.features || []) addPoint(f);
+
+  for (const f of pack.lines?.features || []) {
+    const p = f.properties || {};
+    const coords = f.geometry?.coordinates;
+    if (!coords || coords.length < 2) continue;
+    const a = coords[0];
+    const b = coords[coords.length - 1];
+    seq += 1;
+    placed.push({
+      id: String(f.id ?? p.id ?? `line-${seq}`),
+      assetClass: p.assetClass || "secondary",
+      assetGroup: "line",
+      kind: "line",
+      x: a[0] / s,
+      z: a[1] / s,
+      bx: b[0] / s,
+      bz: b[1] / s,
+      uid: p.globalId || "",
+      globalId: p.globalId,
+      nominalKv: p.nominalKv != null ? Number(p.nominalKv) : undefined,
+      runId: p.runId || feederRunId(p.subnetworkId),
+    });
+  }
+
+  for (const f of pack.junctions?.features || []) {
+    const p = f.properties || {};
+    if (p.assetClass !== "service_point") continue;
+    const xy = packPointXZ(f, s);
+    if (!xy) continue;
+    seq += 1;
+    placed.push({
+      id: `cust-${p.id || f.id}`,
+      assetClass: "customer",
+      assetGroup: "junction",
+      kind: "point",
+      x: xy.x,
+      z: xy.z,
+      useClass: p.useClass || "residential",
+      lineId: p.lineId,
+      nominalKv: p.nominalKv != null ? Number(p.nominalKv) : 0.22,
+      runId: p.runId || feederRunId(p.subnetworkId),
+    });
+  }
+
+  for (const b of pack.feeds?.bindings || []) {
+    const feed = b.feeds?.[0];
+    if (!b.assetId || !feed?.kind) continue;
+    configs[b.assetId] = { ...feed };
+  }
+
+  return { placed, configs, houseMap: {}, boardMap: {}, seq, batchSeq: 0 };
+}

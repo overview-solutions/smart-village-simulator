@@ -1,0 +1,45 @@
+{
+  "id": "openami-stack",
+  "name": "OpenAMI stack (hypothetical)",
+  "schemaVersion": "0.1.0",
+  "crs": "EPSG:4326",
+  "status": "hypothetical",
+  "origin": {
+    "lon": 11.53412,
+    "lat": 4.79209,
+    "alt": 0,
+    "note": "Schematic ENU metres in properties x,z (+X east, −Z north). Same Voundou pin as other sample packs. Plant is invented — not existing assets."
+  },
+  "bbox": [
+    -188,
+    -80.8,
+    158,
+    6
+  ],
+  "openami": {
+    "spatialSchema": "OpenAMI-aligned GeoJSON (ISV)",
+    "seedLive": true,
+    "notes": "One compatible OpenAMI path. Street EMS + MeshEMS first km → MPM Manager aggregation → EnAccess MPM backend. GroundBolt-style prepaid is a later sim hook, not a second backend. OpenEMS / SparkNet / DLMS / STS are not in this pack.",
+    "stack": {
+      "firstKm": [
+        "Street EMS (NESL hardware)",
+        "MeshEMS (E-IOT firmware)"
+      ],
+      "aggregation": "MPM Manager",
+      "backend": "EnAccess MPM",
+      "later": [
+        "GroundBolt-style prepaid (sim feed kind)",
+        "O&M via MeshEMS ΔP / disconnect"
+      ],
+      "notInThisPack": [
+        "SparkNet Hub",
+        "OpenEMS",
+        "DLMS/COSEM",
+        "STS"
+      ]
+    }
+  },
+  "source": {
+    "kind": "hypothetical-openami-stack"
+  }
+}

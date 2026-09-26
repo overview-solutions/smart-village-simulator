@@ -1,0 +1,670 @@
+{
+  "type": "FeatureCollection",
+  "name": "electric-lines",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "ln-gen-inv",
+      "properties": {
+        "id": "ln-gen-inv",
+        "assetClass": "trunk",
+        "assetGroup": "electric_line",
+        "lengthM": 8.9,
+        "globalId": "40545266-25f8-52ac-bf8b-176b6e617d8b",
+        "subnetworkId": "island-1",
+        "label": "gen→inverter",
+        "nominalKv": 0.38,
+        "phase": "ABC"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -80,
+            -52
+          ],
+          [
+            -72,
+            -48
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-bess-inv",
+      "properties": {
+        "id": "ln-bess-inv",
+        "assetClass": "trunk",
+        "assetGroup": "electric_line",
+        "lengthM": 8.9,
+        "globalId": "89140cb9-f97a-5d2b-46bd-a60e93cab510",
+        "subnetworkId": "island-1",
+        "label": "bess→inverter",
+        "nominalKv": 0.38,
+        "phase": "ABC"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -76,
+            -56
+          ],
+          [
+            -72,
+            -48
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-inv-station",
+      "properties": {
+        "id": "ln-inv-station",
+        "assetClass": "trunk",
+        "assetGroup": "electric_line",
+        "lengthM": 86.5,
+        "globalId": "c9a16c96-c4ac-5c80-26ec-a452c7379150",
+        "subnetworkId": "island-1",
+        "label": "inverter→station",
+        "nominalKv": 0.38,
+        "phase": "ABC"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -72,
+            -48
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-w-pri",
+      "properties": {
+        "id": "ln-w-pri",
+        "assetClass": "primary",
+        "assetGroup": "electric_line",
+        "lengthM": 60.2,
+        "globalId": "d2efe926-bc7f-538f-0e38-82edc455e77e",
+        "subnetworkId": "f-west",
+        "label": "West primary 380 V",
+        "nominalKv": 0.38,
+        "phase": "ABCN",
+        "runId": "west"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0,
+            0
+          ],
+          [
+            -56,
+            -22
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-w-sec-1",
+      "properties": {
+        "id": "ln-w-sec-1",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "lengthM": 63.2,
+        "globalId": "b7a01f62-005e-5645-d788-3f123cfc77d0",
+        "subnetworkId": "f-west",
+        "label": "West secondary 220 V",
+        "nominalKv": 0.22,
+        "phase": "ABCN",
+        "runId": "west"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -56,
+            -22
+          ],
+          [
+            -118,
+            -34
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-w-sec-2",
+      "properties": {
+        "id": "ln-w-sec-2",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "lengthM": 58.3,
+        "globalId": "0ffe5797-384d-5ea2-83d1-c8896a0ec0bc",
+        "subnetworkId": "f-west",
+        "label": "West farm 220 V",
+        "nominalKv": 0.22,
+        "phase": "ABCN",
+        "runId": "west"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -118,
+            -34
+          ],
+          [
+            -176,
+            -28
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-m-pri",
+      "properties": {
+        "id": "ln-m-pri",
+        "assetClass": "primary",
+        "assetGroup": "electric_line",
+        "lengthM": 59.1,
+        "globalId": "17449e42-ecf0-5bb7-d23b-0928103ace19",
+        "subnetworkId": "f-market",
+        "label": "Market primary 380 V",
+        "nominalKv": 0.38,
+        "phase": "ABCN",
+        "runId": "market"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0,
+            0
+          ],
+          [
+            52,
+            -28
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-m-sec-1",
+      "properties": {
+        "id": "ln-m-sec-1",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "lengthM": 55.7,
+        "globalId": "f313edc2-3a86-5088-81d1-df46cf8eda0a",
+        "subnetworkId": "f-market",
+        "label": "Market secondary 220 V",
+        "nominalKv": 0.22,
+        "phase": "ABCN",
+        "runId": "market"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            52,
+            -28
+          ],
+          [
+            104,
+            -48
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-m-sec-2",
+      "properties": {
+        "id": "ln-m-sec-2",
+        "assetClass": "secondary",
+        "assetGroup": "electric_line",
+        "lengthM": 46.2,
+        "globalId": "efbd8396-b708-55cd-e18f-b4198d620a53",
+        "subnetworkId": "f-market",
+        "label": "Market civic 220 V",
+        "nominalKv": 0.22,
+        "phase": "ABCN",
+        "runId": "market"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            104,
+            -48
+          ],
+          [
+            148,
+            -62
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-1",
+      "properties": {
+        "id": "ln-svc-1",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "lengthM": 15.6,
+        "globalId": "aebf5040-b1fb-5c3f-514a-39b28e691ee7",
+        "subnetworkId": "f-west",
+        "label": "Service 1",
+        "nominalKv": 0.22,
+        "phase": "A",
+        "runId": "west"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -118,
+            -42
+          ],
+          [
+            -128,
+            -54
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-2",
+      "properties": {
+        "id": "ln-svc-2",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "lengthM": 15.6,
+        "globalId": "16c45779-b47e-5738-8dd3-59a30128987d",
+        "subnetworkId": "f-west",
+        "label": "Service 2",
+        "nominalKv": 0.22,
+        "phase": "B",
+        "runId": "west"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -118,
+            -42
+          ],
+          [
+            -106,
+            -52
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-3",
+      "properties": {
+        "id": "ln-svc-3",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "lengthM": 16.1,
+        "globalId": "7dcf1de2-d585-52af-99ef-cdce93734e69",
+        "subnetworkId": "f-west",
+        "label": "Service 3",
+        "nominalKv": 0.22,
+        "phase": "C",
+        "runId": "west"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -118,
+            -42
+          ],
+          [
+            -132,
+            -34
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-4",
+      "properties": {
+        "id": "ln-svc-4",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "lengthM": 15.6,
+        "globalId": "3076b89b-85ec-5edf-cb39-cfa4170dbdb9",
+        "subnetworkId": "f-west",
+        "label": "Service 4",
+        "nominalKv": 0.22,
+        "phase": "A",
+        "runId": "west"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -176,
+            -36
+          ],
+          [
+            -188,
+            -46
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-5",
+      "properties": {
+        "id": "ln-svc-5",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "lengthM": 15.6,
+        "globalId": "ea927eb6-099e-576d-db48-9f634cc3b5d4",
+        "subnetworkId": "f-west",
+        "label": "Service 5",
+        "nominalKv": 0.22,
+        "phase": "B",
+        "runId": "west"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -176,
+            -36
+          ],
+          [
+            -166,
+            -48
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-6",
+      "properties": {
+        "id": "ln-svc-6",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "lengthM": 13.6,
+        "globalId": "c7517dde-6bef-523e-1196-eca1c05c8570",
+        "subnetworkId": "f-west",
+        "label": "Service 6",
+        "nominalKv": 0.22,
+        "phase": "C",
+        "runId": "west"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -176,
+            -36
+          ],
+          [
+            -184,
+            -25
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-7",
+      "properties": {
+        "id": "ln-svc-7",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "lengthM": 15.2,
+        "globalId": "d6c004e7-9472-545d-0ea8-d3956c3ff629",
+        "subnetworkId": "f-west",
+        "label": "Service 7",
+        "nominalKv": 0.22,
+        "phase": "A",
+        "runId": "west"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -176,
+            -36
+          ],
+          [
+            -162,
+            -30
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-8",
+      "properties": {
+        "id": "ln-svc-8",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "lengthM": 16.1,
+        "globalId": "c8a245fc-aa06-5867-b40b-0d5f6488ff10",
+        "subnetworkId": "f-west",
+        "label": "Service 8",
+        "nominalKv": 0.22,
+        "phase": "B",
+        "runId": "west"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -118,
+            -42
+          ],
+          [
+            -110,
+            -28
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-9",
+      "properties": {
+        "id": "ln-svc-9",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "lengthM": 14.1,
+        "globalId": "0df76c46-890e-5777-bd4d-4a5e7dd66838",
+        "subnetworkId": "f-market",
+        "label": "Service 9",
+        "nominalKv": 0.22,
+        "phase": "A",
+        "runId": "market"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            104,
+            -56
+          ],
+          [
+            114,
+            -66
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-10",
+      "properties": {
+        "id": "ln-svc-10",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "lengthM": 13.6,
+        "globalId": "55e5fdbf-33e0-5c39-994d-91b6fe8ef7ee",
+        "subnetworkId": "f-market",
+        "label": "Service 10",
+        "nominalKv": 0.22,
+        "phase": "B",
+        "runId": "market"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            104,
+            -56
+          ],
+          [
+            93,
+            -64
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-11",
+      "properties": {
+        "id": "ln-svc-11",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "lengthM": 14.4,
+        "globalId": "b14610ae-709e-501c-aed6-ec15f3b6cd3d",
+        "subnetworkId": "f-market",
+        "label": "Service 11",
+        "nominalKv": 0.22,
+        "phase": "C",
+        "runId": "market"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            104,
+            -56
+          ],
+          [
+            112,
+            -44
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-12",
+      "properties": {
+        "id": "ln-svc-12",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "lengthM": 12.8,
+        "globalId": "b65ff6d6-7440-508e-dcb2-a79d0efe6464",
+        "subnetworkId": "f-market",
+        "label": "Service 12",
+        "nominalKv": 0.22,
+        "phase": "A",
+        "runId": "market"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            148,
+            -70
+          ],
+          [
+            158,
+            -78
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-13",
+      "properties": {
+        "id": "ln-svc-13",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "lengthM": 14.1,
+        "globalId": "ce36f0d6-d157-5a91-3106-b913b5189ac4",
+        "subnetworkId": "f-market",
+        "label": "Service 13",
+        "nominalKv": 0.22,
+        "phase": "B",
+        "runId": "market"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            148,
+            -70
+          ],
+          [
+            138,
+            -80
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ln-svc-14",
+      "properties": {
+        "id": "ln-svc-14",
+        "assetClass": "service",
+        "assetGroup": "electric_line",
+        "lengthM": 12.5,
+        "globalId": "8d859aa1-1584-5a62-450a-b0d49493cc8c",
+        "subnetworkId": "f-market",
+        "label": "Service 14",
+        "nominalKv": 0.22,
+        "phase": "C",
+        "runId": "market"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            148,
+            -70
+          ],
+          [
+            154,
+            -59
+          ]
+        ]
+      }
+    }
+  ]
+}

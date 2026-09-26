@@ -56,7 +56,7 @@ Never copy private contacts, prices, NDA text, CIR `internal/`, Nakama keys, or 
 | `village-simulator/js/village-candidates.js` | Africa KE/ZM candidate layer on zoom-out |
 | `scripts/write-village-geojson.js` | Writes `grid.geojson` (legacy one-blob export) |
 | `villages/` | Per-site UN-style GeoJSON packs + API bindings (LOD fetch) — see `villages/README.md` |
-| `villages/catalog.json` | Site switcher catalog (Voundou · demo-lv · safari-park-casino · voundou-grid) |
+| `villages/catalog.json` | Site switcher catalog (Voundou · demo-lv · safari-park-casino · voundou-grid · openami-stack) |
 | `village-simulator/public/villages/` | Pack copies (`npm run villages:sync`). 3D sim (`/`) draws them — hub redirects home. |
 | `tests/` | Geo, TimeContext playhead, minigrid candidates, village-modes, productive-use, pack-topology |
 

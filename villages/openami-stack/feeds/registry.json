@@ -1,0 +1,271 @@
+{
+  "schemaVersion": "0.1.0",
+  "bindings": [
+    {
+      "assetId": "ems-w",
+      "lod": 2,
+      "feeds": [
+        {
+          "kind": "mqtt_sunspec",
+          "brokerRef": "env:MQTT_URL",
+          "topic": "openami/openami-stack/f-west/ems",
+          "model": "SunSpec"
+        }
+      ]
+    },
+    {
+      "assetId": "ems-m",
+      "lod": 2,
+      "feeds": [
+        {
+          "kind": "mqtt_sunspec",
+          "brokerRef": "env:MQTT_URL",
+          "topic": "openami/openami-stack/f-market/ems",
+          "model": "SunSpec"
+        }
+      ]
+    },
+    {
+      "assetId": "cab-mpm",
+      "lod": 2,
+      "feeds": [
+        {
+          "kind": "rest_json",
+          "urlTemplate": "env:MPM_URL/api/sites/{id}",
+          "pollSec": 60,
+          "authRef": "env:MPM_TOKEN"
+        }
+      ]
+    },
+    {
+      "assetId": "inv-1",
+      "lod": 2,
+      "feeds": [
+        {
+          "kind": "mqtt_sunspec",
+          "brokerRef": "env:MQTT_URL",
+          "topic": "openami/openami-stack/island/inv",
+          "model": "701"
+        }
+      ]
+    },
+    {
+      "assetId": "bess-1",
+      "lod": 2,
+      "feeds": [
+        {
+          "kind": "mqtt_sunspec",
+          "brokerRef": "env:MQTT_URL",
+          "topic": "openami/openami-stack/island/bess",
+          "model": "802"
+        }
+      ]
+    },
+    {
+      "assetId": "m-1",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "openami-stack-prepaid",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-2",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "openami-stack-prepaid",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-3",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "openami-stack-prepaid",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-4",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "openami-stack-prepaid",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-5",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "openami-stack-prepaid",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-6",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "openami-stack-prepaid",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-7",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "openami-stack-prepaid",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-8",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "openami-stack-prepaid",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-9",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "openami-stack-prepaid",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-10",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "openami-stack-prepaid",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-11",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "openami-stack-prepaid",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-12",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "groundbolt",
+          "siteRef": "openami-stack",
+          "meterRef": "m-12"
+        }
+      ]
+    },
+    {
+      "assetId": "m-13",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "openami-stack-prepaid",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    },
+    {
+      "assetId": "m-14",
+      "lod": 3,
+      "feeds": [
+        {
+          "kind": "sim",
+          "scenarioId": "openami-stack-prepaid",
+          "metrics": [
+            "kWh",
+            "credit",
+            "relay"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -28,12 +28,26 @@ export async function fetchVillagePack(base) {
     if (!r.ok) throw new Error(`${rel} HTTP ${r.status}`);
     return r.json();
   };
-  const [lines, structure, devices] = await Promise.all([
+  const opt = async (rel) => {
+    try {
+      const r = await fetch(`${root}/${rel}`);
+      if (!r.ok) return null;
+      return r.json();
+    } catch {
+      return null;
+    }
+  };
+  const [village, lines, structure, devices, junctions, subnetworks, associations, feeds] = await Promise.all([
+    opt("village.json"),
     j("network/electric-lines.geojson"),
     j("network/structure.geojson"),
     j("network/electric-devices.geojson"),
+    opt("network/electric-junctions.geojson"),
+    opt("network/subnetworks.geojson"),
+    opt("network/associations.json"),
+    opt("feeds/registry.json"),
   ]);
-  return { lines, structure, devices };
+  return { village, lines, structure, devices, junctions, subnetworks, associations, feeds };
 }
 
 export function fetchVoundouGridPack() {

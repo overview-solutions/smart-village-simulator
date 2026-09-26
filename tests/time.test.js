@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { TimeContext } from "@circaevum/locus/time";
 
 const WINDOW_MIN = 120;
-const boundH = 36;
+const boundH = 108;
 const SCRUNCH_H = 9;
 const DAY_MIN = 1440;
 
@@ -27,11 +27,11 @@ describe("village playhead via Locus TimeContext", () => {
   });
 
   it("120 min lookback fills presentHeight", () => {
-    assert.equal(villageY(480, 600), 36);
+    assert.equal(villageY(480, 600), 108);
   });
 
   it("day-start packs to pastTop", () => {
-    assert.equal(villageY(0, 600), 45);
+    assert.equal(villageY(0, 600), 117);
   });
 
   it("future hangs below now", () => {

@@ -12,6 +12,7 @@ const PACKS = [
   { id: "demo-lv", dir: join(ROOT, "villages/demo-lv") },
   { id: "safari-park-casino", dir: join(ROOT, "villages/safari-park-casino") },
   { id: "voundou-grid", dir: join(ROOT, "villages/voundou-grid") },
+  { id: "openami-stack", dir: join(ROOT, "villages/openami-stack") },
 ];
 
 function loadJson(path) {

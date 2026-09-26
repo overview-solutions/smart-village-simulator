@@ -1,0 +1,315 @@
+{
+  "schemaVersion": "0.1.0",
+  "connectivity": [
+    {
+      "fromId": "gen-1",
+      "toId": "inv-1",
+      "subnetworkId": "island-1",
+      "fromTerminal": "OUT",
+      "via": "ln-gen-inv"
+    },
+    {
+      "fromId": "bess-1",
+      "toId": "inv-1",
+      "subnetworkId": "island-1",
+      "via": "ln-bess-inv"
+    },
+    {
+      "fromId": "inv-1",
+      "toId": "station-1",
+      "subnetworkId": "island-1",
+      "toTerminal": "H1",
+      "via": "ln-inv-station"
+    },
+    {
+      "fromId": "station-1",
+      "toId": "bus-island",
+      "subnetworkId": "island-1",
+      "fromTerminal": "X1"
+    },
+    {
+      "fromId": "bus-island",
+      "toId": "brk-w",
+      "subnetworkId": "f-west",
+      "via": "ln-w-pri"
+    },
+    {
+      "fromId": "brk-w",
+      "toId": "j-w-head",
+      "subnetworkId": "f-west"
+    },
+    {
+      "fromId": "j-w-head",
+      "toId": "xfmr-w",
+      "subnetworkId": "f-west",
+      "toTerminal": "H1",
+      "via": "ln-w-sec-1"
+    },
+    {
+      "fromId": "xfmr-w",
+      "toId": "bus-w",
+      "subnetworkId": "f-west",
+      "fromTerminal": "X1"
+    },
+    {
+      "fromId": "bus-w",
+      "toId": "ems-w",
+      "subnetworkId": "f-west",
+      "toTerminal": "S"
+    },
+    {
+      "fromId": "ems-w",
+      "toId": "tap-w1",
+      "subnetworkId": "f-west",
+      "fromTerminal": "S"
+    },
+    {
+      "fromId": "tap-w1",
+      "toId": "tap-w2",
+      "subnetworkId": "f-west",
+      "via": "ln-w-sec-2"
+    },
+    {
+      "fromId": "bus-island",
+      "toId": "fuse-m",
+      "subnetworkId": "f-market",
+      "via": "ln-m-pri"
+    },
+    {
+      "fromId": "fuse-m",
+      "toId": "j-m-head",
+      "subnetworkId": "f-market"
+    },
+    {
+      "fromId": "j-m-head",
+      "toId": "xfmr-m",
+      "subnetworkId": "f-market",
+      "toTerminal": "H1",
+      "via": "ln-m-sec-1"
+    },
+    {
+      "fromId": "xfmr-m",
+      "toId": "bus-m",
+      "subnetworkId": "f-market",
+      "fromTerminal": "X1"
+    },
+    {
+      "fromId": "bus-m",
+      "toId": "ems-m",
+      "subnetworkId": "f-market"
+    },
+    {
+      "fromId": "ems-m",
+      "toId": "tap-m1",
+      "subnetworkId": "f-market"
+    },
+    {
+      "fromId": "tap-m1",
+      "toId": "tap-m2",
+      "subnetworkId": "f-market",
+      "via": "ln-m-sec-2"
+    },
+    {
+      "fromId": "tap-w1",
+      "toId": "m-1",
+      "subnetworkId": "f-west",
+      "via": "ln-svc-1"
+    },
+    {
+      "fromId": "m-1",
+      "toId": "sp-1",
+      "subnetworkId": "f-west"
+    },
+    {
+      "fromId": "tap-w1",
+      "toId": "m-2",
+      "subnetworkId": "f-west",
+      "via": "ln-svc-2"
+    },
+    {
+      "fromId": "m-2",
+      "toId": "sp-2",
+      "subnetworkId": "f-west"
+    },
+    {
+      "fromId": "tap-w1",
+      "toId": "m-3",
+      "subnetworkId": "f-west",
+      "via": "ln-svc-3"
+    },
+    {
+      "fromId": "m-3",
+      "toId": "sp-3",
+      "subnetworkId": "f-west"
+    },
+    {
+      "fromId": "tap-w2",
+      "toId": "m-4",
+      "subnetworkId": "f-west",
+      "via": "ln-svc-4"
+    },
+    {
+      "fromId": "m-4",
+      "toId": "sp-4",
+      "subnetworkId": "f-west"
+    },
+    {
+      "fromId": "tap-w2",
+      "toId": "m-5",
+      "subnetworkId": "f-west",
+      "via": "ln-svc-5"
+    },
+    {
+      "fromId": "m-5",
+      "toId": "sp-5",
+      "subnetworkId": "f-west"
+    },
+    {
+      "fromId": "tap-w2",
+      "toId": "m-6",
+      "subnetworkId": "f-west",
+      "via": "ln-svc-6"
+    },
+    {
+      "fromId": "m-6",
+      "toId": "sp-6",
+      "subnetworkId": "f-west"
+    },
+    {
+      "fromId": "tap-w2",
+      "toId": "m-7",
+      "subnetworkId": "f-west",
+      "via": "ln-svc-7"
+    },
+    {
+      "fromId": "m-7",
+      "toId": "sp-7",
+      "subnetworkId": "f-west"
+    },
+    {
+      "fromId": "tap-w1",
+      "toId": "m-8",
+      "subnetworkId": "f-west",
+      "via": "ln-svc-8"
+    },
+    {
+      "fromId": "m-8",
+      "toId": "sp-8",
+      "subnetworkId": "f-west"
+    },
+    {
+      "fromId": "tap-m1",
+      "toId": "m-9",
+      "subnetworkId": "f-market",
+      "via": "ln-svc-9"
+    },
+    {
+      "fromId": "m-9",
+      "toId": "sp-9",
+      "subnetworkId": "f-market"
+    },
+    {
+      "fromId": "tap-m1",
+      "toId": "m-10",
+      "subnetworkId": "f-market",
+      "via": "ln-svc-10"
+    },
+    {
+      "fromId": "m-10",
+      "toId": "sp-10",
+      "subnetworkId": "f-market"
+    },
+    {
+      "fromId": "tap-m1",
+      "toId": "m-11",
+      "subnetworkId": "f-market",
+      "via": "ln-svc-11"
+    },
+    {
+      "fromId": "m-11",
+      "toId": "sp-11",
+      "subnetworkId": "f-market"
+    },
+    {
+      "fromId": "tap-m2",
+      "toId": "m-12",
+      "subnetworkId": "f-market",
+      "via": "ln-svc-12"
+    },
+    {
+      "fromId": "m-12",
+      "toId": "sp-12",
+      "subnetworkId": "f-market"
+    },
+    {
+      "fromId": "tap-m2",
+      "toId": "m-13",
+      "subnetworkId": "f-market",
+      "via": "ln-svc-13"
+    },
+    {
+      "fromId": "m-13",
+      "toId": "sp-13",
+      "subnetworkId": "f-market"
+    },
+    {
+      "fromId": "tap-m2",
+      "toId": "m-14",
+      "subnetworkId": "f-market",
+      "via": "ln-svc-14"
+    },
+    {
+      "fromId": "m-14",
+      "toId": "sp-14",
+      "subnetworkId": "f-market"
+    }
+  ],
+  "containment": [
+    {
+      "containerId": "cab-w",
+      "contentId": "ems-w"
+    },
+    {
+      "containerId": "cab-m",
+      "contentId": "ems-m"
+    }
+  ],
+  "attachment": [
+    {
+      "structureId": "pad-gen",
+      "attachedId": "gen-1"
+    },
+    {
+      "structureId": "pole-hub",
+      "attachedId": "station-1"
+    },
+    {
+      "structureId": "pole-w2",
+      "attachedId": "xfmr-w"
+    },
+    {
+      "structureId": "pole-w2",
+      "attachedId": "ems-w"
+    },
+    {
+      "structureId": "pole-w2",
+      "attachedId": "dtm-w"
+    },
+    {
+      "structureId": "pole-m2",
+      "attachedId": "xfmr-m"
+    },
+    {
+      "structureId": "pole-m2",
+      "attachedId": "ems-m"
+    },
+    {
+      "structureId": "pole-w1",
+      "attachedId": "brk-w"
+    },
+    {
+      "structureId": "pole-m1",
+      "attachedId": "fuse-m"
+    }
+  ]
+}

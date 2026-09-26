@@ -93,6 +93,7 @@ Catalog: [`catalog.json`](catalog.json). Packs are data. 3D sim (`/`) is the onl
 | `demo-lv` | Pack data (not a separate page) |
 | `safari-park-casino` | Pack data — Nairobi workshop |
 | `voundou-grid` | Drawn in 3D sim — traced 380/220 overlay (no house services) |
+| `openami-stack` | Hypothetical OpenAMI path — Street EMS + MeshEMS → MPM Manager → EnAccess MPM |
 
 After editing a pack:
 

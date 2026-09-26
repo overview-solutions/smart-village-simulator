@@ -1,0 +1,738 @@
+{
+  "type": "FeatureCollection",
+  "name": "electric-devices",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "gen-1",
+      "properties": {
+        "id": "gen-1",
+        "assetClass": "gen",
+        "assetGroup": "electric_device",
+        "x": -80,
+        "z": -52,
+        "lon": 11.5333988,
+        "lat": 4.7925571,
+        "globalId": "079fa7a7-dc17-5ef7-1318-e3c95195a072",
+        "subnetworkId": "island-1",
+        "label": "PV + genset",
+        "phase": "ABC",
+        "nominalKv": 0.38,
+        "ratedA": 250,
+        "terminals": [
+          {
+            "name": "OUT",
+            "side": "ac"
+          }
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -80,
+          -52
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "inv-1",
+      "properties": {
+        "id": "inv-1",
+        "assetClass": "inverter",
+        "assetGroup": "electric_device",
+        "x": -72,
+        "z": -48,
+        "lon": 11.5334709,
+        "lat": 4.7925212,
+        "globalId": "1b8de834-c049-5dbc-988d-b25d6585a09c",
+        "subnetworkId": "island-1",
+        "label": "Hybrid inverter",
+        "phase": "ABC",
+        "nominalKv": 0.38,
+        "ratedA": 200
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72,
+          -48
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "bess-1",
+      "properties": {
+        "id": "bess-1",
+        "assetClass": "bess",
+        "assetGroup": "electric_device",
+        "x": -76,
+        "z": -56,
+        "lon": 11.5334349,
+        "lat": 4.7925931,
+        "globalId": "9c243a25-00a6-5bd0-33ef-d5390861fc1f",
+        "subnetworkId": "island-1",
+        "label": "BESS",
+        "phase": "ABC",
+        "nominalKv": 0.38,
+        "ratedA": 200
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -76,
+          -56
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "station-1",
+      "properties": {
+        "id": "station-1",
+        "assetClass": "station",
+        "assetGroup": "electric_device",
+        "x": 0,
+        "z": 0,
+        "lon": 11.53412,
+        "lat": 4.79209,
+        "globalId": "db648ee6-7dd8-5908-daef-eb84f8677184",
+        "subnetworkId": "island-1",
+        "label": "Village station",
+        "phase": "ABC",
+        "nominalKv": 0.38,
+        "ratedA": 400,
+        "terminals": [
+          {
+            "name": "H1",
+            "side": "primary"
+          },
+          {
+            "name": "X1",
+            "side": "secondary"
+          }
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "brk-w",
+      "properties": {
+        "id": "brk-w",
+        "assetClass": "breaker",
+        "assetGroup": "electric_device",
+        "x": -54,
+        "z": -20,
+        "lon": 11.5336332,
+        "lat": 4.7922697,
+        "globalId": "df5f2860-4668-5718-79e7-2140d0c2c833",
+        "subnetworkId": "f-west",
+        "label": "West feeder breaker",
+        "phase": "ABC",
+        "nominalKv": 0.38,
+        "ratedA": 200
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -54,
+          -20
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "xfmr-w",
+      "properties": {
+        "id": "xfmr-w",
+        "assetClass": "xfmr",
+        "assetGroup": "electric_device",
+        "x": -118,
+        "z": -31,
+        "lon": 11.5330563,
+        "lat": 4.7923685,
+        "globalId": "a88dfb06-2e8b-5873-98bb-64b8e991f8af",
+        "subnetworkId": "f-west",
+        "label": "West pole xfmr",
+        "phase": "ABC",
+        "nominalKv": 0.38,
+        "ratedA": 100,
+        "terminals": [
+          {
+            "name": "H1",
+            "side": "primary"
+          },
+          {
+            "name": "X1",
+            "side": "secondary"
+          }
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -118,
+          -31
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ems-w",
+      "properties": {
+        "id": "ems-w",
+        "assetClass": "ems",
+        "assetGroup": "electric_device",
+        "x": -116,
+        "z": -37,
+        "lon": 11.5330743,
+        "lat": 4.7924224,
+        "globalId": "0b981c98-0d14-5083-5ff7-1627751ebb56",
+        "subnetworkId": "f-west",
+        "label": "Street EMS · MeshEMS firmware (west)",
+        "stackLayer": "firstKm",
+        "stackComponent": "MeshEMS",
+        "phase": "ABC",
+        "terminals": [
+          {
+            "name": "N",
+            "side": "northbound"
+          },
+          {
+            "name": "S",
+            "side": "southbound"
+          }
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -116,
+          -37
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dtm-w",
+      "properties": {
+        "id": "dtm-w",
+        "assetClass": "dtm",
+        "assetGroup": "electric_device",
+        "x": -121,
+        "z": -30,
+        "lon": 11.5330292,
+        "lat": 4.7923595,
+        "globalId": "60fa2a43-c8f5-5a0b-b975-2b06626c96cd",
+        "subnetworkId": "f-west",
+        "label": "DTM west",
+        "phase": "ABC"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121,
+          -30
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "fuse-m",
+      "properties": {
+        "id": "fuse-m",
+        "assetClass": "fuse",
+        "assetGroup": "electric_device",
+        "x": 50,
+        "z": -26,
+        "lon": 11.5345707,
+        "lat": 4.7923236,
+        "globalId": "45f14021-f535-5102-03b1-013b827cf51f",
+        "subnetworkId": "f-market",
+        "label": "Market feeder fuse",
+        "phase": "ABC",
+        "nominalKv": 0.38,
+        "ratedA": 63
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          50,
+          -26
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "xfmr-m",
+      "properties": {
+        "id": "xfmr-m",
+        "assetClass": "xfmr",
+        "assetGroup": "electric_device",
+        "x": 104,
+        "z": -45,
+        "lon": 11.5350575,
+        "lat": 4.7924942,
+        "globalId": "9c93b5a3-44d1-5ac7-6d5c-baae2a8d9a10",
+        "subnetworkId": "f-market",
+        "label": "Market pole xfmr",
+        "phase": "ABC",
+        "nominalKv": 0.38,
+        "ratedA": 100,
+        "terminals": [
+          {
+            "name": "H1",
+            "side": "primary"
+          },
+          {
+            "name": "X1",
+            "side": "secondary"
+          }
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104,
+          -45
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "ems-m",
+      "properties": {
+        "id": "ems-m",
+        "assetClass": "ems",
+        "assetGroup": "electric_device",
+        "x": 106,
+        "z": -51,
+        "lon": 11.5350756,
+        "lat": 4.7925481,
+        "globalId": "00db145a-4842-5e2c-6b98-46da8a58d242",
+        "subnetworkId": "f-market",
+        "label": "Street EMS · MeshEMS firmware (market)",
+        "stackLayer": "firstKm",
+        "stackComponent": "MeshEMS",
+        "phase": "ABC",
+        "terminals": [
+          {
+            "name": "N",
+            "side": "northbound"
+          },
+          {
+            "name": "S",
+            "side": "southbound"
+          }
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106,
+          -51
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-1",
+      "properties": {
+        "id": "m-1",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": -128,
+        "z": -54.8,
+        "lon": 11.5329661,
+        "lat": 4.7925823,
+        "globalId": "3788b426-8653-5f67-d313-6815ba002c5c",
+        "subnetworkId": "f-west",
+        "label": "Meter residential 1",
+        "useClass": "residential",
+        "lineId": "ln-w-sec-1",
+        "phase": "A",
+        "stackLayer": "laterBilling",
+        "stackComponent": "GroundBolt-style prepaid (sim)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -128,
+          -54.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-2",
+      "properties": {
+        "id": "m-2",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": -106,
+        "z": -52.8,
+        "lon": 11.5331644,
+        "lat": 4.7925643,
+        "globalId": "49452024-a5ef-52bd-ad75-47a3d15a12e0",
+        "subnetworkId": "f-west",
+        "label": "Meter residential 2",
+        "useClass": "residential",
+        "lineId": "ln-w-sec-1",
+        "phase": "B",
+        "stackLayer": "laterBilling",
+        "stackComponent": "GroundBolt-style prepaid (sim)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -106,
+          -52.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-3",
+      "properties": {
+        "id": "m-3",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": -132,
+        "z": -34.8,
+        "lon": 11.5329301,
+        "lat": 4.7924026,
+        "globalId": "71808e4d-597b-5dbf-df89-1d87c4bcd09d",
+        "subnetworkId": "f-west",
+        "label": "Meter agricultural 3",
+        "useClass": "agricultural",
+        "lineId": "ln-w-sec-1",
+        "phase": "C",
+        "stackLayer": "laterBilling",
+        "stackComponent": "GroundBolt-style prepaid (sim)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -132,
+          -34.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-4",
+      "properties": {
+        "id": "m-4",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": -188,
+        "z": -46.8,
+        "lon": 11.5324253,
+        "lat": 4.7925104,
+        "globalId": "54cf465f-4b98-5960-5ace-b1311f095daf",
+        "subnetworkId": "f-west",
+        "label": "Meter water 4",
+        "useClass": "water",
+        "lineId": "ln-w-sec-2",
+        "phase": "A",
+        "stackLayer": "laterBilling",
+        "stackComponent": "GroundBolt-style prepaid (sim)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -188,
+          -46.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-5",
+      "properties": {
+        "id": "m-5",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": -166,
+        "z": -48.8,
+        "lon": 11.5326236,
+        "lat": 4.7925284,
+        "globalId": "7ff20baf-2df7-5ded-0520-4cea52f53c35",
+        "subnetworkId": "f-west",
+        "label": "Meter residential 5",
+        "useClass": "residential",
+        "lineId": "ln-w-sec-2",
+        "phase": "B",
+        "stackLayer": "laterBilling",
+        "stackComponent": "GroundBolt-style prepaid (sim)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -166,
+          -48.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-6",
+      "properties": {
+        "id": "m-6",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": -184,
+        "z": -25.8,
+        "lon": 11.5324613,
+        "lat": 4.7923218,
+        "globalId": "ff227dbb-f4eb-5eca-0185-4e6619b55ec5",
+        "subnetworkId": "f-west",
+        "label": "Meter agricultural 6",
+        "useClass": "agricultural",
+        "lineId": "ln-w-sec-2",
+        "phase": "C",
+        "stackLayer": "laterBilling",
+        "stackComponent": "GroundBolt-style prepaid (sim)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -184,
+          -25.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-7",
+      "properties": {
+        "id": "m-7",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": -162,
+        "z": -30.8,
+        "lon": 11.5326596,
+        "lat": 4.7923667,
+        "globalId": "3fb6e9db-ded3-5fcb-7281-7e956037b51d",
+        "subnetworkId": "f-west",
+        "label": "Meter streetlight 7",
+        "useClass": "streetlight",
+        "lineId": "ln-w-sec-2",
+        "phase": "A",
+        "stackLayer": "laterBilling",
+        "stackComponent": "GroundBolt-style prepaid (sim)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -162,
+          -30.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-8",
+      "properties": {
+        "id": "m-8",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": -110,
+        "z": -28.8,
+        "lon": 11.5331284,
+        "lat": 4.7923487,
+        "globalId": "c583bfee-52a7-5b26-6d4f-9ca606b4050a",
+        "subnetworkId": "f-west",
+        "label": "Meter residential 8",
+        "useClass": "residential",
+        "lineId": "ln-w-sec-1",
+        "phase": "B",
+        "stackLayer": "laterBilling",
+        "stackComponent": "GroundBolt-style prepaid (sim)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -110,
+          -28.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-9",
+      "properties": {
+        "id": "m-9",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": 114,
+        "z": -66.8,
+        "lon": 11.5351477,
+        "lat": 4.7926901,
+        "globalId": "9a0058ed-2c29-540b-c90d-37ee7921ee77",
+        "subnetworkId": "f-market",
+        "label": "Meter market 9",
+        "useClass": "market",
+        "lineId": "ln-m-sec-1",
+        "phase": "A",
+        "stackLayer": "laterBilling",
+        "stackComponent": "GroundBolt-style prepaid (sim)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          114,
+          -66.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-10",
+      "properties": {
+        "id": "m-10",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": 93,
+        "z": -64.8,
+        "lon": 11.5349584,
+        "lat": 4.7926721,
+        "globalId": "db593194-8f62-5bd2-b5fb-a6aa423d85ae",
+        "subnetworkId": "f-market",
+        "label": "Meter commercial 10",
+        "useClass": "commercial",
+        "lineId": "ln-m-sec-1",
+        "phase": "B",
+        "stackLayer": "laterBilling",
+        "stackComponent": "GroundBolt-style prepaid (sim)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93,
+          -64.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-11",
+      "properties": {
+        "id": "m-11",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": 112,
+        "z": -44.8,
+        "lon": 11.5351296,
+        "lat": 4.7924924,
+        "globalId": "603b66ec-2795-5ccb-8955-7e97994774e7",
+        "subnetworkId": "f-market",
+        "label": "Meter school 11",
+        "useClass": "school",
+        "lineId": "ln-m-sec-1",
+        "phase": "C",
+        "stackLayer": "laterBilling",
+        "stackComponent": "GroundBolt-style prepaid (sim)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          112,
+          -44.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-12",
+      "properties": {
+        "id": "m-12",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": 158,
+        "z": -78.8,
+        "lon": 11.5355443,
+        "lat": 4.7927979,
+        "globalId": "88ff2516-50e7-57d2-7f4d-0a9b9fefe6d3",
+        "subnetworkId": "f-market",
+        "label": "Meter medical 12",
+        "useClass": "medical",
+        "lineId": "ln-m-sec-2",
+        "phase": "A",
+        "stackLayer": "laterBilling",
+        "stackComponent": "GroundBolt-style prepaid (sim)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          158,
+          -78.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-13",
+      "properties": {
+        "id": "m-13",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": 138,
+        "z": -80.8,
+        "lon": 11.535364,
+        "lat": 4.7928158,
+        "globalId": "800734ef-eb8a-556f-7632-e4ca3ece0417",
+        "subnetworkId": "f-market",
+        "label": "Meter worship 13",
+        "useClass": "worship",
+        "lineId": "ln-m-sec-2",
+        "phase": "B",
+        "stackLayer": "laterBilling",
+        "stackComponent": "GroundBolt-style prepaid (sim)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          138,
+          -80.8
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "m-14",
+      "properties": {
+        "id": "m-14",
+        "assetClass": "meter",
+        "assetGroup": "electric_device",
+        "x": 154,
+        "z": -59.8,
+        "lon": 11.5355083,
+        "lat": 4.7926272,
+        "globalId": "9073765d-6cc0-524e-897b-fc9efb103980",
+        "subnetworkId": "f-market",
+        "label": "Meter residential 14",
+        "useClass": "residential",
+        "lineId": "ln-m-sec-2",
+        "phase": "C",
+        "stackLayer": "laterBilling",
+        "stackComponent": "GroundBolt-style prepaid (sim)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          154,
+          -59.8
+        ]
+      }
+    }
+  ]
+}
