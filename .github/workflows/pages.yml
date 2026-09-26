@@ -1,3 +1,5 @@
+# Deploy 404s until Settings → Pages → Source = GitHub Actions.
+# build (npm test + vite) is the required job. deploy is follow-on.
 name: pages
 
 on:
@@ -40,9 +42,19 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    # Missing Pages setting → deploy-pages 404. Do not fail the workflow.
+    continue-on-error: true
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Pages must use GitHub Actions source
+        run: |
+          echo "Deploy 404 = Pages not enabled or Source is not GitHub Actions."
+          echo "Click: https://github.com/${{ github.repository }}/settings/pages"
+          echo "Set Source to GitHub Actions. Org policy can also block Pages."
       - id: deployment
         uses: actions/deploy-pages@v4
