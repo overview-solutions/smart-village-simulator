@@ -123,9 +123,19 @@ export async function createVillageMap(container) {
     dark: 'demo-dark',
   };
 
-  const localStyleUrl = (key) => new URL(`maps/${paths[key]}/style.json`, location.href).href;
+  const OPENFREE = {
+    liberty: 'https://tiles.openfreemap.org/styles/liberty',
+    bright: 'https://tiles.openfreemap.org/styles/bright',
+    positron: 'https://tiles.openfreemap.org/styles/positron',
+    dark: 'https://tiles.openfreemap.org/styles/dark',
+  };
 
-  const style = (key) => {
+  const localStyleUrl = (key) =>
+    new URL(`maps/${paths[key]}/style.json`, new URL(import.meta.env.BASE_URL || './', location.href)).href;
+
+  let siteStyleUrl = null;
+
+  async function resolveStyle(key) {
     if (key === 'satellite') return satellite;
     if (key === 'none') {
       return {
@@ -134,12 +144,18 @@ export async function createVillageMap(container) {
         layers: [{ id: 'background', type: 'background', paint: { 'background-color': GREEN.background } }],
       };
     }
-    // Nature = local bright (or liberty) URL — greens applied on style.load
-    if (key === 'nature') return siteStyleUrl || localStyleUrl('bright');
-    return localStyleUrl(key);
-  };
+    if (key === 'nature' && siteStyleUrl) return siteStyleUrl;
+    const packKey = key === 'nature' ? 'bright' : key;
+    const local = localStyleUrl(packKey);
+    try {
+      const r = await fetch(local, { method: 'HEAD' });
+      if (r.ok) return local;
+    } catch {
+      /* Pages has no gitignored map packs */
+    }
+    return OPENFREE[packKey] || OPENFREE.bright;
+  }
 
-  let siteStyleUrl = null;
   let selected = new URLSearchParams(location.search).get('basemap') || 'nature';
   if (!(selected in paths) && !['satellite', 'nature', 'none'].includes(selected)) {
     selected = 'nature';
@@ -153,13 +169,15 @@ export async function createVillageMap(container) {
   }
   select.value = selected;
 
+  const resolved = await resolveStyle(selected);
+  const usingOpenFree = typeof resolved === 'string' && resolved.includes('openfreemap.org');
   const viewer = new LocusMap(container, {
     origin: ORIGIN,
     zoom: 19,
     pitch: 55,
     bearing: 0,
-    offline: !needsNetwork(selected),
-    style: style(selected),
+    offline: !needsNetwork(selected) && !usingOpenFree,
+    style: resolved,
     onError: () => {
       status.textContent =
         'Map asset unavailable · run npm run map:prepare or pick satellite online';
@@ -216,15 +234,17 @@ export async function createVillageMap(container) {
     history.replaceState(null, '', url);
     status.textContent = 'Loading basemap…';
     try {
-      await viewer.setBasemap(style(selected));
+      const next = await resolveStyle(selected);
+      viewer.offline = !needsNetwork(selected) && !(typeof next === 'string' && next.includes('openfreemap.org'));
+      await viewer.setBasemap(next);
       afterStyle();
     } catch {
       if (selected === 'nature') {
         try {
-          viewer.offline = true;
-          await viewer.setBasemap(localStyleUrl('liberty'));
+          viewer.offline = false;
+          await viewer.setBasemap(OPENFREE.bright);
           afterStyle();
-          status.textContent = 'Locus · Voundou · nature greens (liberty pack)';
+          status.textContent = 'Voundou · nature greens (OpenFreeMap)';
           return;
         } catch {
           /* fall through */
