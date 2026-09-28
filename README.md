@@ -15,7 +15,7 @@ Hypothetical GroundBolt prepaid day — not live telemetry. Default layout is sy
 |---|---|---|
 | What | Static knowledge base (meters, AMI/EMS notes, citations). No login. | Runnable 3D simulator (Build / Operations / Loads / Maintenance / Energy Assets). |
 | Repo | [overview-solutions/isv-ai-wiki](https://github.com/overview-solutions/isv-ai-wiki) | This tree |
-| Sim on the site | Frozen embed (may be older than `main` here). Do not treat wiki numbers as this app’s runtime. | Live scene you `npm start` |
+| Sim on the site | Live GitHub Pages app in the hub (`#village-metering/village-simulator`), plus a v1 freeze link. | This app (`npm start` or Pages) |
 
 ISV volunteer knowledge vs a scene you can build and run. Public writing never copies private facts from `isv-ai-wiki-private` (contacts, prices, NDA text).
 
@@ -99,11 +99,11 @@ Graphics issues → [Circaevum/locus](https://github.com/Circaevum/locus). App /
 |-------|------|
 | Locus (`@circaevum/locus`) | Time→Y (`TimeContext`), ENU↔WGS84, `LocusGL` / `LocusMap` |
 | This app | Meters, feeders, tariffs, payments, village meshes, UI, modes |
-| [isv.wiki](https://isv.wiki/) | Docs, nav, hash aliases. Embed is still the wiki’s frozen static copy until a Pages cutover |
+| [isv.wiki](https://isv.wiki/) | Docs, nav, hash aliases. Hub iframes this app on GitHub Pages |
 
 LocusMap owns the visible canvas, basemaps, camera, and shared renderer. Village meshes attach to its scene. Drag to pan, right-drag to rotate/pitch, scroll to zoom.
 
-Wiki hashes `#village-metering/village-simulator` (and `worldline-day` aliases) stay. After this app is on GitHub Pages, point the wiki iframe at that URL with `?embed=1`.
+Wiki hashes `#village-metering/village-simulator` (and `worldline-day` aliases) stay. Hub iframe dest: `https://overview-solutions.github.io/smart-village-simulator/?embed=1`.
 
 ---
 
