@@ -259,10 +259,64 @@ html[data-role="customer"] .stage { grid-template-columns: 1fr; }
 .fs-load-leg i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
 #wl-fs-load-cv { display: block; width: 100%; height: 132px; flex: 1; min-height: 0; }
 .side { display: flex; flex-direction: column; gap: 0.65rem; min-height: 0; overflow: auto; }
+.zoom-slide {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 0.15rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+}
+.zoom-slide-thumb {
+  position: absolute;
+  top: 0.15rem;
+  bottom: 0.15rem;
+  left: 0.15rem;
+  width: calc((100% - 0.3rem) / 3);
+  border-radius: 999px;
+  background: #5ee0ff;
+  box-shadow: none;
+  transform: translateX(0);
+  transition: transform 0.18s ease, opacity 0.18s ease, background-color 0.18s ease;
+  pointer-events: none;
+}
+.zoom-slide.is-ems .zoom-slide-thumb { transform: translateX(100%); background: #2bb6a3; }
+.zoom-slide.is-meter .zoom-slide-thumb { transform: translateX(200%); background: #e6c84a; }
+.zoom-slide.is-village .zoom-slide-thumb { opacity: 0; }
+.zoom-slide button {
+  position: relative;
+  z-index: 1;
+  border: 0;
+  background: transparent;
+  border-radius: 999px;
+  padding: 0.38rem 0.2rem;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+}
+.zoom-slide button.on { color: #102028; font-weight: 600; }
+.zoom-slide.is-feeder .zoom-slide-name { color: #5ee0ff; }
+.zoom-slide.is-ems .zoom-slide-name { color: #2bb6a3; }
+.zoom-slide.is-meter .zoom-slide-name { color: #e6c84a; }
+html[data-theme="light"] .zoom-slide.is-feeder .zoom-slide-name { color: #0b6f86; }
+html[data-theme="light"] .zoom-slide.is-ems .zoom-slide-name { color: #0f6e5c; }
+html[data-theme="light"] .zoom-slide.is-meter .zoom-slide-name { color: #8a6a08; }
+.zoom-slide-name {
+  margin: 0.4rem 0 0;
+  font-size: 11px;
+  color: var(--text-2);
+  min-height: 1.2em;
+}
+@media (prefers-reduced-motion: reduce) {
+  .zoom-slide-thumb { transition: none; }
+}
 .panel { border: 1px solid var(--border); border-radius: 10px; background: var(--bg-2); padding: 0.65rem 0.75rem; font-size: 12px; }
 .panel h2 { font-size: 11px; font-weight: 500; color: var(--text-2); margin: 0 0 0.4rem; border: 0; padding: 0; display: flex; align-items: center; gap: 0.4rem; }
 .panel h2::before { content: ""; width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
-.panel-play h2::before { background: #2bb6a3; }
+.panel-zoom h2::before { background: #5c7cfa; }
 .panel-geoid h2::before { background: #5c7cfa; }
 .panel-stats h2::before { background: #3b6d11; }
 .panel-kpi h2::before { background: #ba7517; }
@@ -522,6 +576,11 @@ html[data-role="customer"] .stage { grid-template-columns: 1fr; }
   border-color: color-mix(in srgb, var(--blue) 45%, var(--border));
   background: color-mix(in srgb, var(--blue) 8%, var(--bg));
 }
+.kpi-gauge.kpi-figure { cursor: default; }
+.kpi-gauge.kpi-figure:hover {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--bg) 65%, transparent);
+}
 .kpi-gauge.is-focus {
   border-color: color-mix(in srgb, #e6c84a 55%, var(--border));
   background: color-mix(in srgb, #e6c84a 10%, var(--bg));
@@ -625,7 +684,8 @@ html[data-theme="dark"] .kpi-gauge-top .kpi-actual.is-miss { color: #f97066; }
   padding: 0.32rem 0.75rem; font-size: 12px; font-weight: 500; color: var(--text-2);
 }
 .wl-mode-switch button.on { background: var(--bg); color: var(--text); box-shadow: inset 0 0 0 1px var(--border); }
-#wl-mode-hint { font-size: 11px; color: var(--text-2); margin: 0 0 0.45rem; min-height: 1.1em; }
+#wl-mode-hint { font-size: 11px; color: var(--text-2); margin: 0 0 0.15rem; min-height: 1.1em; }
+#wl-focus-caption { font-size: 12px; color: var(--text); margin: 0 0 0.45rem; min-height: 1.15em; }
 .wl-mode-strip {
   display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center;
   margin: 0 0 0.55rem; padding: 0.4rem 0.55rem;
@@ -1739,6 +1799,7 @@ html.embed .wl-app-main { padding: 0 0.7rem; }
     <button type="button" id="wl-fs" title="Fullscreen (F)">Fullscreen</button>
   </div>
   <p id="wl-mode-hint" role="status">Run the day — feeders, prepaid, anomalies, EMS.</p>
+  <p id="wl-focus-caption" data-modes="operations" role="status"></p>
   <div id="wl-site-pin" class="wl-site-pin" hidden>
     <label>Place <input id="wl-pin-place" type="text" placeholder="Town, address, or lat, lon" autocomplete="off" /></label>
     <button type="button" id="wl-pin-go">Go</button>
@@ -1750,7 +1811,7 @@ html.embed .wl-app-main { padding: 0 0.7rem; }
       <option value="">Feeder: village</option>
     </select>
     <button type="button" id="wl-ems-open" title="Pole MeshEMS cabinet">EMS</button>
-    <button type="button" id="wl-anomaly" class="on" title="On: outage / leak / last-breath / cutoff stacks only. Off: hide those customer worldlines. Grid stays.">Anomalies</button>
+    <button type="button" id="wl-anomaly" class="on" title="Village layer: critical meter stacks. A selected feeder, EMS, or meter replaces them with that layer only.">Anomalies</button>
     <button type="button" id="wl-all-customers" title="Every seeded meter stack + pay / reading / SMS. Separate from Anomalies.">All customers</button>
     <button type="button" id="wl-day-outages" title="Highlight every home and line hit by any outage today">Day outages</button>
     <button type="button" data-hide="leak" title="ΔP leak span between boards">Leakage</button>
@@ -1912,6 +1973,16 @@ html.embed .wl-app-main { padding: 0 0.7rem; }
         </div>
     </div>
     <div class="side">
+      <div class="panel panel-zoom" data-modes="operations">
+        <h2>Focus</h2>
+        <div class="zoom-slide is-village" id="wl-zoom-slide" role="radiogroup" aria-label="Focus level">
+          <span class="zoom-slide-thumb" aria-hidden="true"></span>
+          <button type="button" data-zoom="feeder" role="radio" aria-checked="false">Feeder</button>
+          <button type="button" data-zoom="ems" role="radio" aria-checked="false">EMS</button>
+          <button type="button" data-zoom="meter" role="radio" aria-checked="false">Meter</button>
+        </div>
+        <p id="wl-zoom-name" class="zoom-slide-name">Whole village</p>
+      </div>
       <div class="panel panel-productive" data-modes="productive" hidden>
         <h2>Loads</h2>
         <p class="wl-build-cfg-intro">
@@ -2006,7 +2077,7 @@ html.embed .wl-app-main { padding: 0 0.7rem; }
         <pre id="wl-geoid-json">{"type":"FeatureCollection","features":[]}</pre>
       </div>
       <div class="panel panel-kpi" data-modes="operations,productive,energy">
-        <h2>Scoreboard</h2>
+        <h2 id="wl-kpi-title">Scoreboard</h2>
         <div id="wl-kpi-toolbar">
           <label>
             <span class="visually-hidden">KPI category</span>
@@ -2043,8 +2114,8 @@ html.embed .wl-app-main { padding: 0 0.7rem; }
   </div><!-- .wl-app-main -->
   </div><!-- #wl-theater -->
   <div id="wl-stream-panel" class="stream-panel" hidden>
-    <h2>Load signature · <span id="wl-stream-name"></span></h2>
-    <p class="stream-note">Stacked stream of end-use watts (viz-only). Fridge holds a baseline; cooking, laundry, pump, tools fire in short successive bursts — not all appliances on all day. Grows with playhead. Click house in 3D or list.</p>
+    <h2><span id="wl-stream-title">Village load</span> · <span id="wl-stream-name"></span></h2>
+    <p class="stream-note" id="wl-stream-note">End-use watts for the selected feeder, EMS, or meter. Grows with the playhead.</p>
     <svg id="wl-stream" viewBox="0 0 720 168" role="img" aria-label="Load signature streamgraph"></svg>
     <div id="wl-stream-legend" class="legend"></div>
   </div>

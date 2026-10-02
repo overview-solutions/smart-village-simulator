@@ -20,7 +20,7 @@ import {
   slugName,
 } from "./village-project.js";
 import { createCandidateOverlay } from "./village-candidates.js";
-import { buildKpiReport, kpiGroupsForMode, kpiScore, kpiHit, fmtKpi } from "./village-kpi.js";
+import { buildKpiReport, buildZoomKpiReport, kpiGroupsForMode, kpiScore, kpiHit, fmtKpi } from "./village-kpi.js";
 import {
   MODE_HIDE,
   MODE_META,
@@ -30,6 +30,23 @@ import {
   opsSetAllCustomers,
   opsCustomerStackMode,
 } from "./village-modes.js";
+import {
+  FOCUS_CAPTION_KEY,
+  battSpans,
+  buildFocusSamples,
+  collectTimeline,
+  eventVisibleAtLevel,
+  focusCaption,
+  focusLevel,
+  markerVisible,
+  meterMomentIndex,
+  pvSpans,
+  readingInScope,
+  ribbonRgb,
+  sampleAt,
+  timeGroupOriginY,
+  walletInk,
+} from "./village-focus-series.js";
 import {
   USE_CLASSES,
   CRITICAL_ORDER,
@@ -439,11 +456,10 @@ function eventBaseHex(kind) {
 }
 
 function colorForReading(r) {
+  if (r.lastBreathArrived) return new THREE.Color(COL.lastbreath);
+  if (r.lastBreath) return new THREE.Color(COL.lastbreath_lost);
+  if (r.feederOut) return new THREE.Color(COL.fault);
   if (state.scheme === "feeder") return feederColorForHouse(r.houseId);
-  if (state.scheme === "messages") {
-    if (r.lastBreathArrived) return new THREE.Color(COL.lastbreath);
-    if (r.lastBreath) return new THREE.Color(COL.lastbreath_lost);
-  }
   if (state.scheme === "load") {
     const spec = LOAD_TYPES[r.loadType] || LOAD_TYPES.idle;
     return new THREE.Color(spec.hex);
@@ -555,7 +571,7 @@ function rebuildAnomalyIds() {
     if (e.houseId && ANOM_EVENT.has(e.kind)) anomalyIds.add(e.houseId);
   }
   for (const r of day.readings) {
-    if (r.lastBreathArrived || r.lastBreathReason === "channel") anomalyIds.add(r.houseId);
+    if (r.lastBreathArrived || r.lastBreathReason === "channel" || r.feederOut) anomalyIds.add(r.houseId);
   }
 }
 rebuildAnomalyIds();
@@ -568,6 +584,9 @@ function rebuildLiveIndexes() {
   for (const k of Object.keys(HOUSE_IDS_BY_FEEDER)) delete HOUSE_IDS_BY_FEEDER[k];
   for (const h of liveHouses) (HOUSE_IDS_BY_FEEDER[h.feederId] ||= []).push(h.id);
   houseHealthById = null;
+  focusPack = null;
+  focusLeakById = Object.fromEntries(liveLeaks.map((l) => [l.id, l]));
+  focusOutageById = Object.fromEntries(liveOutages.map((o) => [o.id, o]));
   _feederColMin = -1;
   _feederCols = null;
   rebuildAnomalyIds();
@@ -760,6 +779,11 @@ function clearTimeMeshes() {
   }
   spineMeshes.length = 0;
   for (const line of keep) spineMeshes.push(line);
+  for (const m of focusSeriesMeshes) {
+    m.parent?.remove(m);
+    m.geometry?.dispose?.();
+  }
+  focusSeriesMeshes = [];
 }
 
 function syncAnomalyUi() {
@@ -805,6 +829,7 @@ function rebuildLiveTimeMeshes() {
   buildReadings();
   buildDisconnectKnobs();
   buildEvents();
+  buildFocusSeries();
   buildMeshFloor();
   buildMeshPackets();
   buildLastBreaths();
@@ -951,6 +976,12 @@ const spineMeshes = [];
 const timeAxisLabels = [];
 let readingMesh;
 let worldlineMesh;
+/** Collection ribbons (feeder / EMS / roof solar / battery). Not customer stacks. */
+let focusSeriesMeshes = [];
+/** @type {ReturnType<typeof buildFocusSamples> & { moments?: Record<string, { min: number, kind: string, houseId: string }[]> } | null} */
+let focusPack = null;
+let focusLeakById = Object.fromEntries((LEAKS || []).map((l) => [l.id, l]));
+let focusOutageById = Object.fromEntries((OUTAGES || []).map((o) => [o.id, o]));
 let knobMesh;
 let powerLineMesh;
 let poleMesh;
@@ -1077,6 +1108,10 @@ const timeUniforms = {
   uAnomalyOnly: { value: 1 },
   uShowStacks: { value: 1 },
   uFocusHid: { value: -1 },
+  /** 0 village · 1 feeder · 2 EMS · 3 meter */
+  uFocusLevel: { value: 0 },
+  /** Meter stack uses credit ink instead of the village color scheme. */
+  uInk: { value: 0 },
 };
 
 const Y_WORLD_GLSL = `
@@ -1121,11 +1156,15 @@ function makeWorldlineMat() {
     vertexColors: true,
     transparent: true,
     depthWrite: false,
+    depthTest: false,
     uniforms: timeUniforms,
     vertexShader: `
       attribute float tMin;
       attribute float anom;
       attribute float hid;
+      attribute float wal;
+      attribute float fault;
+      attribute float sel;
       varying vec3 vColor;
       varying float vShow;
       varying float vDim;
@@ -1140,12 +1179,15 @@ function makeWorldlineMat() {
       uniform float uAnomalyOnly;
       uniform float uShowStacks;
       uniform float uFocusHid;
+      uniform float uFocusLevel;
+      uniform float uInk;
       ${Y_WORLD_GLSL}
       void main() {
-        vColor = color;
-        float focused = uFocusHid >= 0.0 && abs(hid - uFocusHid) < 0.5 ? 1.0 : 0.0;
-        vShow = (uShowStacks < 0.5) ? 0.0 : (uAnomalyOnly < 0.5 || anom > 0.5 || focused > 0.5) ? 1.0 : 0.0;
-        vDim = uFocusHid < 0.0 || focused > 0.5 ? 1.0 : 0.22;
+        float selShow = sel > 0.5 ? 1.0 : 0.0;
+        vShow = uShowStacks < 0.5 ? 0.0 : selShow;
+        vDim = 1.0;
+        vec3 ink = mix(vec3(0.706, 0.137, 0.094), vec3(0.788, 0.635, 0.153), clamp(wal, 0.0, 1.0));
+        vColor = (uInk > 0.5 && fault < 0.5) ? ink : color;
         vec3 p = vec3(position.x, yWorld(tMin), position.z);
         gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
       }
@@ -1172,6 +1214,7 @@ function makeReadingMat() {
       attribute float tMin;
       attribute float anom;
       attribute float hid;
+      attribute float sel;
       varying vec3 vColor;
       varying float vShow;
       varying float vDim;
@@ -1186,12 +1229,13 @@ function makeReadingMat() {
       uniform float uAnomalyOnly;
       uniform float uShowStacks;
       uniform float uFocusHid;
+      uniform float uFocusLevel;
       ${Y_WORLD_GLSL}
       void main() {
         vColor = instanceColor;
-        float focused = uFocusHid >= 0.0 && abs(hid - uFocusHid) < 0.5 ? 1.0 : 0.0;
-        vShow = (uShowStacks < 0.5) ? 0.0 : (uAnomalyOnly < 0.5 || anom > 0.5 || focused > 0.5) ? 1.0 : 0.0;
-        vDim = uFocusHid < 0.0 || focused > 0.5 ? 1.0 : 0.22;
+        float selShow = sel > 0.5 ? 1.0 : 0.0;
+        vShow = uShowStacks < 0.5 ? 0.0 : selShow;
+        vDim = 1.0;
         vec3 origin = vec3(instanceMatrix[3][0], instanceMatrix[3][1], instanceMatrix[3][2]);
         vec3 scaled = (instanceMatrix * vec4(position, 0.0)).xyz;
         vec3 wp = vec3(origin.x, yWorld(tMin), origin.z) + scaled;
@@ -1221,6 +1265,7 @@ function makeKnobMat() {
       attribute float hid;
       varying vec3 vColor;
       varying float vDim;
+      varying float vShow;
       uniform float uNow;
       uniform float uWindow;
       uniform float uYPerHour;
@@ -1230,10 +1275,12 @@ function makeKnobMat() {
       uniform float uMode;
       uniform float uDay;
       uniform float uFocusHid;
+      uniform float uFocusLevel;
       ${Y_WORLD_GLSL}
       void main() {
         vColor = instanceColor;
         float focused = uFocusHid >= 0.0 && abs(hid - uFocusHid) < 0.5 ? 1.0 : 0.0;
+        vShow = uFocusLevel > 0.5 ? 0.0 : 1.0;
         vDim = uFocusHid < 0.0 || focused > 0.5 ? 1.0 : 0.16;
         vec3 origin = vec3(instanceMatrix[3][0], instanceMatrix[3][1], instanceMatrix[3][2]);
         vec3 scaled = (instanceMatrix * vec4(position, 0.0)).xyz;
@@ -1244,11 +1291,54 @@ function makeKnobMat() {
     fragmentShader: `
       varying vec3 vColor;
       varying float vDim;
+      varying float vShow;
       void main() {
+        if (vShow < 0.5) discard;
         gl_FragColor = vec4(vColor, 0.9 * vDim);
       }
     `,
   });
+}
+
+let focusRibbonMat = null;
+
+function makeFocusRibbonMat() {
+  return new THREE.ShaderMaterial({
+    vertexColors: true,
+    transparent: true,
+    depthWrite: false,
+    depthTest: false,
+    uniforms: timeUniforms,
+    vertexShader: `
+      attribute float tMin;
+      varying vec3 vColor;
+      uniform float uNow;
+      uniform float uWindow;
+      uniform float uYPerHour;
+      uniform float uScrunch;
+      uniform float uBound;
+      uniform float uPastTop;
+      uniform float uMode;
+      uniform float uDay;
+      ${Y_WORLD_GLSL}
+      void main() {
+        vColor = color;
+        vec3 p = vec3(position.x, yWorld(tMin), position.z);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+      }
+    `,
+    fragmentShader: `
+      varying vec3 vColor;
+      void main() {
+        gl_FragColor = vec4(vColor, 0.92);
+      }
+    `,
+  });
+}
+
+function focusRibbonMaterial() {
+  if (!focusRibbonMat) focusRibbonMat = makeFocusRibbonMat();
+  return focusRibbonMat;
 }
 
 function addTime(obj) {
@@ -1350,6 +1440,7 @@ async function boot() {
   scene.add(timeGroup);
   timeStackRoot = new THREE.Group();
   timeStackRoot.name = "time-stack";
+  timeStackRoot.scale.y = 1;
   timeStackRoot.frustumCulled = false;
   scene.add(timeStackRoot);
 
@@ -1368,6 +1459,7 @@ async function boot() {
   buildReadings();
   buildDisconnectKnobs();
   buildEvents();
+  buildFocusSeries();
   buildMeshFloor();
   buildMeshPackets();
   buildLastBreaths();
@@ -1609,13 +1701,17 @@ function syncTimeLayout() {
   }
 }
 
+function placeTimeGroup() {
+  if (!timeGroup) return;
+  const v2 = isV2();
+  timeGroup.scale.y = v2 ? -1 : 1;
+  timeGroup.position.y = timeGroupOriginY(yAt(state.nowMin), 1, v2);
+}
+
 function applyVizMode() {
   const v2 = isV2();
   timeUniforms.uMode.value = v2 ? 1 : 0;
-  if (timeGroup) {
-    timeGroup.scale.y = v2 ? -1 : 1;
-    timeGroup.position.y = v2 ? yAt(state.nowMin) : 0;
-  }
+  placeTimeGroup();
   clipPlanes[0].constant = v2 ? SCRUNCH_H + 0.08 : v1Top() + 2;
   if (nowPlane) nowPlane.material.opacity = v2 ? 0.07 : 0.16;
   if (winBand) winBand.visible = v2;
@@ -2193,7 +2289,7 @@ function addOutageGridSlice(o, min, color, kind, backbone) {
     geo,
     new THREE.LineBasicMaterial({ color, transparent: true, opacity: backbone ? 1 : 0.7 }),
   );
-  line.userData = { kind, min, houseId: null, bakedY: false };
+  line.userData = { kind, min, houseId: null, bakedY: false, outageId: o.id };
   addTime(line);
   eventMeshes.push(line);
 }
@@ -2204,32 +2300,33 @@ function buildOutageColumn() {
     const y1 = yAt(o.restore);
     const h = Math.max(0.4, y1 - y0);
     const cyl = new THREE.Mesh(
-      new THREE.CylinderGeometry(1.6, 1.6, h, 16, 1, true),
+      new THREE.CylinderGeometry(0.36, 0.36, h, 12, 1, true),
       new THREE.MeshBasicMaterial({
         color: COL.outage,
         transparent: true,
-        opacity: 0.14,
+        opacity: 0.1,
         side: THREE.DoubleSide,
         depthWrite: false,
       }),
     );
     cyl.position.set(o.x, y0 + h / 2, o.z);
-    cyl.userData = { kind: "outage", min: o.min, y1: o.restore, baseH: h, houseId: null };
+    cyl.userData = { kind: "outage", min: o.min, y1: o.restore, baseH: h, houseId: null, outageId: o.id };
     addTime(cyl);
     eventMeshes.push(cyl);
 
     const core = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.16, 0.16, h, 8),
+      new THREE.CylinderGeometry(0.045, 0.045, h, 6),
       new THREE.MeshBasicMaterial({ color: COL.fault }),
     );
     core.position.set(o.x, y0 + h / 2, o.z);
-    core.userData = { kind: "outage", min: o.min, y1: o.restore, baseH: h, houseId: null };
+    core.userData = { kind: "outage", min: o.min, y1: o.restore, baseH: h, houseId: null, outageId: o.id };
     addTime(core);
     eventMeshes.push(core);
 
     const faultSpr = timeSprite(`FAULT · ${o.label}`, "#ff6a78", 420);
-    faultSpr.position.set(o.x + 2.4, y0 - 0.9, o.z);
-    faultSpr.userData = { kind: "outage", min: o.min, yOff: -0.9, houseId: null };
+    faultSpr.scale.set(3.6, 0.78, 1);
+    faultSpr.position.set(o.x + 0.7, y0 - 0.35, o.z);
+    faultSpr.userData = { kind: "outage", min: o.min, yOff: -0.9, houseId: null, outageId: o.id };
     addTime(faultSpr);
     eventMeshes.push(faultSpr);
 
@@ -2239,12 +2336,117 @@ function buildOutageColumn() {
   }
 }
 
+function addFocusRibbon(pos, col, tMin, userData) {
+  if (tMin.length < 2) return;
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+  geo.setAttribute("tMin", new THREE.Float32BufferAttribute(tMin, 1));
+  const line = new THREE.LineSegments(geo, focusRibbonMaterial());
+  line.frustumCulled = false;
+  line.renderOrder = 8;
+  line.userData = userData;
+  attachTimeStack(line);
+  focusSeriesMeshes.push(line);
+}
+
+function ribbonFromSamples(samples, x, z, userData) {
+  if (!samples || samples.length < 2) return;
+  const pos = [];
+  const col = [];
+  const tMin = [];
+  for (let i = 0; i < samples.length - 1; i++) {
+    const c = ribbonRgb(samples[i]);
+    pos.push(x, 0, z, x, 0, z);
+    col.push(c[0], c[1], c[2], c[0], c[1], c[2]);
+    tMin.push(samples[i].min, samples[i + 1].min);
+  }
+  addFocusRibbon(pos, col, tMin, userData);
+}
+
+function ribbonFromSpans(spans, x, z, userData) {
+  if (!spans?.length) return;
+  const pos = [];
+  const col = [];
+  const tMin = [];
+  for (const s of spans) {
+    pos.push(x, 0, z, x, 0, z);
+    col.push(s.rgb[0], s.rgb[1], s.rgb[2], s.rgb[0], s.rgb[1], s.rgb[2]);
+    tMin.push(s.min0, s.min1);
+  }
+  addFocusRibbon(pos, col, tMin, userData);
+}
+
+function focusEventIndex() {
+  return {
+    houseById,
+    boardById,
+    leakById: focusLeakById,
+    outageById: focusOutageById,
+  };
+}
+
+function buildFocusSeries() {
+  focusPack = buildFocusSamples({
+    houses: liveHouses,
+    boards: liveBoards,
+    feeders: liveFeeders,
+    readings: day.readings,
+    leaks: liveLeaks,
+    slotMin: SLOT_MIN,
+    pvIds: PV_ROOF_IDS,
+    battIds: BESS_HOME_IDS,
+    sunAt: sunElev,
+  });
+  focusPack.moments = meterMomentIndex(liveHouses, day.readings);
+  for (const f of liveFeeders) {
+    const dtm = liveDtms.find((d) => d.feederId === f.id);
+    ribbonFromSamples(focusPack.feeders[f.id], (dtm?.x ?? f.x) + 1.15, dtm?.z ?? f.z, {
+      focusLayer: "feeder",
+      feederId: f.id,
+    });
+  }
+  for (const b of liveBoards) {
+    ribbonFromSamples(focusPack.boards[b.id], b.x + 0.85, b.z, {
+      focusLayer: "ems",
+      boardId: b.id,
+    });
+  }
+  for (const [id, trace] of Object.entries(focusPack.meters)) {
+    const h = houseById[id];
+    if (!h) continue;
+    ribbonFromSpans(pvSpans(trace), h.x + 0.72, h.z, { focusLayer: "meter-pv", houseId: id });
+    ribbonFromSpans(battSpans(trace), h.x - 0.72, h.z, { focusLayer: "meter-batt", houseId: id });
+  }
+  for (const moments of Object.values(focusPack.moments)) {
+    for (const mo of moments) {
+      if (mo.kind === "token_out" && day.events.some((e) => e.kind === "disconnect" && e.houseId === mo.houseId && Math.abs(e.min - mo.min) <= 2)) {
+        continue;
+      }
+      const h = houseById[mo.houseId];
+      if (!h) continue;
+      const token = mo.kind === "token_out";
+      const mesh = new THREE.Mesh(
+        token ? new THREE.OctahedronGeometry(0.32) : new THREE.SphereGeometry(0.2, 10, 8),
+        new THREE.MeshBasicMaterial({ color: token ? COL.disconnect : COL.fault }),
+      );
+      mesh.position.set(h.x, yAt(mo.min), h.z);
+      mesh.userData = { kind: mo.kind, min: mo.min, houseId: mo.houseId, focusLayer: "meter-moment" };
+      addTime(mesh);
+      eventMeshes.push(mesh);
+    }
+  }
+}
+
 function buildWorldlines() {
   const pos = [];
   const col = [];
   const tMin = [];
   const anom = [];
   const hid = [];
+  const wal = [];
+  const fault = [];
+  const sel = [];
   const byHouse = Object.fromEntries(liveHouses.map((h) => [h.id, []]));
   for (const r of day.readings) {
     if (byHouse[r.houseId]) byHouse[r.houseId].push(r);
@@ -2260,6 +2462,11 @@ function buildWorldlines() {
       tMin.push(a.min, b.min);
       anom.push(an, an);
       hid.push(hi, hi);
+      const ink = walletInk(a.wallet);
+      wal.push(ink, ink);
+      const bad = a.feederOut || a.lastBreath ? 1 : 0;
+      fault.push(bad, bad);
+      sel.push(0, 0);
       const c = colorForReading(a);
       col.push(c.r, c.g, c.b, c.r, c.g, c.b);
     }
@@ -2270,8 +2477,12 @@ function buildWorldlines() {
   geo.setAttribute("tMin", new THREE.Float32BufferAttribute(tMin, 1));
   geo.setAttribute("anom", new THREE.Float32BufferAttribute(anom, 1));
   geo.setAttribute("hid", new THREE.Float32BufferAttribute(hid, 1));
+  geo.setAttribute("wal", new THREE.Float32BufferAttribute(wal, 1));
+  geo.setAttribute("fault", new THREE.Float32BufferAttribute(fault, 1));
+  geo.setAttribute("sel", new THREE.Float32BufferAttribute(sel, 1));
   worldlineMesh = new THREE.LineSegments(geo, makeWorldlineMat());
   worldlineMesh.frustumCulled = false;
+  worldlineMesh.renderOrder = 8;
   attachTimeStack(worldlineMesh);
 
   const ops = opsXZ();
@@ -2298,6 +2509,7 @@ function buildReadings() {
   const tArr = new Float32Array(n);
   const aArr = new Float32Array(n);
   const hArr = new Float32Array(n);
+  const sArr = new Float32Array(n);
   day.readings.forEach((r, i) => {
     const h = houseById[r.houseId];
     dummy.position.set(h.x, 0, h.z);
@@ -2314,6 +2526,7 @@ function buildReadings() {
   readingMesh.geometry.setAttribute("tMin", new THREE.InstancedBufferAttribute(tArr, 1));
   readingMesh.geometry.setAttribute("anom", new THREE.InstancedBufferAttribute(aArr, 1));
   readingMesh.geometry.setAttribute("hid", new THREE.InstancedBufferAttribute(hArr, 1));
+  readingMesh.geometry.setAttribute("sel", new THREE.InstancedBufferAttribute(sArr, 1));
   readingMesh.instanceColor.needsUpdate = true;
   readingMesh.userData.kind = "reading";
   readingMesh.frustumCulled = false;
@@ -2496,13 +2709,13 @@ function buildEvents() {
       const px = o?.x ?? LANDMARKS.xfmr.x;
       const pz = o?.z ?? LANDMARKS.xfmr.z;
       const m = new THREE.Mesh(
-        e.kind === "outage" ? new THREE.OctahedronGeometry(0.82) : new THREE.SphereGeometry(0.32, 12, 12),
+        e.kind === "outage" ? new THREE.OctahedronGeometry(0.2) : new THREE.SphereGeometry(0.14, 10, 8),
         e.kind === "outage"
           ? new THREE.MeshBasicMaterial({ color })
           : new THREE.MeshLambertMaterial({ color }),
       );
       m.position.set(px, y, pz);
-      m.userData = { kind: e.kind, min: e.min, houseId: null };
+      m.userData = { kind: e.kind, min: e.min, houseId: null, outageId: e.outageId || null };
       addTime(m);
       eventMeshes.push(m);
       if (e.kind === "repair") {
@@ -2510,7 +2723,7 @@ function buildEvents() {
         const a = new THREE.Vector3(opsAt.x, y, opsAt.z);
         const b = new THREE.Vector3(px, y, pz);
         const line = curve(a, b, 1.1, COL.repair, false);
-        line.userData = { kind: "repair", min: e.min, houseId: null };
+        line.userData = { kind: "repair", min: e.min, houseId: null, outageId: e.outageId || null };
         addTime(line);
         eventMeshes.push(line);
       }
@@ -2522,7 +2735,7 @@ function buildEvents() {
         new THREE.MeshLambertMaterial({ color: COL.phase_xfer }),
       );
       bead.position.set(h.x, y, h.z);
-      bead.userData = { kind: "phase_xfer", min: e.min, houseId: e.houseId };
+      bead.userData = { kind: "phase_xfer", min: e.min, houseId: e.houseId, feederId: e.feederId || null };
       addTime(bead);
       eventMeshes.push(bead);
       const line = curve(
@@ -2532,7 +2745,7 @@ function buildEvents() {
         COL.phase_xfer,
         true,
       );
-      line.userData = { kind: "phase_xfer", min: e.min, houseId: e.houseId };
+      line.userData = { kind: "phase_xfer", min: e.min, houseId: e.houseId, feederId: e.feederId || null };
       addTime(line);
       eventMeshes.push(line);
       const dest = new THREE.Mesh(
@@ -2540,7 +2753,7 @@ function buildEvents() {
         new THREE.MeshLambertMaterial({ color: COL.dtm }),
       );
       dest.position.set(dtm.x, y, dtm.z);
-      dest.userData = { kind: "phase_xfer", min: e.min, houseId: e.houseId };
+      dest.userData = { kind: "phase_xfer", min: e.min, houseId: e.houseId, feederId: e.feederId || null };
       addTime(dest);
       eventMeshes.push(dest);
     }
@@ -2549,11 +2762,11 @@ function buildEvents() {
       if (!lk) continue;
       const hex = e.kind === "leak" ? COL.leak : COL.restore;
       const mid = new THREE.Mesh(
-        e.kind === "leak" ? new THREE.OctahedronGeometry(0.48) : new THREE.SphereGeometry(0.22, 10, 10),
+        e.kind === "leak" ? new THREE.OctahedronGeometry(0.12) : new THREE.SphereGeometry(0.08, 8, 6),
         new THREE.MeshBasicMaterial({ color: hex }),
       );
       mid.position.set(lk.x, y, lk.z);
-      mid.userData = { kind: e.kind, min: e.min, houseId: null };
+      mid.userData = { kind: e.kind, min: e.min, houseId: null, leakId: e.leakId || null };
       addTime(mid);
       eventMeshes.push(mid);
       if (e.kind === "leak") {
@@ -2564,7 +2777,7 @@ function buildEvents() {
           COL.leak,
           true,
         );
-        line.userData = { kind: "leak", min: e.min, houseId: null };
+        line.userData = { kind: "leak", min: e.min, houseId: null, leakId: e.leakId || null };
         addTime(line);
         eventMeshes.push(line);
       }
@@ -2589,7 +2802,7 @@ function addMeshPacket(ids, min, color, kind, houseId, dashed, opacity = 0.9, dy
     : new THREE.LineBasicMaterial({ color, transparent: true, opacity });
   const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), mat);
   if (dashed) line.computeLineDistances();
-  line.userData = { kind, min, houseId, lineHops: ids.length, dyScale };
+  line.userData = { kind, min, houseId, lineHops: ids.length, dyScale, span: "path" };
   line.frustumCulled = false;
   addTime(line);
   eventMeshes.push(line);
@@ -2601,7 +2814,7 @@ function addMeshPacket(ids, min, color, kind, houseId, dashed, opacity = 0.9, dy
       new THREE.MeshLambertMaterial({ color, transparent: true, opacity }),
     );
     bead.position.set(p.x, yAt(min) - i * dy, p.z);
-    bead.userData = { kind, min, houseId, hopI: i, dyScale, hops: ids.length };
+    bead.userData = { kind, min, houseId, hopI: i, dyScale, hops: ids.length, span: "path" };
     bead.frustumCulled = false;
     addTime(bead);
     eventMeshes.push(bead);
@@ -3299,10 +3512,10 @@ function buildLeaks() {
     const dz = lk.bz - lk.az;
     const len = Math.hypot(dx, dz) || 1;
     const yaw = Math.atan2(dx, dz);
+    const ux = dx / len;
+    const uz = dz / len;
     const mx = (lk.ax + lk.bx) / 2;
     const mz = (lk.az + lk.bz) / 2;
-    const corridorW = Math.max(2.6, feederBufWidth("primary") * 1.35);
-    const pickH = LINE_HANG + 0.85;
     const pick = new THREE.Mesh(
       new THREE.BoxGeometry(1, 1, 1),
       new THREE.MeshBasicMaterial({
@@ -3313,46 +3526,61 @@ function buildLeaks() {
         side: THREE.DoubleSide,
       }),
     );
-    pick.position.set(mx, pickH / 2, mz);
+    pick.position.set(mx, LINE_HANG, mz);
     pick.rotation.y = yaw;
-    pick.scale.set(corridorW, pickH, len + 1.4);
+    pick.scale.set(0.7, 0.8, len);
     leakMark(pick, lk, "pick");
     const ground = new THREE.Mesh(
       new THREE.BoxGeometry(1, 1, 1),
       new THREE.MeshBasicMaterial({
         color: COL.leak,
         transparent: true,
-        opacity: 0.95,
-        depthWrite: true,
+        opacity: 0.22,
+        depthWrite: false,
+        polygonOffset: true,
+        polygonOffsetFactor: -1,
+        polygonOffsetUnits: -1,
       }),
     );
-    ground.position.set(mx, Y_FEEDER + 0.14, mz);
+    ground.position.set(mx, Y_FEEDER + 0.02, mz);
     ground.rotation.y = yaw;
-    ground.scale.set(corridorW, 0.18, len);
+    ground.scale.set(0.28, 0.012, Math.max(0.4, len - 0.35));
     leakMark(ground, lk, "ground");
-    const bar = new THREE.Mesh(
-      new THREE.BoxGeometry(1, 1, 1),
-      new THREE.MeshBasicMaterial({ color: COL.leak }),
-    );
-    bar.position.set(mx, LINE_HANG + 0.4, mz);
-    bar.rotation.y = yaw;
-    bar.scale.set(0.55, 0.72, len);
-    leakMark(bar, lk, "span");
+    const spanMat = new THREE.MeshBasicMaterial({
+      color: COL.leak,
+      transparent: true,
+      opacity: 0.9,
+      depthWrite: false,
+    });
+    const dash = 0.36;
+    const gap = 0.2;
+    const step = dash + gap;
+    const n = Math.max(1, Math.floor((len - 0.25) / step));
+    for (let i = 0; i < n; i++) {
+      const t = 0.16 + (i + 0.5) * step;
+      if (t > len - 0.12) break;
+      const tick = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.025, dash), spanMat);
+      tick.position.set(lk.ax + ux * t, LINE_HANG + 0.08, lk.az + uz * t);
+      tick.rotation.y = yaw;
+      leakMark(tick, lk, "span");
+    }
+    const capMat = new THREE.MeshBasicMaterial({
+      color: COL.leak,
+      transparent: true,
+      opacity: 0.95,
+      depthWrite: false,
+    });
     for (const [x, z] of [
       [lk.ax, lk.az],
       [lk.bx, lk.bz],
     ]) {
-      const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(0.78, 0.14, 10, 22),
-        new THREE.MeshBasicMaterial({ color: COL.leak }),
-      );
-      ring.rotation.x = Math.PI / 2;
-      ring.position.set(x, LINE_HANG + 0.5, z);
-      leakMark(ring, lk, "ring");
+      const cap = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 6), capMat);
+      cap.position.set(x, LINE_HANG + 0.1, z);
+      leakMark(cap, lk, "ring");
     }
     const spr = timeSprite(`ΔP ${lk.leakW} W`, "#ffb8ff", 280);
-    spr.scale.set(8.4, 1.8, 1);
-    spr.position.set(lk.x, LINE_HANG + 2.15, lk.z);
+    spr.scale.set(3.2, 0.72, 1);
+    spr.position.set(lk.x, LINE_HANG + 0.55, lk.z);
     leakMark(spr, lk, "label");
   }
   updateLeakViz();
@@ -3370,7 +3598,17 @@ function updateLeakViz() {
       continue;
     }
     const layer = m.userData.leakLayer;
-    m.visible = showAll && (fid ? lk.feederId === fid : layer !== "ground" && layer !== "pick");
+    const level = focusLevel(state.scope);
+    const onEms = lk.fromBoardId === state.scopeBoard || lk.toBoardId === state.scopeBoard;
+    m.visible =
+      showAll &&
+      (level === "meter"
+        ? false
+        : level === "ems"
+          ? onEms
+          : fid
+            ? lk.feederId === fid
+            : layer !== "ground" && layer !== "pick");
     if (!m.visible) continue;
     const live = leakLive(lk);
     if (m.material?.color) m.material.color.copy(live ? liveCol : mapCol);
@@ -3381,16 +3619,21 @@ function updateLeakViz() {
       m.material.depthWrite = false;
     } else if (layer === "ground") {
       m.material.transparent = true;
-      m.material.opacity = live ? 0.98 : 0.88;
-      m.material.depthWrite = true;
+      m.material.opacity = live ? 0.34 : 0.14;
+      m.material.depthWrite = false;
     } else if (layer === "label") {
       m.material.transparent = true;
-      m.material.opacity = 1;
-      const k = fid ? 1.35 : 1.12;
-      m.scale.set(8.4 * k, 1.8 * k, 1);
+      m.material.opacity = live ? 1 : 0.75;
+      const k = fid ? 1.05 : 1;
+      m.scale.set(3.2 * k, 0.72 * k, 1);
+    } else if (layer === "span" || layer === "ring") {
+      m.material.transparent = true;
+      m.material.opacity = live ? 0.95 : 0.55;
+      m.material.depthWrite = false;
     } else {
-      m.material.transparent = false;
-      m.material.opacity = 1;
+      m.material.transparent = true;
+      m.material.opacity = live ? 0.9 : 0.5;
+      m.material.depthWrite = false;
     }
   }
 }
@@ -3988,7 +4231,7 @@ function setNow(min) {
     lastUiMin = Math.floor(state.nowMin);
     return;
   }
-  if (timeGroup) timeGroup.position.y = isV2() ? yAt(state.nowMin) : 0;
+  if (timeGroup) placeTimeGroup();
   timeUniforms.uNow.value = state.nowMin;
   placeSun(state.nowMin);
   if (nowPlane) nowPlane.position.y = Y_NOW;
@@ -4010,6 +4253,63 @@ function setNow(min) {
   if (scrub && document.activeElement !== scrub) scrub.value = String(imin);
   fillLog();
   fillHouses();
+  paintFocusCaption();
+}
+
+function paintFocusCaption() {
+  const el = document.getElementById("wl-focus-caption");
+  if (!el) return;
+  if (quietClockMode()) {
+    el.textContent = "";
+    el.title = "";
+    return;
+  }
+  const level = focusLevel(state.scope);
+  el.title = FOCUS_CAPTION_KEY[level] || "";
+  let sample = null;
+  if (level === "feeder") sample = sampleAt(focusPack?.feeders?.[state.scope?.id], state.nowMin);
+  else if (level === "ems") sample = sampleAt(focusPack?.boards?.[state.scopeBoard], state.nowMin);
+  else if (level === "meter" && state.focus) {
+    const r = readingAt(state.focus, state.nowMin);
+    const slot = Math.floor(state.nowMin / SLOT_MIN);
+    const hi = houseIndex[state.focus];
+    const prev = slot > 0 && hi != null ? day.readings[(slot - 1) * HOUSE_N + hi] : null;
+    const g = sampleAt(focusPack?.meters?.[state.focus], state.nowMin);
+    if (r) {
+      sample = {
+        wallet: r.wallet,
+        on: r.on,
+        feederOut: !!r.feederOut,
+        tokenOut: !!(prev && prev.wallet > 0 && (r.wallet || 0) <= 0 && !r.feederOut),
+        pvW: g?.pvW || 0,
+        battMode: g?.battMode || "idle",
+      };
+    }
+  }
+  el.textContent = focusCaption(level, sample);
+}
+
+function syncReadingSelection() {
+  const attr = readingMesh?.geometry?.getAttribute("sel");
+  if (!attr) return;
+  const arr = attr.array;
+  const n = Math.min(arr.length, day.readings.length);
+  for (let i = 0; i < n; i++) arr[i] = readingInScope(houseById[day.readings[i].houseId], state.scope) ? 1 : 0;
+  attr.needsUpdate = true;
+}
+
+function syncStackSelection() {
+  syncReadingSelection();
+  const attr = worldlineMesh?.geometry?.getAttribute("sel");
+  const hidAttr = worldlineMesh?.geometry?.getAttribute("hid");
+  if (!attr || !hidAttr) return;
+  const arr = attr.array;
+  const hids = hidAttr.array;
+  for (let i = 0; i < arr.length; i++) {
+    const h = liveHouses[hids[i]];
+    arr[i] = readingInScope(h, state.scope) ? 1 : 0;
+  }
+  attr.needsUpdate = true;
 }
 
 function applyTimeStackVisibility() {
@@ -4018,9 +4318,14 @@ function applyTimeStackVisibility() {
   const hideStack = noWorldlines || state.hide.worldline || !hasLive;
   const stackMode = opsCustomerStackMode(state.anomalyOnly, state.showAllCustomers);
   const showStacks = stackMode !== "hidden";
+  const level = focusLevel(state.scope);
+  const focusLive = hasLive && !noWorldlines && !state.hide.worldline;
+  const levelN = level === "meter" ? 3 : level === "ems" ? 2 : level === "feeder" ? 1 : 0;
 
-  if (worldlineMesh) worldlineMesh.visible = hasLive && !noWorldlines && !state.hide.worldline && showStacks;
-  if (readingMesh) readingMesh.visible = hasLive && !noWorldlines && !state.hide.reading && showStacks;
+  const selected = level === "feeder" || level === "ems" || level === "meter";
+  if (worldlineMesh) worldlineMesh.visible = focusLive && selected;
+  if (readingMesh) readingMesh.visible = focusLive && selected;
+  if (selected) syncStackSelection();
   if (timeGroup) timeGroup.visible = !hideStack;
   if (timeStackRoot) timeStackRoot.visible = !hideStack;
   if (nowPlane) nowPlane.visible = hasLive && !noWorldlines;
@@ -4032,19 +4337,58 @@ function applyTimeStackVisibility() {
   if (sprFut) sprFut.visible = hasLive && !noWorldlines && isV2();
   for (const line of spineMeshes) if (line) line.visible = !hideStack;
 
-  if (knobMesh) knobMesh.visible = hasLive && appMode !== "build" && !state.hide.disconnect && showStacks;
+  if (knobMesh) knobMesh.visible = hasLive && appMode !== "build" && !state.hide.disconnect && showStacks && level === "village";
   for (const m of rfFloorMeshes) m.visible = hasLive && appMode !== "build" && !state.hide.rf;
-  timeUniforms.uShowStacks.value = showStacks && appMode !== "build" ? 1 : 0;
+  timeUniforms.uShowStacks.value = focusLive && (level === "village" ? showStacks : true) ? 1 : 0;
+  timeUniforms.uFocusLevel.value = levelN;
+  timeUniforms.uInk.value = level === "meter" ? 1 : 0;
   timeUniforms.uAnomalyOnly.value = appMode === "build" || stackMode === "all" ? 0 : 1;
   timeUniforms.uFocusHid.value = state.focus == null ? -1 : houseIndex[state.focus];
 
+  const idx = focusEventIndex();
+  for (const line of focusSeriesMeshes) {
+    const layer = line.userData.focusLayer;
+    let show = false;
+    if (focusLive && level === "feeder" && layer === "feeder") show = line.userData.feederId === state.scope?.id;
+    else if (focusLive && level === "ems" && layer === "ems") show = line.userData.boardId === state.scopeBoard;
+    else if (focusLive && level === "meter" && (layer === "meter-pv" || layer === "meter-batt")) {
+      show = line.userData.houseId === state.focus;
+    }
+    line.visible = show;
+  }
+
   for (const m of eventMeshes) {
-    if (!hasLive || (noWorldlines && appMode === "build") || !showStacks) {
+    if (!hasLive || (noWorldlines && appMode === "build")) {
       m.visible = false;
       continue;
     }
     const kind = m.userData.kind;
     if (!kind) continue;
+    if (level === "village") {
+      m.visible = false;
+      continue;
+    }
+    if (!noWorldlines) {
+      const forcedPhase = (level === "feeder" || level === "ems") && kind === "phase_xfer";
+      const hideLeak = (kind === "leak" || kind === "leak_clear") && !!state.hide.leak;
+      const hidePay = (kind === "pay" || kind === "credit") && !!state.hide.pay;
+      const hideSms = kind === "sms" && !!state.hide.sms && m.userData.houseId !== state.focus;
+      const hideCut =
+        (kind === "disconnect" || kind === "reconnect" || kind === "overload" || kind === "token_out") &&
+        !!state.hide.disconnect;
+      m.visible =
+        markerVisible(m.userData, state.scope, idx) &&
+        (forcedPhase || (!hideLeak && !hidePay && !hideSms && !hideCut));
+      if (m.material && "opacity" in m.material) {
+        m.material.transparent = true;
+        m.material.opacity = m.userData.baseOpacity ?? 1;
+      }
+      continue;
+    }
+    if (!showStacks) {
+      m.visible = false;
+      continue;
+    }
     // Build/Maintenance: never show time-axis crumbs (they ride the worldline stack).
     if (
       noWorldlines &&
@@ -4077,6 +4421,7 @@ function applyTimeStackVisibility() {
       m.material.opacity = dim ? 0.18 : base;
     }
   }
+  paintFocusCaption();
 }
 
 function applyVisibility() {
@@ -4908,6 +5253,7 @@ function setScope(scope, opts = {}) {
     else if (next.kind === "village") buildMode?.selectRun?.(null);
   }
   fillHouses(true);
+  fillKpi();
   fillGeoid();
   writeQuery({
     feeder: next.kind === "feeder" ? next.id : "",
@@ -5087,14 +5433,22 @@ function bindStagePick() {
   });
 
   map.on("style.load", enableGestures);
+  map.on("move", () => applyStackScale(map.getZoom()));
   map.on("moveend", syncThreeCamFromMap);
   syncThreeCamFromMap();
+}
+
+/** Map zoom does not rescale minute-to-Y. Lock both groups to scale ±1 so crumbs and beads share yWorld. */
+function applyStackScale(_zoom) {
+  if (timeStackRoot) timeStackRoot.scale.y = 1;
+  placeTimeGroup();
 }
 
 /** Keep legacy camera/controls pose aligned with the visible MapLibre view. */
 function syncThreeCamFromMap() {
   if (!locusMap || !camera || !controls) return;
   const v = locusMap.camera.getView();
+  applyStackScale(v.zoom);
   const tx = v.x / GROUND_SCALE;
   const tz = v.z / GROUND_SCALE;
   controls.target.set(tx, 0.4, tz);
@@ -6581,6 +6935,15 @@ function svgScoreRing(hit, miss, size = 64) {
 }
 
 function kpiGaugeHtml(r) {
+  if (r.kind === "figure") {
+    const actualTxt = `${fmtKpi(r, "actual")}${r.uom === "#" || r.uom === "$" ? "" : ` ${r.uom}`}`;
+    return `<div class="kpi-gauge kpi-figure" role="listitem">
+      <div class="kpi-gauge-top">
+        <span class="kpi-name">${esc(r.label)}</span>
+        <span class="kpi-actual">${esc(actualTxt)}</span>
+      </div>
+    </div>`;
+  }
   const hit = kpiHit(r);
   const scale = Math.max(Math.abs(r.actual), Math.abs(r.target), 1) * 1.12;
   const fillPct = Math.min(100, (Math.abs(r.actual) / scale) * 100);
@@ -6588,7 +6951,7 @@ function kpiGaugeHtml(r) {
   const actualTxt = `${fmtKpi(r, "actual")}${r.uom === "#" || r.uom === "$" ? "" : ` ${r.uom}`}`;
   const uomSuffix = r.uom === "#" ? "" : ` ${r.uom}`;
   return `<button type="button" class="kpi-gauge${kpiUi.focusId === r.id ? " is-focus" : ""}" role="listitem"
-    data-kpi="${esc(r.id)}" data-focus="${esc(r.focus || "")}" title="Focus: ${esc(r.focus || r.id)}">
+    data-kpi="${esc(r.id)}" data-focus="${esc(r.focus || "")}" title="${r.focus === "report" ? esc(r.label) : `Focus: ${esc(r.focus || r.id)}`}">
     <div class="kpi-gauge-top">
       <span class="kpi-name">${esc(r.label)}</span>
       <span class="kpi-actual ${hit ? "is-hit" : "is-miss"}">${esc(actualTxt)}</span>
@@ -6699,12 +7062,45 @@ function fillStats() {
 /** @type {{ cat: string, missOnly: boolean, focusId: string | null, report: ReturnType<typeof buildKpiReport> | null }} */
 const kpiUi = { cat: "all", missOnly: false, focusId: null, report: null };
 
+function zoomKpiInput() {
+  const s = state.scope || { kind: "village" };
+  const house = state.focus ? houseById[state.focus] : null;
+  const board = state.scopeBoard ? boardById[state.scopeBoard] : null;
+  const feeder = s.kind === "feeder" ? liveFeeders.find((f) => f.id === s.id) : null;
+  return {
+    scope: s,
+    houses: liveHouses,
+    boardById,
+    readings: day.readings,
+    events: day.events,
+    leaks: liveLeaks,
+    outages: liveOutages,
+    slotMin: SLOT_MIN,
+    labels: {
+      feeder: feeder?.label || feeder?.id,
+      board: board?.label,
+      house: house ? `${house.name} · ${house.serial}` : null,
+    },
+  };
+}
+
 function fillKpi() {
   const board = document.getElementById("wl-kpi-board");
   const head = document.getElementById("wl-kpi-head");
   const catEl = document.getElementById("wl-kpi-cat");
+  const titleEl = document.getElementById("wl-kpi-title");
+  const noteEl = document.getElementById("wl-kpi-note");
   if (!board) return;
-  const report = buildKpiReport(day, { houseN: liveHouses.length, scopeFeederId: activeFeederId() });
+  const zoom = appMode === "operations";
+  if (titleEl) titleEl.textContent = zoom ? "Meter report" : "Scoreboard";
+  if (noteEl) {
+    noteEl.textContent = zoom
+      ? "Full day for the meters in this zoom. Bars are schematic thresholds. Plain numbers have no target."
+      : "Schematic demo figures · click a metric to focus related map layers.";
+  }
+  const report = zoom
+    ? buildZoomKpiReport(zoomKpiInput())
+    : buildKpiReport(day, { houseN: liveHouses.length, scopeFeederId: activeFeederId() });
   kpiUi.report = report;
   const groups = kpiGroupsForMode(report.groups, appMode);
   const { hitN, missN } = kpiScore(groups);
@@ -6745,6 +7141,10 @@ function fillKpi() {
 function focusKpiRow(focusKey, kpiId) {
   kpiUi.focusId = kpiId || null;
   const key = focusKey || "";
+  if (key === "report") {
+    fillKpi();
+    return;
+  }
   if (key === "production") {
     state.anomalyOnly = false;
     state.showAllCustomers = false;
@@ -6845,9 +7245,14 @@ function fillLedger() {
 function fillLog() {
   const el = document.getElementById("wl-log");
   if (!el) return;
-  const rows = day.events.filter(
-    (e) => e.min <= state.nowMin && e.kind !== "reading" && e.kind !== "off" && (!state.focus || e.houseId === state.focus || !e.houseId),
-  );
+  const level = focusLevel(state.scope);
+  const idx = focusEventIndex();
+  const rows = day.events.filter((e) => {
+    if (e.min > state.nowMin || e.kind === "reading" || e.kind === "off") return false;
+    if (e.kind === "sms" && state.hide.sms && e.houseId !== state.focus) return false;
+    if (level === "village") return !state.focus || e.houseId === state.focus || !e.houseId;
+    return eventVisibleAtLevel(e, state.scope, idx);
+  });
   const last = rows.slice(-8).reverse();
   el.innerHTML = last
     .map((e) => {
@@ -7745,6 +8150,7 @@ function fillFeederSelect() {
       if (appMode === "build") fillBuildPanel();
     });
   }
+  syncZoomPicks();
 }
 
 function syncFeederSelect() {
@@ -7753,6 +8159,93 @@ function syncFeederSelect() {
     const el = document.getElementById(id);
     if (el && el.value !== fid) el.value = fid;
   }
+  syncZoomPicks();
+}
+
+let zoomPickBound = false;
+
+function meterPickLabel(h) {
+  const name = h.name || h.id;
+  return h.serial ? `${name} · ${h.serial}` : name;
+}
+
+function metersOnBoard(bid) {
+  const ids = boardById[bid]?.houseIds;
+  const list = ids?.length
+    ? ids.map((id) => houseById[id]).filter(Boolean)
+    : liveHouses.filter((h) => h.boardId === bid);
+  return list.sort((a, b) => String(a.name || a.id).localeCompare(String(b.name || b.id)));
+}
+
+function zoomLevelNow() {
+  const s = state.scope || {};
+  if (state.focus || s.houseId || s.kind === "house") return "meter";
+  if (state.scopeBoard || s.boardId || s.kind === "board") return "ems";
+  if (activeFeederId()) return "feeder";
+  return "village";
+}
+
+function zoomNameNow(level) {
+  if (level === "meter" && state.focus && houseById[state.focus]) return meterPickLabel(houseById[state.focus]);
+  if (level === "ems" && state.scopeBoard && boardById[state.scopeBoard]) {
+    return boardById[state.scopeBoard].label || state.scopeBoard;
+  }
+  const fid = activeFeederId();
+  if (level === "feeder" && fid) {
+    const f = liveFeeders.find((x) => x.id === fid);
+    return f?.label || fid;
+  }
+  return "Whole village";
+}
+
+function applyZoomLevel(level) {
+  let fid = activeFeederId() || liveFeeders[0]?.id || null;
+  if (!fid) return;
+  if (level === "feeder") {
+    setScope({ kind: "feeder", id: fid }, { cam: true, from: "pick" });
+    return;
+  }
+  let bid = state.scopeBoard;
+  if (!bid || boardById[bid]?.feederId !== fid) {
+    const focused = state.focus ? houseById[state.focus] : null;
+    bid = focused?.feederId === fid ? focused.boardId : boardsOnFeeder(fid)[0]?.id || null;
+  }
+  if (!bid) {
+    setScope({ kind: "feeder", id: fid }, { cam: true, from: "pick" });
+    return;
+  }
+  if (level === "ems") {
+    setScope({ kind: "feeder", id: fid, boardId: bid }, { cam: true, from: "pick" });
+    return;
+  }
+  const focused = state.focus ? houseById[state.focus] : null;
+  const hid = focused?.boardId === bid ? focused.id : metersOnBoard(bid)[0]?.id || null;
+  if (!hid) setScope({ kind: "feeder", id: fid, boardId: bid }, { cam: true, from: "pick" });
+  else setScope({ kind: "feeder", id: fid, boardId: bid, houseId: hid }, { cam: true, from: "pick" });
+}
+
+function syncZoomPicks() {
+  const slide = document.getElementById("wl-zoom-slide");
+  const nameEl = document.getElementById("wl-zoom-name");
+  if (!slide) return;
+  const level = state.role === "customer" ? "meter" : zoomLevelNow();
+  slide.classList.remove("is-village", "is-feeder", "is-ems", "is-meter");
+  slide.classList.add(`is-${level}`);
+  slide.querySelectorAll("button[data-zoom]").forEach((btn) => {
+    const on = btn.getAttribute("data-zoom") === level;
+    btn.classList.toggle("on", on);
+    btn.setAttribute("aria-checked", on ? "true" : "false");
+  });
+  if (nameEl) nameEl.textContent = zoomNameNow(level);
+  if (zoomPickBound) return;
+  zoomPickBound = true;
+  slide.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-zoom]");
+    if (!btn || state.role === "customer") return;
+    const level = btn.getAttribute("data-zoom");
+    if (!level || level === zoomLevelNow()) return;
+    applyZoomLevel(level);
+  });
 }
 
 function fillUseClassLegend() {
@@ -8511,20 +9004,68 @@ function hexCss(n) {
   return `#${n.toString(16).padStart(6, "0")}`;
 }
 
-function drawStream() {
-  const panel = document.getElementById("wl-stream-panel");
-  const svg = document.getElementById("wl-stream");
-  const nameEl = document.getElementById("wl-stream-name");
-  const legend = document.getElementById("wl-stream-legend");
-  if (!panel || !svg) return;
-  if (!state.focus) {
-    panel.hidden = true;
-    return;
-  }
-  panel.hidden = false;
-  const house = houseById[state.focus];
-  if (nameEl) nameEl.textContent = house ? `${house.name} · ${house.serial}` : state.focus;
+function currentTimeline() {
+  const mix = STREAM_KEYS.map((k) => ({
+    id: k,
+    label: LOAD_TYPES[k]?.label || k,
+    color: hexCss(LOAD_TYPES[k]?.hex || 0x888888),
+  }));
+  const s = state.scope || { kind: "village" };
+  const house = state.focus ? houseById[state.focus] : null;
+  const board = state.scopeBoard ? boardById[state.scopeBoard] : null;
+  const feeder = s.kind === "feeder" ? liveFeeders.find((f) => f.id === s.id) : null;
+  return collectTimeline({
+    scope: s,
+    houses: liveHouses,
+    boardById,
+    readings: day.readings,
+    leaks: liveLeaks,
+    outages: liveOutages,
+    nowMin: state.nowMin,
+    slotMin: SLOT_MIN,
+    mix,
+    labels: {
+      feeder: feeder?.label || feeder?.id,
+      board: board?.label,
+      house: house ? `${house.name} · ${house.serial}` : null,
+    },
+  });
+}
 
+function timelineBands(tl) {
+  const n = tl.mins.length;
+  const tops = tl.layers.map(() => []);
+  const bots = tl.layers.map(() => []);
+  const centered = tl.level === "village";
+  let yMin = 0;
+  let yMax = 1;
+  for (let i = 0; i < n; i++) {
+    let total = 0;
+    for (const layer of tl.layers) total += layer.values[i] || 0;
+    let run = centered ? -total / 2 : 0;
+    if (run < yMin) yMin = run;
+    if (run + total > yMax) yMax = run + total;
+    for (let li = 0; li < tl.layers.length; li++) {
+      bots[li].push(run);
+      run += tl.layers[li].values[i] || 0;
+      tops[li].push(run);
+    }
+  }
+  return { tops, bots, yMin, yMax };
+}
+
+function timelineAxisTicks(bands) {
+  const vals = bands.yMin < -1 ? [bands.yMin, 0, bands.yMax] : [0, bands.yMax];
+  const seen = new Set();
+  return vals.filter((w) => {
+    const key = Math.round(w);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function timelineSvg(tl) {
   const W = 720;
   const H = 168;
   const padL = 44;
@@ -8534,88 +9075,80 @@ function drawStream() {
   const innerW = W - padL - padR;
   const innerH = H - padT - padB;
   const xAt = (min) => padL + (min / DAY_MIN) * innerW;
-
-  const hi = houseIndex[state.focus];
-  if (hi == null || !house) {
-    panel.hidden = true;
-    return;
-  }
-  const rows = [];
-  const lastSlot = Math.min(SLOTS - 1, Math.floor(state.nowMin / SLOT_MIN));
-  for (let s = 0; s <= lastSlot; s++) rows.push(day.readings[s * HOUSE_N + hi]);
-  const layers = STREAM_KEYS.map((k) => ({
-    k,
-    tops: [],
-    bots: [],
-    used: false,
-  }));
-
-  let yMin = 0;
-  let yMax = 1;
-  for (const r of rows) {
-    const mix = r?.mix || {};
-    let total = 0;
-    for (const k of STREAM_KEYS) total += mix[k] || 0;
-    let y0 = -total / 2;
-    if (y0 < yMin) yMin = y0;
-    if (y0 + total > yMax) yMax = y0 + total;
-    let run = y0;
-    for (const layer of layers) {
-      const v = mix[layer.k] || 0;
-      if (v > 0) layer.used = true;
-      layer.bots.push(run);
-      run += v;
-      layer.tops.push(run);
-    }
-  }
-  const span = yMax - yMin || 1;
-  const ySvg = (w) => padT + innerH - ((w - yMin) / span) * innerH;
-
-  function area(layer) {
-    if (rows.length < 2) return "";
-    const top = rows.map((r, i) => `${i === 0 ? "M" : "L"}${xAt(r.min).toFixed(1)},${ySvg(layer.tops[i]).toFixed(1)}`);
-    const bot = [];
-    for (let i = rows.length - 1; i >= 0; i--) {
-      bot.push(`L${xAt(rows[i].min).toFixed(1)},${ySvg(layer.bots[i]).toFixed(1)}`);
-    }
-    return `${top.join(" ")} ${bot.join(" ")} Z`;
-  }
-
+  const bands = timelineBands(tl);
+  const span = bands.yMax - bands.yMin || 1;
+  const ySvg = (w) => padT + innerH - ((w - bands.yMin) / span) * innerH;
   const ticks = [0, 6, 12, 18, 24].map((hr) => {
     const x = xAt(hr * 60);
     return `<line x1="${x}" y1="${padT}" x2="${x}" y2="${H - padB}" stroke="#2a2a2e"/>
       <text x="${x}" y="${H - 6}" fill="#9a9990" font-size="10" text-anchor="middle">${String(hr).padStart(2, "0")}:00</text>`;
   });
-  const yTicks = [yMin, 0, yMax].map((w) => {
+  const yTicks = timelineAxisTicks(bands).map((w) => {
     const y = ySvg(w);
     return `<text x="${padL - 6}" y="${y + 3}" fill="#9a9990" font-size="9" text-anchor="end">${Math.round(w)} W</text>`;
   });
+  const marks = tl.marks
+    .map((m) => {
+      const x0 = xAt(m.min);
+      const x1 = xAt(m.end);
+      const fill = m.kind === "leak" ? "#e85dff" : "#ff2d4a";
+      return `<rect x="${x0.toFixed(1)}" y="${padT}" width="${Math.max(1.2, x1 - x0).toFixed(1)}" height="${innerH}" fill="${fill}" fill-opacity="0.16"/>`;
+    })
+    .join("");
+  const paths = tl.layers
+    .map((layer, li) => {
+      if (tl.mins.length < 2) return "";
+      if (!layer.values.some((v) => v > 0)) return "";
+      const top = tl.mins.map((min, i) => `${i === 0 ? "M" : "L"}${xAt(min).toFixed(1)},${ySvg(bands.tops[li][i]).toFixed(1)}`);
+      const bot = [];
+      for (let i = tl.mins.length - 1; i >= 0; i--) {
+        bot.push(`L${xAt(tl.mins[i]).toFixed(1)},${ySvg(bands.bots[li][i]).toFixed(1)}`);
+      }
+      return `<path d="${top.join(" ")} ${bot.join(" ")} Z" fill="${layer.color}" fill-opacity="0.88"/>`;
+    })
+    .join("");
   const playX = xAt(state.nowMin);
-  const paths = layers
-    .filter((l) => l.used)
-    .map((l) => {
-      const spec = LOAD_TYPES[l.k];
-      return `<path d="${area(l)}" fill="${hexCss(spec.hex)}" fill-opacity="0.88" stroke="${hexCss(spec.hex)}" stroke-opacity="0.4" stroke-width="0.6"/>`;
-    });
-
-  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-  svg.innerHTML = `
+  return `
     <rect width="${W}" height="${H}" fill="#121214"/>
     ${ticks.join("")}
+    ${marks}
     ${yTicks.join("")}
-    ${paths.join("")}
+    ${paths}
     <line x1="${playX}" y1="${padT}" x2="${playX}" y2="${H - padB}" stroke="#2aa8b8" stroke-width="1.2"/>
   `;
+}
 
-  if (legend) {
-    legend.innerHTML = layers
-      .filter((l) => l.used)
-      .map((l) => {
-        const spec = LOAD_TYPES[l.k];
-        return `<span><i style="background:${hexCss(spec.hex)}"></i>${spec.label}</span>`;
-      })
-      .join("");
+function timelineLegendHtml(tl) {
+  const used = tl.layers.filter((l) => tl.level === "ems" || l.values.some((v) => v > 0));
+  const shown = used.slice(0, 12);
+  const extra = used.length - shown.length;
+  return (
+    shown.map((l) => `<span><i style="background:${l.color}"></i>${esc(l.label)}</span>`).join("") +
+    (extra > 0 ? `<span>+${extra}</span>` : "")
+  );
+}
+
+function drawStream() {
+  const panel = document.getElementById("wl-stream-panel");
+  const svg = document.getElementById("wl-stream");
+  const nameEl = document.getElementById("wl-stream-name");
+  const titleEl = document.getElementById("wl-stream-title");
+  const noteEl = document.getElementById("wl-stream-note");
+  const legend = document.getElementById("wl-stream-legend");
+  if (!panel || !svg) return;
+  if (!liveHouses.length) {
+    panel.hidden = true;
+    return;
   }
+  const tl = currentTimeline();
+  panel.hidden = false;
+  const head = tl.level === "meter" ? "Meter load" : tl.level === "ems" ? "EMS meters" : tl.level === "feeder" ? "Feeder phases" : "Village load";
+  if (titleEl) titleEl.textContent = head;
+  if (nameEl) nameEl.textContent = tl.title;
+  if (noteEl) noteEl.textContent = tl.note;
+  svg.setAttribute("viewBox", "0 0 720 168");
+  svg.innerHTML = timelineSvg(tl);
+  if (legend) legend.innerHTML = timelineLegendHtml(tl);
 }
 
 function theaterFs() {
@@ -8642,37 +9175,10 @@ function scopeHouses() {
   return liveHouses;
 }
 
-function scopeCaption(houses) {
-  const s = state.scope || { kind: "village" };
-  const n = houses.length;
-  if (s.kind === "house") {
-    const h = houseById[s.id];
-    return { title: h ? h.name : s.id, sub: h ? `${h.serial} · 1 home · ${h.cluster}` : "1 home" };
-  }
-  if (s.kind === "board") {
-    const b = boardById[s.id];
-    return { title: b?.label || "MeshEMS", sub: `${n} homes on this board · ${HOMES_PER_BOARD} / board` };
-  }
-  if (s.kind === "feeder") {
-    const f = liveFeeders.find((x) => x.id === s.id);
-    const d = liveDtms.find((x) => x.feederId === s.id);
-    return { title: f?.label || s.id, sub: `${d?.label || "DTM"} · ${n} homes` };
-  }
-  if (s.kind === "station") {
-    const st = STATIONS.find((x) => x.id === s.id);
-    return { title: st?.label || "Station", sub: `${n} homes on station` };
-  }
-  return { title: "Village load", sub: `${n} homes · none selected` };
-}
-
 function fmtLoadW(w) {
   if (w >= 10000) return `${Math.round(w / 1000)} kW`;
   if (w >= 1000) return `${(w / 1000).toFixed(1)} kW`;
   return `${Math.round(w)} W`;
-}
-
-function houseLineHue(i) {
-  return (i * 137.508) % 360;
 }
 
 function drawFsLoad() {
@@ -8681,13 +9187,11 @@ function drawFsLoad() {
   const subEl = document.getElementById("wl-fs-load-sub");
   const legEl = document.getElementById("wl-fs-load-leg");
   if (!cv || !theaterFs()) return;
-  const houses = scopeHouses();
-  const cap = scopeCaption(houses);
-  if (titleEl) titleEl.textContent = cap.title;
-  if (subEl) subEl.textContent = cap.sub;
+  const tl = currentTimeline();
+  const head = tl.level === "meter" ? "Meter load" : tl.level === "ems" ? "EMS meters" : tl.level === "feeder" ? "Feeder phases" : "Village load";
+  if (titleEl) titleEl.textContent = head;
+  if (subEl) subEl.textContent = tl.note;
 
-  const kind = state.scope?.kind || "village";
-  const lines = kind === "board" || kind === "feeder" || kind === "station";
   const rect = cv.getBoundingClientRect();
   const dpr = Math.min(2, window.devicePixelRatio || 1);
   const W = Math.max(320, Math.floor(rect.width * dpr));
@@ -8708,47 +9212,20 @@ function drawFsLoad() {
   const padB = 20 * dpr;
   const innerW = W - padL - padR;
   const innerH = H - padT - padB;
-  const last = Math.min(SLOTS - 1, Math.floor(state.nowMin / SLOT_MIN));
   const xAt = (min) => padL + (min / DAY_MIN) * innerW;
+  const bands = timelineBands(tl);
+  const span = bands.yMax - bands.yMin || 1;
+  const yAt = (w) => padT + innerH - ((w - bands.yMin) / span) * innerH;
 
-  const series = houses.map((h) => {
-    const hi = houseIndex[h.id];
-    const pts = [];
-    for (let s = 0; s <= last; s++) {
-      const r = day.readings[s * HOUSE_N + hi];
-      pts.push({
-        min: r.min,
-        w: r.on && !r.feederOut ? r.powerW : 0,
-        mix: r.mix || {},
-      });
-    }
-    return { house: h, pts };
-  });
-
-  let yMax = 1;
-  let stacked = null;
-  if (!lines) {
-    stacked = STREAM_KEYS.map((k) => ({ k, vals: [] }));
-    for (let s = 0; s <= last; s++) {
-      const acc = Object.fromEntries(STREAM_KEYS.map((k) => [k, 0]));
-      for (const row of series) {
-        const mix = row.pts[s]?.mix || {};
-        for (const k of STREAM_KEYS) acc[k] += mix[k] || 0;
-      }
-      let tot = 0;
-      for (const layer of stacked) {
-        layer.vals.push(acc[layer.k]);
-        tot += acc[layer.k];
-      }
-      if (tot > yMax) yMax = tot;
-    }
-  } else {
-    for (const row of series) {
-      for (const p of row.pts) if (p.w > yMax) yMax = p.w;
-    }
+  for (const m of tl.marks) {
+    const x0 = xAt(m.min);
+    const x1 = xAt(m.end);
+    ctx.fillStyle = m.kind === "leak" ? "#e85dff" : "#ff2d4a";
+    ctx.globalAlpha = 0.16;
+    ctx.fillRect(x0, padT, Math.max(1.2 * dpr, x1 - x0), innerH);
   }
+  ctx.globalAlpha = 1;
 
-  const yAt = (w) => padT + innerH - (w / yMax) * innerH;
   ctx.strokeStyle = "#2a2a2e";
   ctx.lineWidth = 1;
   ctx.font = `${10 * dpr}px sans-serif`;
@@ -8763,67 +9240,28 @@ function drawFsLoad() {
     ctx.fillText(`${String(hr).padStart(2, "0")}:00`, x, H - 5 * dpr);
   }
   ctx.textAlign = "right";
-  for (const w of [0, yMax / 2, yMax]) {
+  for (const w of timelineAxisTicks(bands)) {
     ctx.fillText(fmtLoadW(w), padL - 6 * dpr, yAt(w) + 3 * dpr);
   }
 
-  if (!lines && stacked) {
-    const mins = series[0] ? series[0].pts.map((p) => p.min) : [];
-    let run = new Array(mins.length).fill(0);
-    for (const layer of stacked) {
-      if (!layer.vals.some((v) => v > 0)) continue;
-      const spec = LOAD_TYPES[layer.k];
+  if (tl.mins.length >= 2) {
+    tl.layers.forEach((layer, li) => {
+      if (!layer.values.some((v) => v > 0)) return;
       ctx.beginPath();
-      mins.forEach((min, i) => {
-        const y = yAt(run[i] + layer.vals[i]);
+      tl.mins.forEach((min, i) => {
+        const y = yAt(bands.tops[li][i]);
         if (i === 0) ctx.moveTo(xAt(min), y);
         else ctx.lineTo(xAt(min), y);
       });
-      for (let i = mins.length - 1; i >= 0; i--) {
-        ctx.lineTo(xAt(mins[i]), yAt(run[i]));
-        run[i] += layer.vals[i];
-      }
+      for (let i = tl.mins.length - 1; i >= 0; i--) ctx.lineTo(xAt(tl.mins[i]), yAt(bands.bots[li][i]));
       ctx.closePath();
-      ctx.fillStyle = hexCss(spec.hex);
+      ctx.fillStyle = layer.color;
       ctx.globalAlpha = 0.88;
       ctx.fill();
       ctx.globalAlpha = 1;
-    }
-    if (legEl) {
-      legEl.innerHTML = stacked
-        .filter((l) => l.vals.some((v) => v > 0))
-        .map((l) => `<span><i style="background:${hexCss(LOAD_TYPES[l.k].hex)}"></i>${LOAD_TYPES[l.k].label}</span>`)
-        .join("");
-    }
-  } else {
-    const thin = series.length > 12;
-    ctx.lineWidth = thin ? 1 : 1.4 * dpr;
-    ctx.globalAlpha = thin ? 0.28 : 0.92;
-    series.forEach((row, i) => {
-      if (row.pts.length < 2) return;
-      ctx.beginPath();
-      row.pts.forEach((p, j) => {
-        const x = xAt(p.min);
-        const y = yAt(p.w);
-        if (j === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      });
-      ctx.strokeStyle = `hsl(${houseLineHue(i)}, 62%, 58%)`;
-      ctx.stroke();
     });
-    ctx.globalAlpha = 1;
-    if (legEl) {
-      const shown = series.slice(0, 10);
-      const extra = series.length - shown.length;
-      legEl.innerHTML =
-        shown
-          .map(
-            (row, i) =>
-              `<span><i style="background:hsl(${houseLineHue(i)}, 62%, 58%)"></i>${row.house.name}</span>`,
-          )
-          .join("") + (extra > 0 ? `<span>+${extra} more</span>` : "");
-    }
   }
+  if (legEl) legEl.innerHTML = timelineLegendHtml(tl);
 
   const playX = xAt(state.nowMin);
   ctx.strokeStyle = "#2aa8b8";

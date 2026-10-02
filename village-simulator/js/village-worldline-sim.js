@@ -971,15 +971,13 @@ export function simulateDay(ctx) {
       if (!h.smsSent && h.wallet > 0 && h.wallet <= LOW_BALANCE) {
         h.smsSent = true;
         smsN += 1;
-        if (loudHouse(h)) {
-          events.push({
-            min,
-            kind: "sms",
-            houseId: h.id,
-            wallet: h.wallet,
-            note: `TYPE_CUSTOMER_LOW_BALANCE (threshold ${LOW_BALANCE})`,
-          });
-        }
+        events.push({
+          min,
+          kind: "sms",
+          houseId: h.id,
+          wallet: h.wallet,
+          note: `TYPE_CUSTOMER_LOW_BALANCE (threshold ${LOW_BALANCE})`,
+        });
       }
 
       if (disconnected && cutKind === "credit") {
