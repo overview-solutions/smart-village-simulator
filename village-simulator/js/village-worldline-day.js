@@ -7644,6 +7644,13 @@ function projectSave(asNewName = false) {
   syncProjectChip();
 }
 
+function alertFailure(err, fallback) {
+  const raw = String(err?.message || err || "").trim();
+  const html = /<!doctype html/i.test(raw) || /<html[\s>]/i.test(raw);
+  const msg = !raw || html || raw.length > 240 ? fallback : raw;
+  alert(msg);
+}
+
 function projectNew() {
   openProjectModal({
     title: "New project",
@@ -7665,7 +7672,7 @@ function projectNew() {
             try {
               pin = await resolvePlace(q);
             } catch (err) {
-              alert(err?.message || String(err));
+              alertFailure(err, "Could not look up that place. Try lat, lon.");
               return;
             }
           }
@@ -7831,7 +7838,7 @@ function bindProjectMenu() {
     try {
       await projectImportFiles(importEl.files);
     } catch (err) {
-      alert(err?.message || String(err));
+      alertFailure(err, "Could not import that file.");
     }
     importEl.value = "";
   });

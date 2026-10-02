@@ -1,6 +1,16 @@
 /**
- * Pin a new site: Overpass OSM extract + local OpenFreeMap pack (via /api/site-pack).
+ * Pin a new site: Nominatim place lookup, Overpass OSM extract,
+ * local OpenFreeMap pack (Vite /api/site-pack only).
  */
+
+/** True only under `vite` dev. Static GitHub Pages has no /api. */
+function onDevServer() {
+  try {
+    return import.meta.env.DEV === true;
+  } catch {
+    return false;
+  }
+}
 
 const OSM_SRC = "site-osm";
 const OSM_LAYERS = ["site-osm-power", "site-osm-road", "site-osm-build"];
@@ -41,16 +51,35 @@ export async function resolvePlace(query) {
   if (!q) return null;
   const pair = parseCoordPair(q);
   if (pair) return pair;
-  const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`);
-  if (!res.ok) {
-    const t = await res.text();
-    throw new Error(t || `geocode HTTP ${res.status}`);
+  // /api/geocode exists only on the Vite dev server. A root-absolute fetch
+  // from GitHub Pages hits https://overview-solutions.github.io/api/geocode
+  // and returns the "Site not found" HTML page.
+  const url = new URL("https://nominatim.openstreetmap.org/search");
+  url.searchParams.set("format", "jsonv2");
+  url.searchParams.set("limit", "1");
+  url.searchParams.set("q", q);
+  let res;
+  try {
+    res = await fetch(url, { headers: { Accept: "application/json" } });
+  } catch {
+    throw new Error("Place lookup failed. Try lat, lon.");
   }
-  const hit = await res.json();
-  if (!hit || !Number.isFinite(hit.lat) || !Number.isFinite(hit.lon)) {
+  if (!res.ok) {
+    throw new Error(`Place lookup failed (HTTP ${res.status}). Try lat, lon.`);
+  }
+  let rows;
+  try {
+    rows = await res.json();
+  } catch {
+    throw new Error("Place lookup failed. Try lat, lon.");
+  }
+  const hit = Array.isArray(rows) ? rows[0] : null;
+  const lat = Number(hit?.lat);
+  const lon = Number(hit?.lon);
+  if (!hit || !Number.isFinite(lat) || !Number.isFinite(lon)) {
     throw new Error(`No place match for “${q}”`);
   }
-  return { lat: hit.lat, lon: hit.lon, label: hit.name || q };
+  return { lat, lon, label: hit.display_name || q };
 }
 
 function osmToGeoJSON(osm) {
@@ -146,14 +175,16 @@ export function addSiteOsmLayers(map, fc) {
 }
 
 export async function cacheSitePack({ lon, lat, name, km = 2, osm }) {
+  if (!onDevServer()) {
+    throw new Error("Offline map pack needs the local dev server.");
+  }
   const res = await fetch("/api/site-pack", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ lon, lat, km, name, osm }),
   });
   if (!res.ok) {
-    const t = await res.text();
-    throw new Error(t || `site-pack HTTP ${res.status}`);
+    throw new Error(`Map pack failed (HTTP ${res.status}).`);
   }
   return res.json();
 }
