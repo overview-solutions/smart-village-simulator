@@ -804,6 +804,15 @@ html[data-theme="dark"] .kpi-gauge-top .kpi-actual.is-miss { color: #f97066; }
 }
 .wl-build-end[hidden] { display: none !important; }
 .wl-build-end:hover { background: color-mix(in srgb, #00e5ff 16%, var(--bg)); color: var(--text); }
+.wl-build-finish {
+  flex-shrink: 0; align-self: center;
+  margin-left: 0.1rem; padding: 0.25rem 0.55rem;
+  border: 1px solid #e6c84a; border-radius: 6px; background: var(--bg);
+  font-family: inherit; font-size: 10px; font-weight: 600;
+  color: #e6c84a; cursor: pointer; white-space: nowrap;
+}
+.wl-build-finish[hidden] { display: none !important; }
+.wl-build-finish:hover { background: color-mix(in srgb, #e6c84a 16%, var(--bg)); color: var(--text); }
 .wl-build-seed {
   flex-shrink: 0; align-self: center;
   margin-left: 0.1rem; padding: 0.25rem 0.55rem;

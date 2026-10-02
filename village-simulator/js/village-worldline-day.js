@@ -5247,10 +5247,16 @@ function setScope(scope, opts = {}) {
   }
   applyVisibility();
   colorPowerLines();
-  if (emptyCanvas && appMode !== "build") {
-    const run = next.kind === "feeder" ? liveFeeders.find((f) => f.id === next.id) : null;
-    if (run?.runId) buildMode?.selectRun?.(run.runId);
-    else if (next.kind === "village") buildMode?.selectRun?.(null);
+  if (emptyCanvas) {
+    let feederId = null;
+    if (next.kind === "feeder") feederId = next.id;
+    else if (next.kind === "house") feederId = houseById[next.id]?.feederId || null;
+    if (feederId) {
+      const hit = liveFeeders.find((f) => f.id === feederId || f.runId === feederId);
+      const raw = String(feederId);
+      const rid = hit?.runId || (raw.startsWith("f-") ? raw.slice(2) : null);
+      if (rid) buildMode?.selectRun?.(rid);
+    } else if (next.kind === "village") buildMode?.selectRun?.(null);
   }
   fillHouses(true);
   fillKpi();
@@ -7873,18 +7879,19 @@ function bindBuildConfigForm() {
     if (!buildMode) return;
     const assetId = document.getElementById("wl-build-cfg-asset-id")?.value;
     const kind = document.getElementById("wl-build-cfg-kind")?.value;
-    if (!assetId) return;
     const uid = document.getElementById("wl-build-cfg-uid")?.value?.trim() || "";
-    buildMode.setUid(assetId, uid);
-    if (kind) {
-      const cfg = { kind };
+    const cfg = kind ? { kind } : null;
+    if (cfg) {
       const meta = FEED_KINDS[kind];
       for (const f of meta?.fields || []) {
         const inp = document.getElementById(`wl-build-cfg-${f.key}`);
         if (inp) cfg[f.key] = inp.value.trim();
       }
-      buildMode.setFeedConfig(assetId, cfg);
     }
+    buildMode.finishLine?.();
+    if (!assetId) return;
+    buildMode.setUid(assetId, uid);
+    if (cfg) buildMode.setFeedConfig(assetId, cfg);
     fillBuildConfigForm();
   });
 }

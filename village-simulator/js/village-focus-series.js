@@ -99,6 +99,14 @@ export function focusLevel(scope) {
   return "village";
 }
 
+/** `f-run-auto-8` and `run-auto-8` are the same feeder. Blank ids match nothing. */
+export function sameFeeder(a, b) {
+  if (a == null || b == null || a === "" || b === "") return false;
+  const na = String(a).replace(/^f-/, "");
+  const nb = String(b).replace(/^f-/, "");
+  return na.length > 0 && na === nb;
+}
+
 /** 15-min reading beads: feeder, EMS, or meter only. Village stays clear. */
 export function readingInScope(house, scope) {
   const level = focusLevel(scope);
@@ -107,7 +115,7 @@ export function readingInScope(house, scope) {
   const boardId = scope?.boardId || (scope?.kind === "board" ? scope.id : null);
   if (level === "meter") return house.id === houseId;
   if (level === "ems") return !!boardId && house.boardId === boardId;
-  if (level === "feeder") return scope?.kind === "feeder" && house.feederId === scope.id;
+  if (level === "feeder") return scope?.kind === "feeder" && sameFeeder(house.feederId, scope.id);
   return false;
 }
 
@@ -154,9 +162,9 @@ export function outageHitsHouse(o, house) {
 
 export function outageHitsFeeder(o, feederId, index) {
   if (!o || !feederId) return false;
-  if (o.feederId) return o.feederId === feederId;
+  if (o.feederId) return sameFeeder(o.feederId, feederId);
   if (!o.xfmrId || !index?.houseById) return false;
-  return Object.values(index.houseById).some((h) => h.feederId === feederId && h.xfmrId === o.xfmrId);
+  return Object.values(index.houseById).some((h) => sameFeeder(h.feederId, feederId) && h.xfmrId === o.xfmrId);
 }
 
 export function outageHitsBoard(o, board) {
@@ -179,12 +187,12 @@ function scopeCtx(scope, index) {
 function onFeeder(e, ctx, index) {
   if (e.kind === "leak" || e.kind === "leak_clear") {
     const lk = leakOf(e, index);
-    return !!lk && lk.feederId === ctx.feederId;
+    return !!lk && sameFeeder(lk.feederId, ctx.feederId);
   }
   if (e.kind === "phase_xfer") {
-    if (e.feederId && e.feederId === ctx.feederId) return true;
+    if (sameFeeder(e.feederId, ctx.feederId)) return true;
     const h = houseOf(e, index);
-    return !!h && h.feederId === ctx.feederId;
+    return !!h && sameFeeder(h.feederId, ctx.feederId);
   }
   const o = outageOf(e, index);
   return outageHitsFeeder(o, ctx.feederId, index);
@@ -274,7 +282,7 @@ function leakActive(leaks, feederId, boardId, min) {
     if (min < lk.min || min >= lk.restore) continue;
     if (boardId) {
       if (lk.fromBoardId === boardId || lk.toBoardId === boardId) return true;
-    } else if (lk.feederId === feederId) return true;
+    } else if (sameFeeder(lk.feederId, feederId)) return true;
   }
   return false;
 }
@@ -403,7 +411,7 @@ export function buildFocusSamples(input) {
   for (let s = 0; s < slots; s++) {
     const min = readings[s * n]?.min ?? s * slotMin;
     for (const f of input.feeders || []) {
-      const rows = rowsFor(readings, n, s, (i) => houses[i].feederId === f.id);
+      const rows = rowsFor(readings, n, s, (i) => sameFeeder(houses[i].feederId, f.id));
       const imb = phaseImbalance(rows, IMB_FEEDER_W);
       const leak = leakActive(leaks, f.id, null, min);
       const outage = rows.some((r) => r?.feederOut);
@@ -512,7 +520,7 @@ export function timelineMembers(scope, houses, boardById) {
     const ids = new Set(boardById?.[bid]?.houseIds || []);
     return tagged.filter((h) => ids.has(h.id) || h.boardId === bid);
   }
-  if (level === "feeder") return tagged.filter((h) => h.feederId === scope.id);
+  if (level === "feeder") return tagged.filter((h) => sameFeeder(h.feederId, scope.id));
   return tagged;
 }
 
@@ -575,7 +583,7 @@ export function collectTimeline(input) {
       for (const layer of layers) layer.values.push(acc[layer.id]);
     }
     for (const lk of input.leaks || []) {
-      if (lk.feederId === scope.id) marks.push({ min: lk.min, end: lk.restore, kind: "leak" });
+      if (sameFeeder(lk.feederId, scope.id)) marks.push({ min: lk.min, end: lk.restore, kind: "leak" });
     }
     for (const o of input.outages || []) {
       if (outageHitsFeeder(o, scope.id, index)) marks.push({ min: o.min, end: o.restore, kind: "outage" });

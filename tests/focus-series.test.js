@@ -77,6 +77,16 @@ test("focus level follows house, then EMS, then feeder", () => {
   assert.equal(readingInScope({ id: "h2", feederId: "f-a", boardId: "b1" }, { kind: "feeder", id: "f-a", boardId: "b0" }), false);
   assert.equal(readingInScope({ id: "h0", feederId: "f-a", boardId: "b0" }, { kind: "feeder", id: "f-a", boardId: "b0", houseId: "h0" }), true);
   assert.equal(readingInScope({ id: "h1", feederId: "f-a", boardId: "b0" }, { kind: "feeder", id: "f-a", boardId: "b0", houseId: "h0" }), false);
+  assert.equal(readingInScope({ id: "h0", feederId: "f-run-auto-8" }, { kind: "feeder", id: "run-auto-8" }), true);
+  assert.equal(readingInScope({ id: "h3", feederId: "f-run-auto-9" }, { kind: "feeder", id: "f-run-auto-8" }), false);
+  assert.equal(readingInScope({ id: "h0" }, { kind: "feeder" }), false);
+  assert.equal(readingInScope({ id: "h0", feederId: "f-a" }, { kind: "feeder", id: "" }), false);
+  const members = timelineMembers({ kind: "feeder", id: "run-auto-8" }, [
+    { id: "h0", feederId: "f-run-auto-8" },
+    { id: "h3", feederId: "f-run-auto-9" },
+    { id: "hx" },
+  ], {});
+  assert.deepEqual(members.map((h) => h.id), ["h0"]);
 });
 
 test("phase imbalance ignores a quiet feeder and flags a skewed one", () => {

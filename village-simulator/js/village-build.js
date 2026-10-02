@@ -297,6 +297,122 @@ export function feedConfigComplete(cfg) {
   return FEED_KINDS[cfg.kind].required.every((k) => String(cfg[k] ?? "").trim() !== "");
 }
 
+/** Empty identity. Whitespace counts as empty. */
+export function isBlankId(v) {
+  return v == null || String(v).trim() === "";
+}
+
+function autoPrefixRe(prefix) {
+  const esc = String(prefix).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`^(?:f-)?${esc}-(\\d+)$`);
+}
+
+/** Numbers already used by AUTO-FEEDER-n / f-AUTO-FEEDER-n (and the EMS / meter twins). */
+export function collectAutofillNumbers(prefix, records, extra = []) {
+  const used = new Set();
+  const re = autoPrefixRe(prefix);
+  const take = (v) => {
+    const m = String(v ?? "").trim().match(re);
+    if (m) used.add(Number(m[1]));
+  };
+  for (const p of records || []) {
+    if (!p || typeof p !== "object") {
+      take(p);
+      continue;
+    }
+    take(p.runId);
+    take(p.feederId);
+    take(p.uid);
+    take(p.globalId);
+  }
+  for (const v of extra) take(v);
+  return used;
+}
+
+/** Next obvious autofill id. `used` is a Set of numbers or a list of raw ids. */
+export function nextAutofillId(prefix, used) {
+  const taken = used instanceof Set ? used : collectAutofillNumbers(prefix, [], used || []);
+  let n = 1;
+  while (taken.has(n)) n += 1;
+  return `${prefix}-${n}`;
+}
+
+/**
+ * Fill empty identity fields on a new build record.
+ * Feeder id lives on `runId` (reader + f- prefix focus). EMS / meter use `uid`.
+ * Does not overwrite a non-blank value.
+ * @returns {{ rec: object, runId: string | null }}
+ */
+export function autofillIdentity(rec, ctx = {}) {
+  const runIn = ctx.runId ?? null;
+  if (!rec || rec.seeded) return { rec, runId: runIn };
+  const placed = ctx.placed || [];
+  let runId = runIn;
+  const lineNeedsFeeder = rec.kind === "line" && rec.assetClass !== "service";
+  const isFeeder = rec.assetClass === "feeder";
+  if (lineNeedsFeeder || isFeeder) {
+    if (isBlankId(rec.runId) && !isBlankId(rec.feederId)) {
+      rec.runId = String(rec.feederId).replace(/^f-/, "");
+    } else if (isBlankId(rec.runId) && isBlankId(rec.feederId)) {
+      if (isFeeder || isBlankId(runId)) {
+        rec.runId = nextAutofillId("AUTO-FEEDER", collectAutofillNumbers("AUTO-FEEDER", placed, [runId]));
+        if (!isFeeder) runId = rec.runId;
+      } else {
+        rec.runId = runId;
+      }
+    }
+  }
+  if (isBlankId(rec.uid)) {
+    if (rec.assetClass === "ems") {
+      rec.uid = nextAutofillId("AUTO-EMS", collectAutofillNumbers("AUTO-EMS", placed));
+    } else if (rec.assetClass === "meter") {
+      rec.uid = nextAutofillId("AUTO-METER", collectAutofillNumbers("AUTO-METER", placed));
+    }
+    if (!isBlankId(rec.uid) && isBlankId(rec.globalId)) rec.globalId = rec.uid;
+  }
+  return { rec, runId };
+}
+
+/**
+ * A finished line drops the open point and the line tool so the map stops taking points.
+ * An open dist-run (chainTail) keeps its run id.
+ */
+export function finishLineDraw(state) {
+  const drawing = state?.toolKind === "line" || !!state?.pendingLine;
+  if (!drawing) {
+    return {
+      changed: false,
+      tool: state?.tool ?? null,
+      pendingLine: state?.pendingLine ?? null,
+      runId: state?.runId ?? null,
+    };
+  }
+  return {
+    changed: true,
+    tool: state.toolKind === "line" ? null : (state.tool ?? null),
+    pendingLine: null,
+    runId: state.chainTail ? (state.runId ?? null) : null,
+  };
+}
+
+/**
+ * Generation-site click layout. Starter pole sits on the station.
+ * `startLine` is false — the click does not open the line editor.
+ */
+export function generationSiteLayout(x, z) {
+  const stationX = x + 1.55;
+  const stationZ = z;
+  return {
+    startLine: false,
+    gen: { x, z },
+    station: { x: stationX, z: stationZ },
+    breaker: { x: x + 2.45, z },
+    xfmr: { x: stationX, z: stationZ + 1.05 },
+    pole: { x: stationX, z: stationZ },
+    splice: { x: stationX, z: stationZ },
+  };
+}
+
 const BUILD_ICONS = {
   dist_run: "M5 19V7M5 7h.01M5 11h14M19 7v12M19 7h.01M9 11l2-2 2 2",
   dist_run_primary: "M5 19V7M5 7h.01M5 9h14M5 13h14M19 7v12M19 7h.01",
@@ -437,7 +553,9 @@ export function createBuildMode(opts) {
   }
 
   function beginRun(reuseId) {
-    state.runId = reuseId || nextId("run");
+    state.runId =
+      reuseId ||
+      nextAutofillId("AUTO-FEEDER", collectAutofillNumbers("AUTO-FEEDER", state.placed, [state.runId]));
     state.editRunId = state.runId;
     return state.runId;
   }
@@ -513,6 +631,32 @@ export function createBuildMode(opts) {
       const host = p.structureId ? findPlaced(p.structureId) : null;
       if (host?.runId) p.runId = host.runId;
     }
+    for (const p of state.placed) {
+      if (p.runId || !p.lineId) continue;
+      const host = findPlaced(p.lineId);
+      if (host?.runId) p.runId = host.runId;
+    }
+  }
+
+  function canonRunId(runId) {
+    if (!runId) return null;
+    const raw = String(runId);
+    const bare = raw.startsWith("f-") ? raw.slice(2) : raw;
+    const runs = listRuns();
+    if (runs.some((r) => r.id === raw)) return raw;
+    if (runs.some((r) => r.id === bare)) return bare;
+    return bare;
+  }
+
+  function recordOnRun(rec, fid) {
+    if (!fid) return true;
+    if (!rec) return false;
+    if (rec.runId === fid || rec.feederId === fid || rec.feederId === `f-${fid}`) return true;
+    if (rec.lineId) {
+      const host = findPlaced(rec.lineId);
+      if (host && (host.runId === fid || host.feederId === fid || host.feederId === `f-${fid}`)) return true;
+    }
+    return false;
   }
 
   function listRuns() {
@@ -585,7 +729,7 @@ export function createBuildMode(opts) {
     for (const child of root.children) {
       if (child === ghost || child === preview) continue;
       const rec = findPlaced(child.userData?.recordId);
-      const mine = !fid || (rec && rec.runId === fid);
+      const mine = recordOnRun(rec, fid);
       child.traverse((o) => {
         if (!o.isMesh || !o.material) return;
         const mats = Array.isArray(o.material) ? o.material : [o.material];
@@ -601,9 +745,10 @@ export function createBuildMode(opts) {
   }
 
   function selectRun(runId) {
-    state.editRunId = runId || null;
-    if (runId) {
-      const recs = state.placed.filter((p) => p.runId === runId);
+    const canon = runId ? canonRunId(runId) : null;
+    state.editRunId = canon;
+    if (canon) {
+      const recs = state.placed.filter((p) => p.runId === canon);
       const line = recs.find((p) => p.kind === "line");
       if (line) {
         state.selectedAssetId = line.id;
@@ -613,7 +758,7 @@ export function createBuildMode(opts) {
     applyEditFocus();
     syncFeederEdit();
     paintKvStrip();
-    const run = runId ? listRuns().find((r) => r.id === runId) : null;
+    const run = canon ? listRuns().find((r) => r.id === canon) : null;
     setHint(run ? `Editing ${run.label} · Resume to string more · kV chips retag this feeder` : "All feeders");
     bump();
   }
@@ -685,9 +830,12 @@ export function createBuildMode(opts) {
           .map((r) => `<option value="${r.id}">${r.label}</option>`)
           .join("");
       if (cur && runs.some((r) => r.id === cur)) sel.value = cur;
-      else if (cur && !runs.some((r) => r.id === cur)) {
-        state.editRunId = null;
-        sel.value = "";
+      else if (cur) {
+        const bare = String(cur).replace(/^f-/, "");
+        if (runs.some((r) => r.id === bare)) {
+          state.editRunId = bare;
+          sel.value = bare;
+        } else sel.value = "";
       }
     } else if (sel.value !== (state.editRunId || "")) {
       sel.value = state.editRunId || "";
@@ -758,7 +906,7 @@ export function createBuildMode(opts) {
       const cls = d.lineClass || "secondary";
       const kv = state.draftKv ?? d.defaultKv ?? defaultLineKv(cls);
       if (d.id === "gen_feeder" && !state.chainTail) {
-        return "Gen → Line: click site — places gen + station + xfmr, then string Primary";
+        return "Generation site: click map — gen + station + starter pole. Pick a line tool when you want a line.";
       }
       return state.chainTail
         ? `${d.label}: click next pole (strings ${cls} ${kv} kV · End run / Esc closes)`
@@ -768,8 +916,8 @@ export function createBuildMode(opts) {
     }
     if (d.kind === "line") {
       return state.pendingLine
-        ? `${d.label}: click end point (Esc cancels)`
-        : `${d.label}: click start, then end`;
+        ? `${d.label}: click end point · Complete line stops points (Enter)`
+        : `${d.label}: click start, then end · Complete line when done`;
     }
     if (d.id === "switching_assembly") return "Station / switch: click map — places station + breaker";
     if (d.kind === "area") return `${d.label}: click center on map`;
@@ -792,6 +940,27 @@ export function createBuildMode(opts) {
     });
     const endBtn = toolbarEl.querySelector(".wl-build-end");
     if (endBtn) endBtn.hidden = !state.chainTail;
+    const finishBtn = toolbarEl.querySelector(".wl-build-finish");
+    if (finishBtn) finishBtn.hidden = !(def()?.kind === "line" || state.pendingLine);
+  }
+
+  function finishLine() {
+    const next = finishLineDraw({
+      toolKind: def()?.kind || null,
+      tool: state.tool,
+      pendingLine: state.pendingLine,
+      runId: state.runId,
+      chainTail: state.chainTail,
+    });
+    if (!next.changed) return false;
+    state.tool = next.tool;
+    state.pendingLine = next.pendingLine;
+    state.runId = next.runId;
+    clearPreview();
+    syncTools();
+    setHint("Line finished · pick a line tool to draw another");
+    bump();
+    return true;
   }
 
   function endRun() {
@@ -1168,8 +1337,19 @@ export function createBuildMode(opts) {
     if (state.selectedAssetId === id) state.selectedAssetId = null;
   }
 
-  function placeRecord(rec, { silent = false } = {}) {
-    if (state.runId && !rec.runId && !rec.seeded) rec.runId = state.runId;
+  function placeRecord(rec, { silent = false, identity = true } = {}) {
+    if (state.runId && isBlankId(rec.runId) && !rec.seeded) rec.runId = state.runId;
+    if (identity && !rec.seeded) {
+      const out = autofillIdentity(rec, { placed: state.placed, runId: state.runId });
+      if (
+        out.runId &&
+        rec.kind === "line" &&
+        rec.assetClass !== "service" &&
+        !state.chainTail
+      ) {
+        state.runId = out.runId;
+      }
+    }
     state.placed.push(rec);
     const d = byId[rec.assetClass];
     const mesh = makeMesh(
@@ -1502,17 +1682,24 @@ export function createBuildMode(opts) {
   }
 
   function placeGenFeederHead(x, z) {
-    beginRun();
+    const lay = generationSiteLayout(x, z);
+    state.chainTail = null;
+    state.pendingLine = null;
+    state.runId = null;
+    state.tool = null;
+    clearPreview();
     state.batchSeq += 1;
     const batchId = `batch-${state.batchSeq}`;
     const kv = Number(state.draftKv ?? 11);
+    const runId = nextAutofillId("AUTO-FEEDER", collectAutofillNumbers("AUTO-FEEDER", state.placed));
     placeRecord({
       id: nextId("gen"),
       assetClass: "gen",
       assetGroup: "device",
       kind: "point",
-      x,
-      z,
+      x: lay.gen.x,
+      z: lay.gen.z,
+      runId,
       batchId,
     });
     const stationId = nextId("station");
@@ -1521,11 +1708,12 @@ export function createBuildMode(opts) {
       assetClass: "station",
       assetGroup: "device",
       kind: "point",
-      x: x + 1.55,
-      z,
+      x: lay.station.x,
+      z: lay.station.z,
       primaryKv: kv,
       secondaryKv: 0.4,
       kva: 100,
+      runId,
       batchId,
     });
     placeRecord({
@@ -1533,9 +1721,10 @@ export function createBuildMode(opts) {
       assetClass: "breaker",
       assetGroup: "device",
       kind: "point",
-      x: x + 2.45,
-      z,
+      x: lay.breaker.x,
+      z: lay.breaker.z,
       structureId: stationId,
+      runId,
       batchId,
     });
     placeRecord({
@@ -1543,12 +1732,13 @@ export function createBuildMode(opts) {
       assetClass: "xfmr",
       assetGroup: "device",
       kind: "point",
-      x: x + 1.55,
-      z: z + 1.05,
+      x: lay.xfmr.x,
+      z: lay.xfmr.z,
       structureId: stationId,
       primaryKv: kv,
       secondaryKv: 0.4,
       kva: 100,
+      runId,
       batchId,
     });
     const poleId = nextId("pole");
@@ -1557,9 +1747,10 @@ export function createBuildMode(opts) {
       assetClass: "pole",
       assetGroup: "structure",
       kind: "point",
-      x: x + 2.9,
-      z,
+      x: lay.pole.x,
+      z: lay.pole.z,
       lineClass: "primary",
+      runId,
       batchId,
     });
     const juncId = nextId(DIST_RUN_JUNCTION);
@@ -1568,15 +1759,22 @@ export function createBuildMode(opts) {
       assetClass: DIST_RUN_JUNCTION,
       assetGroup: "junction",
       kind: "point",
-      x: x + 2.9,
-      z,
+      x: lay.splice.x,
+      z: lay.splice.z,
       structureId: poleId,
+      runId,
       batchId,
     });
-    state.chainTail = { x: x + 2.9, z, poleId, junctionId: juncId };
+    state.chainTail = null;
+    state.pendingLine = null;
+    state.runId = null;
+    state.tool = null;
+    state.editRunId = null;
     state.selectedAssetId = stationId;
     state.draftKv = kv;
-    setHint(`Gen + station + xfmr (${kv} kV / 100 kVA) · click poles to string Primary · End run when done`);
+    setHint(
+      `Generation site placed · starter pole on the station · set site fields, then pick a line tool to connect`,
+    );
     syncTools();
     bump();
   }
@@ -1699,8 +1897,7 @@ export function createBuildMode(opts) {
     }
 
     if (d.id === "gen_feeder") {
-      if (!state.chainTail) placeGenFeederHead(pt.x, pt.z);
-      else placeDistRunPole(pt.x, pt.z);
+      placeGenFeederHead(pt.x, pt.z);
       return true;
     }
 
@@ -1737,7 +1934,7 @@ export function createBuildMode(opts) {
         bz: pt.z,
         nominalKv: Number(state.draftKv ?? defaultLineKv(d.id)),
       });
-      setHint(hintForTool());
+      finishLine();
       return true;
     }
 
@@ -1849,13 +2046,15 @@ export function createBuildMode(opts) {
       btn.className = `wl-build-tool${extraClass ? ` ${extraClass}` : ""}`;
       btn.dataset.buildAsset = a.id;
       const tip =
-        a.id === "switching_assembly"
-          ? " (station + breaker)"
-          : a.kind === "chain"
-            ? ` (click poles · auto-string ${a.lineClass || "secondary"})`
-            : a.kind === "line"
-              ? " (2 clicks)"
-              : "";
+        a.id === "gen_feeder"
+          ? " (gen + station + starter pole — does not start a line)"
+          : a.id === "switching_assembly"
+            ? " (station + breaker)"
+            : a.kind === "chain"
+              ? ` (click poles · auto-string ${a.lineClass || "secondary"})`
+              : a.kind === "line"
+                ? " (2 clicks · Complete line stops points)"
+                : "";
       btn.title = `${a.label}${tip}`;
       btn.setAttribute("aria-label", a.label);
       btn.innerHTML = svgIcon(ICONS[a.id] || ICONS.pole);
@@ -1864,7 +2063,8 @@ export function createBuildMode(opts) {
         e.stopPropagation();
         if (!state.active) setActive(true);
         if (state.tool === a.id && (state.chainTail || state.pendingLine)) {
-          endRun();
+          if (a.kind === "line") finishLine();
+          else endRun();
           return;
         }
         state.tool = state.tool === a.id ? null : a.id;
@@ -2023,13 +2223,33 @@ export function createBuildMode(opts) {
       endRun();
     });
     toolbarEl.appendChild(end);
+    const finish = document.createElement("button");
+    finish.type = "button";
+    finish.className = "wl-build-finish";
+    finish.textContent = "Complete line";
+    finish.title = "Finish this line — stop accepting points";
+    finish.hidden = true;
+    finish.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      finishLine();
+    });
+    toolbarEl.appendChild(finish);
     toolbarEl.appendChild(undo);
     paintKvStrip();
     syncTools();
   }
 
   window.addEventListener("keydown", (e) => {
-    if (!state.active || e.key !== "Escape") return;
+    if (!state.active) return;
+    const typing =
+      document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+    if (e.key === "Enter" && !typing && !e.repeat && (def()?.kind === "line" || state.pendingLine)) {
+      finishLine();
+      e.preventDefault();
+      return;
+    }
+    if (e.key !== "Escape") return;
     if (poleMenuEl && !poleMenuEl.hidden) {
       hidePoleMenu();
       e.preventDefault();
@@ -2067,6 +2287,7 @@ export function createBuildMode(opts) {
     resumeRun,
     deleteRun,
     hidePoleMenu,
+    finishLine,
     getPlaced: () => state.placed.slice(),
     houseStatus,
     boardStatus,
@@ -2241,7 +2462,7 @@ export function createBuildMode(opts) {
       state.seq = Number(snap.seq) || 0;
       state.batchSeq = Number(snap.batchSeq) || 0;
       for (const rec of snap.placed || []) {
-        placeRecord({ ...rec });
+        placeRecord({ ...rec }, { silent: true, identity: false });
       }
       state.configs = {};
       for (const [k, v] of Object.entries(snap.configs || {})) {
@@ -2291,7 +2512,8 @@ export function createBuildMode(opts) {
         if (child === ghost || child === preview) continue;
         const rec = findPlaced(child.userData?.recordId);
         const isLine = rec?.kind === "line" || rec?.assetGroup === "line";
-        const match = !group || all || (rec && rec.assetGroup === group) || isLine;
+        const onRun = recordOnRun(rec, state.editRunId);
+        const match = !group || all || (rec && rec.assetGroup === group) || (isLine && onRun);
         const selected = state.selectedAssetId && rec?.id === state.selectedAssetId;
         const lineHex = isLine ? contrastLineColor(rec.assetClass, rec.nominalKv) : null;
         // Solo focus: park non-matching assets. Lines stay — they are the run.
@@ -2311,12 +2533,16 @@ export function createBuildMode(opts) {
               mat.userData._hlBaseEmInt = mat.emissiveIntensity ?? 0;
             }
             if (group == null) {
-              mat.opacity = mat.userData._hlBaseOp;
+              mat.opacity = state.editRunId && !onRun ? 0.16 : mat.userData._hlBaseOp;
               if (mat.color && mat.userData._hlBaseColor != null) mat.color.setHex(mat.userData._hlBaseColor);
               if (mat.emissive) mat.emissive.setHex(0x000000);
               if ("emissiveIntensity" in mat) {
                 mat.emissiveIntensity = mat.userData._hlBaseEmInt ?? 0;
               }
+            } else if (isLine && lineHex != null && !onRun) {
+              mat.opacity = 0.16;
+              if (mat.emissive) mat.emissive.setHex(0x000000);
+              if ("emissiveIntensity" in mat) mat.emissiveIntensity = 0;
             } else if (isLine && lineHex != null) {
               mat.opacity = 1;
               if (mat.color && mat.userData._hlBaseColor !== 0x0a0c10) mat.color.setHex(lineHex);
